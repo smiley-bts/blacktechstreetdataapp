@@ -1,12 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Papa from "papaparse";
-import { TrendingUp, Users, Lightbulb, ChevronDown, ChevronUp } from "lucide-react";
+import { TrendingUp, Users, Lightbulb, ChevronDown, ChevronUp, Search } from "lucide-react";
 import btsLogo from "@/assets/black-tech-street-logo.png";
 import { NPSCard } from "./NPSCard";
 import { MetricCard } from "./MetricCard";
 import { ChartCard } from "./ChartCard";
 import { HorizontalBarChart } from "./HorizontalBarChart";
 import { ConfidenceChart } from "./ConfidenceChart";
+import { ConfidenceComparison, extractConfidenceScore } from "./ConfidenceComparison";
+import { Input } from "@/components/ui/input";
 import {
   Collapsible,
   CollapsibleContent,
@@ -50,6 +52,7 @@ export function ASPIREDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [openParticipants, setOpenParticipants] = useState<Set<string>>(new Set());
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     loadData();
@@ -318,6 +321,38 @@ export function ASPIREDashboard() {
 
   const matchedCount = participants.filter(p => p.hasPreSurvey).length;
 
+  // Prepare confidence comparison data
+  const confidenceComparisonData = useMemo(() => {
+    return participants.map(p => {
+      const preSolving = p.preSurvey ? extractConfidenceScore(p.preSurvey["How confident do you feel using AI to solve problems or create ideas?"]) : null;
+      const postSolving = extractConfidenceScore(p.postSurvey["How confident do you feel using AI to solve problems or create ideas?"]);
+      const preApplying = p.preSurvey ? extractConfidenceScore(p.preSurvey["How confident do you feel applying AI tools in your work, life and community?"]) : null;
+      const postApplying = extractConfidenceScore(p.postSurvey["How confident do you feel applying AI tools in your work, life and community now?"]);
+
+      return {
+        name: `${p.firstName} ${p.lastName}`,
+        email: p.email,
+        preSolving,
+        postSolving,
+        preApplying,
+        postApplying,
+        solvingChange: preSolving !== null && postSolving !== null ? postSolving - preSolving : null,
+        applyingChange: preApplying !== null && postApplying !== null ? postApplying - preApplying : null,
+      };
+    });
+  }, [participants]);
+
+  // Filter participants based on search
+  const filteredParticipants = useMemo(() => {
+    if (!searchQuery.trim()) return participants;
+    const query = searchQuery.toLowerCase();
+    return participants.filter(p => 
+      p.firstName.toLowerCase().includes(query) ||
+      p.lastName.toLowerCase().includes(query) ||
+      p.email.toLowerCase().includes(query)
+    );
+  }, [participants, searchQuery]);
+
   return (
     <div className="min-h-screen bg-background p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
@@ -363,6 +398,11 @@ export function ASPIREDashboard() {
           />
         </div>
 
+        {/* Confidence Comparison - Before vs After */}
+        <ChartCard title="Before vs After: Confidence Comparison" className="mb-8" delay={350}>
+          <ConfidenceComparison participants={confidenceComparisonData} />
+        </ChartCard>
+
         {/* Confidence Levels */}
         <ChartCard title="Post-Workshop Confidence Levels" className="mb-8" delay={400}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -394,8 +434,27 @@ export function ASPIREDashboard() {
 
         {/* Individual Participant Responses */}
         <ChartCard title={`Individual Participant Responses (${participants.length} total)`} delay={800}>
+          {/* Search Input */}
+          <div className="mb-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search by name or email..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 bg-muted/50 border-border"
+              />
+            </div>
+            {searchQuery && (
+              <p className="text-xs text-muted-foreground mt-2">
+                Showing {filteredParticipants.length} of {participants.length} participants
+              </p>
+            )}
+          </div>
+
           <div className="space-y-2">
-            {participants.map((p, idx) => (
+            {filteredParticipants.map((p, idx) => (
               <Collapsible
                 key={p.email || idx}
                 open={openParticipants.has(p.email)}
