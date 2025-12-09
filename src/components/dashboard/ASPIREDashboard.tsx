@@ -286,6 +286,38 @@ export function ASPIREDashboard() {
     );
   };
 
+  // Prepare confidence comparison data - MUST be before early returns
+  const confidenceComparisonData = useMemo(() => {
+    return participants.map(p => {
+      const preSolving = p.preSurvey ? extractConfidenceScore(p.preSurvey["How confident do you feel using AI to solve problems or create ideas?"]) : null;
+      const postSolving = extractConfidenceScore(p.postSurvey["How confident do you feel using AI to solve problems or create ideas?"]);
+      const preApplying = p.preSurvey ? extractConfidenceScore(p.preSurvey["How confident do you feel applying AI tools in your work, life and community?"]) : null;
+      const postApplying = extractConfidenceScore(p.postSurvey["How confident do you feel applying AI tools in your work, life and community now?"]);
+
+      return {
+        name: `${p.firstName} ${p.lastName}`,
+        email: p.email,
+        preSolving,
+        postSolving,
+        preApplying,
+        postApplying,
+        solvingChange: preSolving !== null && postSolving !== null ? postSolving - preSolving : null,
+        applyingChange: preApplying !== null && postApplying !== null ? postApplying - preApplying : null,
+      };
+    });
+  }, [participants]);
+
+  // Filter participants based on search - MUST be before early returns
+  const filteredParticipants = useMemo(() => {
+    if (!searchQuery.trim()) return participants;
+    const query = searchQuery.toLowerCase();
+    return participants.filter(p => 
+      p.firstName.toLowerCase().includes(query) ||
+      p.lastName.toLowerCase().includes(query) ||
+      p.email.toLowerCase().includes(query)
+    );
+  }, [participants, searchQuery]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -320,38 +352,6 @@ export function ASPIREDashboard() {
   }
 
   const matchedCount = participants.filter(p => p.hasPreSurvey).length;
-
-  // Prepare confidence comparison data
-  const confidenceComparisonData = useMemo(() => {
-    return participants.map(p => {
-      const preSolving = p.preSurvey ? extractConfidenceScore(p.preSurvey["How confident do you feel using AI to solve problems or create ideas?"]) : null;
-      const postSolving = extractConfidenceScore(p.postSurvey["How confident do you feel using AI to solve problems or create ideas?"]);
-      const preApplying = p.preSurvey ? extractConfidenceScore(p.preSurvey["How confident do you feel applying AI tools in your work, life and community?"]) : null;
-      const postApplying = extractConfidenceScore(p.postSurvey["How confident do you feel applying AI tools in your work, life and community now?"]);
-
-      return {
-        name: `${p.firstName} ${p.lastName}`,
-        email: p.email,
-        preSolving,
-        postSolving,
-        preApplying,
-        postApplying,
-        solvingChange: preSolving !== null && postSolving !== null ? postSolving - preSolving : null,
-        applyingChange: preApplying !== null && postApplying !== null ? postApplying - preApplying : null,
-      };
-    });
-  }, [participants]);
-
-  // Filter participants based on search
-  const filteredParticipants = useMemo(() => {
-    if (!searchQuery.trim()) return participants;
-    const query = searchQuery.toLowerCase();
-    return participants.filter(p => 
-      p.firstName.toLowerCase().includes(query) ||
-      p.lastName.toLowerCase().includes(query) ||
-      p.email.toLowerCase().includes(query)
-    );
-  }, [participants, searchQuery]);
 
   return (
     <div className="min-h-screen bg-background p-6 lg:p-8">
