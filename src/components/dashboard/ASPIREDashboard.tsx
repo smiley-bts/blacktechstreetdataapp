@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Papa from "papaparse";
-import { Sparkles, TrendingUp, Users, Lightbulb, ChevronDown, ChevronUp } from "lucide-react";
+import { TrendingUp, Users, Lightbulb, ChevronDown, ChevronUp } from "lucide-react";
+import btsLogo from "@/assets/black-tech-street-logo.png";
 import { NPSCard } from "./NPSCard";
 import { MetricCard } from "./MetricCard";
 import { ChartCard } from "./ChartCard";
@@ -322,12 +323,10 @@ export function ASPIREDashboard() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <header className="mb-8 animate-fade-in">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 nps-gradient rounded-lg flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <h1 className="text-3xl font-display font-bold text-foreground">ASPIRE Workshop Analytics</h1>
+          <div className="flex items-center gap-4 mb-4">
+            <img src={btsLogo} alt="Black Tech Street" className="h-12 w-auto" />
           </div>
+          <h1 className="text-3xl font-display font-bold text-foreground mb-2">ASPIRE Workshop Analytics</h1>
           <p className="text-muted-foreground">
             Feedback insights from {metrics.totalResponses} workshop participants
           </p>
