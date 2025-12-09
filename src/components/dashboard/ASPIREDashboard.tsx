@@ -48,10 +48,7 @@ export function ASPIREDashboard({ csvPath }: ASPIREDashboardProps) {
   const loadData = async () => {
     const candidatePaths = csvPath
       ? [csvPath]
-      : [
-          "/ASPIRE Feedback Survey_Submissions_2025-12-09.csv",
-          "/ASPIRE Feedback Survey_Submissions_20251209.csv",
-        ];
+      : ["/aspire-feedback-survey.csv"];
 
     try {
       let csvContent: string | null = null;
