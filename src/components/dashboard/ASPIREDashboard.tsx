@@ -4,9 +4,16 @@ import { Sparkles, TrendingUp, Users, Lightbulb, UserCheck } from "lucide-react"
 import { NPSCard } from "./NPSCard";
 import { MetricCard } from "./MetricCard";
 import { ChartCard } from "./ChartCard";
-import { MindsetPieChart } from "./MindsetPieChart";
 import { HorizontalBarChart } from "./HorizontalBarChart";
 import { ConfidenceChart } from "./ConfidenceChart";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface Metrics {
   recommendNPS: {
@@ -45,6 +52,8 @@ interface MatchedParticipant {
   postConfidenceSolving: number;
   preConfidenceApplying: number;
   postConfidenceApplying: number;
+  changeSolving: number;
+  changeApplying: number;
 }
 
 export function ASPIREDashboard() {
@@ -61,6 +70,11 @@ export function ASPIREDashboard() {
     if (!value) return 0;
     const match = String(value).match(/^(\d)/);
     return match ? parseInt(match[1], 10) : 0;
+  };
+
+  const normalizeEmail = (email: string | undefined): string => {
+    if (!email) return "";
+    return String(email).toLowerCase().trim();
   };
 
   const loadData = async () => {
@@ -102,30 +116,70 @@ export function ASPIREDashboard() {
       });
 
       // Clean and filter data
-      const cleanedPostData = postData.filter((row) => Object.keys(row).length > 0);
-      const cleanedPreData = preData.filter((row) => Object.keys(row).length > 0);
+      const cleanedPostData = postData.filter((row) => 
+        Object.keys(row).length > 0 && row["What's your first name?"]
+      );
+      const cleanedPreData = preData.filter((row) => 
+        Object.keys(row).length > 0 && row["What's your first name?"]
+      );
 
-      // Match participants by email (case-insensitive)
+      console.log(`Post-survey entries: ${cleanedPostData.length}`);
+      console.log(`Pre-survey entries: ${cleanedPreData.length}`);
+
+      // Create a map of pre-survey data by email
       const preByEmail = new Map<string, Record<string, string>>();
       cleanedPreData.forEach((row) => {
-        const email = row["What's your email?"]?.toLowerCase().trim();
-        if (email) preByEmail.set(email, row);
+        const email = normalizeEmail(row["What's your email?"]);
+        if (email) {
+          preByEmail.set(email, row);
+        }
       });
 
+      console.log(`Pre-survey emails mapped: ${preByEmail.size}`);
+
+      // Match participants by email
       const matched: MatchedParticipant[] = [];
       cleanedPostData.forEach((postRow) => {
-        const email = postRow["What's your email?"]?.toLowerCase().trim();
+        const email = normalizeEmail(postRow["What's your email?"]);
+        
         if (email && preByEmail.has(email)) {
           const preRow = preByEmail.get(email)!;
+          
+          const preConfidenceSolving = parseConfidenceLevel(
+            preRow["How confident do you feel using AI to solve problems or create ideas?"]
+          );
+          const postConfidenceSolving = parseConfidenceLevel(
+            postRow["How confident do you feel using AI to solve problems or create ideas?"]
+          );
+          const preConfidenceApplying = parseConfidenceLevel(
+            preRow["How confident do you feel applying AI tools in your work, life and community?"]
+          );
+          const postConfidenceApplying = parseConfidenceLevel(
+            postRow["How confident do you feel applying AI tools in your work, life and community now?"]
+          );
+
           matched.push({
             email,
             firstName: postRow["What's your first name?"] || "",
             lastName: postRow["What's your last name?"] || "",
-            preConfidenceSolving: parseConfidenceLevel(preRow["How confident do you feel using AI to solve problems or create ideas?"]),
-            postConfidenceSolving: parseConfidenceLevel(postRow["How confident do you feel using AI to solve problems or create ideas?"]),
-            preConfidenceApplying: parseConfidenceLevel(preRow["How confident do you feel applying AI tools in your work, life and community?"]),
-            postConfidenceApplying: parseConfidenceLevel(postRow["How confident do you feel applying AI tools in your work, life and community now?"]),
+            preConfidenceSolving,
+            postConfidenceSolving,
+            preConfidenceApplying,
+            postConfidenceApplying,
+            changeSolving: postConfidenceSolving - preConfidenceSolving,
+            changeApplying: postConfidenceApplying - preConfidenceApplying,
           });
+        }
+      });
+
+      console.log(`Matched participants: ${matched.length}`);
+      
+      // Log unmatched for debugging
+      const matchedEmails = new Set(matched.map(m => m.email));
+      cleanedPostData.forEach((postRow) => {
+        const email = normalizeEmail(postRow["What's your email?"]);
+        if (email && !matchedEmails.has(email)) {
+          console.log(`Unmatched post-survey email: ${email}`);
         }
       });
 
@@ -140,14 +194,26 @@ export function ASPIREDashboard() {
   };
 
   const calculateNPS = (responses: Record<string, string>[], questionKey: string) => {
+    // The survey uses 1-5 scale with text like "5 - Extremely Likely"
+    // We need to convert: 5 = 10 (Promoter), 4 = 8 (Passive), 3 = 6 (Detractor), 2 = 4 (Detractor), 1 = 2 (Detractor)
+    const scaleMapping: Record<number, number> = {
+      5: 10,  // Extremely Likely -> Promoter
+      4: 8,   // Likely -> Passive
+      3: 6,   // Neutral -> Detractor
+      2: 4,   // Unlikely -> Detractor
+      1: 2,   // Not Likely -> Detractor
+    };
+
     const scores = responses
       .map((r) => {
         const val = r[questionKey];
         if (!val) return null;
-        const match = String(val).trim().match(/\d+/);
-        return match ? parseInt(match[0], 10) : null;
+        const match = String(val).trim().match(/^(\d)/);
+        if (!match) return null;
+        const rawScore = parseInt(match[1], 10);
+        return scaleMapping[rawScore] ?? null;
       })
-      .filter((v): v is number => v !== null && v >= 0 && v <= 10);
+      .filter((v): v is number => v !== null);
 
     if (scores.length === 0) {
       return {
@@ -194,14 +260,19 @@ export function ASPIREDashboard() {
       .sort((a, b) => b.value - a.value);
   };
 
-  const getPositiveCount = (rows: Record<string, string>[], key: string) => {
+  const getPositiveCount = (rows: Record<string, string>[], keySubstring: string) => {
     return rows.filter((row) => {
-      const val = String(row[key] || "").toLowerCase();
+      // Find the matching key (partial match for flexibility)
+      const matchingKey = Object.keys(row).find(k => k.includes(keySubstring));
+      if (!matchingKey) return false;
+      const val = String(row[matchingKey] || "").toLowerCase();
       return (
         val.includes("agree") ||
         val.includes("yes") ||
         val.includes("definitely") ||
-        val.includes("strongly")
+        val.includes("strongly") ||
+        val.includes("confident") ||
+        val.includes("5 -")
       );
     }).length;
   };
@@ -229,6 +300,7 @@ export function ASPIREDashboard() {
 
     let totalChangeSolving = 0;
     let totalChangeApplying = 0;
+    let validMatchCount = 0;
 
     matched.forEach((p) => {
       if (p.preConfidenceSolving >= 1 && p.preConfidenceSolving <= 5) {
@@ -244,26 +316,29 @@ export function ASPIREDashboard() {
         afterConfidenceApplying[confidenceLevels[p.postConfidenceApplying - 1]]++;
       }
       
-      totalChangeSolving += (p.postConfidenceSolving - p.preConfidenceSolving);
-      totalChangeApplying += (p.postConfidenceApplying - p.preConfidenceApplying);
+      if (p.preConfidenceSolving > 0 && p.postConfidenceSolving > 0) {
+        totalChangeSolving += p.changeSolving;
+        totalChangeApplying += p.changeApplying;
+        validMatchCount++;
+      }
     });
 
-    const avgConfidenceChangeSolving = matched.length > 0 ? totalChangeSolving / matched.length : 0;
-    const avgConfidenceChangeApplying = matched.length > 0 ? totalChangeApplying / matched.length : 0;
+    const avgConfidenceChangeSolving = validMatchCount > 0 ? totalChangeSolving / validMatchCount : 0;
+    const avgConfidenceChangeApplying = validMatchCount > 0 ? totalChangeApplying / validMatchCount : 0;
 
     const continueUsingCount = getPositiveCount(
       rawData,
-      "I plan to continue exploring and using AI tools after today."
+      "I plan to continue exploring"
     );
 
     const attendFollowupCount = getPositiveCount(
       rawData,
-      "Would you attend a follow-up Build Day to continue pursuing your idea?"
+      "Would you attend a follow-up"
     );
 
     const applyAICount = getPositiveCount(
       rawData,
-      "I feel confident that I can apply AI in at least one part of my daily work or life."
+      "I feel confident that I can apply AI"
     );
 
     const confidenceAI = countResponses(
@@ -346,6 +421,12 @@ export function ASPIREDashboard() {
       avgConfidenceChangeSolving,
       avgConfidenceChangeApplying,
     });
+  };
+
+  const getChangeIndicator = (change: number) => {
+    if (change > 0) return <span className="text-emerald-500 font-semibold">+{change}</span>;
+    if (change < 0) return <span className="text-red-500 font-semibold">{change}</span>;
+    return <span className="text-muted-foreground">0</span>;
   };
 
   if (loading) {
@@ -440,18 +521,64 @@ export function ASPIREDashboard() {
           />
         </div>
 
+        {/* Individual Participant Journey Table */}
+        <ChartCard 
+          title={`Individual Participant Journeys (${matchedParticipants.length} matched)`} 
+          className="mb-8" 
+          delay={350}
+        >
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead className="text-center">Pre: Solving</TableHead>
+                  <TableHead className="text-center">Post: Solving</TableHead>
+                  <TableHead className="text-center">Change</TableHead>
+                  <TableHead className="text-center">Pre: Applying</TableHead>
+                  <TableHead className="text-center">Post: Applying</TableHead>
+                  <TableHead className="text-center">Change</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {matchedParticipants.map((p, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell className="font-medium">
+                      {p.firstName} {p.lastName}
+                    </TableCell>
+                    <TableCell className="text-center">{p.preConfidenceSolving || '-'}</TableCell>
+                    <TableCell className="text-center">{p.postConfidenceSolving || '-'}</TableCell>
+                    <TableCell className="text-center">{getChangeIndicator(p.changeSolving)}</TableCell>
+                    <TableCell className="text-center">{p.preConfidenceApplying || '-'}</TableCell>
+                    <TableCell className="text-center">{p.postConfidenceApplying || '-'}</TableCell>
+                    <TableCell className="text-center">{getChangeIndicator(p.changeApplying)}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+          <div className="mt-4 flex gap-6 text-sm text-muted-foreground justify-center">
+            <div>
+              <span className="font-medium">Avg Change (Solving):</span>{" "}
+              <span className={metrics.avgConfidenceChangeSolving >= 0 ? 'text-emerald-500 font-semibold' : 'text-red-500 font-semibold'}>
+                {metrics.avgConfidenceChangeSolving >= 0 ? '+' : ''}{metrics.avgConfidenceChangeSolving.toFixed(2)}
+              </span>
+            </div>
+            <div>
+              <span className="font-medium">Avg Change (Applying):</span>{" "}
+              <span className={metrics.avgConfidenceChangeApplying >= 0 ? 'text-emerald-500 font-semibold' : 'text-red-500 font-semibold'}>
+                {metrics.avgConfidenceChangeApplying >= 0 ? '+' : ''}{metrics.avgConfidenceChangeApplying.toFixed(2)}
+              </span>
+            </div>
+          </div>
+        </ChartCard>
+
         {/* Confidence Transformation - Using AI to Solve Problems */}
         <ChartCard 
-          title={`Confidence: Using AI to Solve Problems (${metrics.matchedParticipants} matched participants)`} 
+          title={`Confidence: Using AI to Solve Problems`} 
           className="mb-8" 
           delay={400}
         >
-          <div className="mb-4 text-center">
-            <span className={`text-2xl font-bold ${metrics.avgConfidenceChangeSolving >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
-              {metrics.avgConfidenceChangeSolving >= 0 ? '+' : ''}{metrics.avgConfidenceChangeSolving.toFixed(2)}
-            </span>
-            <span className="text-muted-foreground ml-2">average confidence change</span>
-          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <ConfidenceChart
               data={metrics.beforeConfidenceSolving}
@@ -468,16 +595,10 @@ export function ASPIREDashboard() {
 
         {/* Confidence Transformation - Applying AI Tools */}
         <ChartCard 
-          title={`Confidence: Applying AI Tools (${metrics.matchedParticipants} matched participants)`} 
+          title={`Confidence: Applying AI Tools`} 
           className="mb-8" 
           delay={500}
         >
-          <div className="mb-4 text-center">
-            <span className={`text-2xl font-bold ${metrics.avgConfidenceChangeApplying >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
-              {metrics.avgConfidenceChangeApplying >= 0 ? '+' : ''}{metrics.avgConfidenceChangeApplying.toFixed(2)}
-            </span>
-            <span className="text-muted-foreground ml-2">average confidence change</span>
-          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <ConfidenceChart
               data={metrics.beforeConfidenceApplying}
