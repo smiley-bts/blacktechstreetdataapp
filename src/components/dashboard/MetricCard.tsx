@@ -6,7 +6,7 @@ interface MetricCardProps {
   value: string | number;
   subtitle?: string;
   icon?: LucideIcon;
-  variant?: "default" | "blue" | "purple" | "amber";
+  variant?: "default" | "blue" | "purple" | "amber" | "green";
   className?: string;
   delay?: number;
 }
@@ -16,6 +16,7 @@ const variantStyles = {
   blue: "bg-card border-chart-blue/20",
   purple: "bg-card border-chart-purple/20",
   amber: "bg-card border-chart-amber/20",
+  green: "bg-card border-emerald-500/20",
 };
 
 const valueStyles = {
@@ -23,6 +24,7 @@ const valueStyles = {
   blue: "text-chart-blue",
   purple: "text-chart-purple",
   amber: "text-chart-amber",
+  green: "text-emerald-500",
 };
 
 export function MetricCard({
