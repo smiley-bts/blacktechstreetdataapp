@@ -6,7 +6,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Cell,
   LabelList,
 } from "recharts";
 
@@ -20,22 +19,31 @@ interface ConfidenceComparisonChartProps {
   afterData: ConfidenceLevel[];
 }
 
-// Map confidence levels to a simplified scale
+// Map confidence levels (handles both numeric 1-5 and text labels)
 const confidenceLevels = [
-  { key: "not", label: "Not Confident", shortLabel: "Not\nConfident" },
-  { key: "slightly", label: "Slightly Confident", shortLabel: "Slightly" },
-  { key: "somewhat", label: "Somewhat Confident", shortLabel: "Somewhat" },
-  { key: "confident", label: "Confident", shortLabel: "Confident" },
-  { key: "very", label: "Very Confident", shortLabel: "Very\nConfident" },
+  { key: "1", label: "Not Confident", numericMatch: ["1"] },
+  { key: "2", label: "Slightly Confident", numericMatch: ["2"] },
+  { key: "3", label: "Somewhat Confident", numericMatch: ["3"] },
+  { key: "4", label: "Confident", numericMatch: ["4"] },
+  { key: "5", label: "Very Confident", numericMatch: ["5"] },
 ];
 
 function matchConfidenceLevel(name: string): string | null {
-  const lower = name.toLowerCase();
-  if (lower.includes("not confident") || lower.includes("not at all")) return "not";
-  if (lower.includes("slightly")) return "slightly";
-  if (lower.includes("somewhat")) return "somewhat";
-  if (lower.includes("very")) return "very";
-  if (lower.includes("confident")) return "confident";
+  const trimmed = name.trim();
+  
+  // Check for numeric values first (1-5)
+  if (/^[1-5]$/.test(trimmed)) {
+    return trimmed;
+  }
+  
+  // Check for text-based labels
+  const lower = trimmed.toLowerCase();
+  if (lower.includes("not confident") || lower.includes("not at all")) return "1";
+  if (lower.includes("slightly")) return "2";
+  if (lower.includes("somewhat")) return "3";
+  if (lower.includes("very")) return "5";
+  if (lower.includes("confident")) return "4";
+  
   return null;
 }
 
@@ -45,20 +53,23 @@ export function ConfidenceComparisonChart({
 }: ConfidenceComparisonChartProps) {
   // Build normalized data
   const chartData = confidenceLevels.map(level => {
-    const beforeMatch = beforeData.find(d => matchConfidenceLevel(d.name) === level.key);
-    const afterMatch = afterData.find(d => matchConfidenceLevel(d.name) === level.key);
+    const beforeTotal = beforeData
+      .filter(d => matchConfidenceLevel(d.name) === level.key)
+      .reduce((sum, d) => sum + d.value, 0);
+    const afterTotal = afterData
+      .filter(d => matchConfidenceLevel(d.name) === level.key)
+      .reduce((sum, d) => sum + d.value, 0);
     
     return {
       name: level.label,
-      shortLabel: level.shortLabel,
-      before: beforeMatch?.value || 0,
-      after: afterMatch?.value || 0,
+      before: beforeTotal,
+      after: afterTotal,
     };
   });
 
   // Calculate totals for showing the shift
-  const totalBefore = beforeData.reduce((sum, d) => sum + d.value, 0);
-  const totalAfter = afterData.reduce((sum, d) => sum + d.value, 0);
+  const totalBefore = chartData.reduce((sum, d) => sum + d.before, 0);
+  const totalAfter = chartData.reduce((sum, d) => sum + d.after, 0);
   
   // Calculate high confidence (Confident + Very Confident) percentages
   const highConfBefore = chartData
@@ -72,7 +83,9 @@ export function ConfidenceComparisonChart({
   const highConfAfterPct = totalAfter > 0 ? Math.round((highConfAfter / totalAfter) * 100) : 0;
   const improvement = highConfAfterPct - highConfBeforePct;
 
-  if (chartData.every(d => d.before === 0 && d.after === 0)) {
+  const hasData = chartData.some(d => d.before > 0 || d.after > 0);
+
+  if (!hasData) {
     return (
       <div className="text-center py-12">
         <p className="text-muted-foreground">No comparison data available</p>

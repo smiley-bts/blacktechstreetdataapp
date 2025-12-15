@@ -1,4 +1,5 @@
 import { LTFDashboard } from "@/components/dashboard/LTFDashboard";
+import btsLogo from "@/assets/black-tech-street-logo.png";
 
 const Index = () => {
   return (
@@ -8,7 +9,7 @@ const Index = () => {
         <header className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
             <img 
-              src="/lovable-uploads/a4b70602-833d-4338-a498-ea07e4d5e926.png" 
+              src={btsLogo} 
               alt="Black Tech Street Logo" 
               className="h-16 w-auto"
             />
