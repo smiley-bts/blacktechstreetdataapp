@@ -43,11 +43,11 @@ export function ConfidenceChart({
             angle={-45}
             textAnchor="end"
             height={80}
-            tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
+            tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 14, fontWeight: 500 }}
             axisLine={{ stroke: "hsl(var(--border))" }}
           />
           <YAxis
-            tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+            tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 16, fontWeight: 600 }}
             axisLine={{ stroke: "hsl(var(--border))" }}
           />
           <Tooltip
