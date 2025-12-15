@@ -1,7 +1,7 @@
-import { ASPIREDashboard } from "@/components/dashboard/ASPIREDashboard";
+import { DashboardTabs } from "@/components/dashboard/DashboardTabs";
 
 const Index = () => {
-  return <ASPIREDashboard />;
+  return <DashboardTabs />;
 };
 
 export default Index;

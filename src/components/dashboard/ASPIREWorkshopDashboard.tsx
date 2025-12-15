@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import Papa from "papaparse";
 import { TrendingUp, Users, Lightbulb, ChevronDown, ChevronUp, Search } from "lucide-react";
-import btsLogo from "@/assets/black-tech-street-logo.png";
+
 import { NPSCard } from "./NPSCard";
 import { MetricCard } from "./MetricCard";
 import { ChartCard } from "./ChartCard";
@@ -46,7 +46,7 @@ interface ParticipantData {
   hasPreSurvey: boolean;
 }
 
-export function ASPIREDashboard() {
+export function ASPIREWorkshopDashboard() {
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [participants, setParticipants] = useState<ParticipantData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -354,18 +354,12 @@ export function ASPIREDashboard() {
   const matchedCount = participants.filter(p => p.hasPreSurvey).length;
 
   return (
-    <div className="min-h-screen bg-background p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <header className="mb-8 animate-fade-in">
-          <div className="flex items-center gap-4 mb-4">
-            <img src={btsLogo} alt="Black Tech Street" className="h-12 w-auto" />
-          </div>
-          <h1 className="text-3xl font-display font-bold text-foreground mb-2">ASPIRE Workshop Analytics</h1>
-          <p className="text-muted-foreground">
-            Feedback insights from {metrics.totalResponses} workshop participants
-          </p>
-        </header>
+    <div className="space-y-8">
+      <div className="text-center mb-4">
+        <p className="text-muted-foreground">
+          Feedback from {metrics.totalResponses} workshop participants
+        </p>
+      </div>
 
         {/* NPS Card */}
         <NPSCard data={metrics.recommendNPS} className="mb-8" />
@@ -544,11 +538,6 @@ export function ASPIREDashboard() {
           </div>
         </ChartCard>
 
-        {/* Footer */}
-        <footer className="mt-12 text-center text-sm text-muted-foreground">
-          <p>ASPIRE Workshop Feedback Dashboard</p>
-        </footer>
-      </div>
     </div>
   );
 }
