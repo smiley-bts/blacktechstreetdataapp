@@ -55,7 +55,8 @@ export function ConfidenceChart({
               backgroundColor: "hsl(var(--card))",
               border: "1px solid hsl(var(--border))",
               borderRadius: "8px",
-              fontSize: "12px",
+              fontSize: "14px",
+              fontWeight: 500,
             }}
             cursor={{ fill: "hsl(var(--muted) / 0.5)" }}
           />
