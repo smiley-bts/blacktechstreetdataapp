@@ -63,18 +63,18 @@ export function ConfidenceComparisonChart({
             angle={-35}
             textAnchor="end"
             height={100}
-            tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12, fontWeight: 500 }}
+            tick={{ fill: "hsl(var(--foreground))", fontSize: 14, fontWeight: 500 }}
             axisLine={{ stroke: "hsl(var(--border))" }}
             interval={0}
           />
           <YAxis
-            tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 14, fontWeight: 600 }}
+            tick={{ fill: "hsl(var(--foreground))", fontSize: 16, fontWeight: 600 }}
             axisLine={{ stroke: "hsl(var(--border))" }}
             label={{ 
               value: "Responses", 
               angle: -90, 
               position: "insideLeft",
-              style: { fill: "hsl(var(--muted-foreground))", fontSize: 12 }
+              style: { fill: "hsl(var(--muted-foreground))", fontSize: 14, fontWeight: 500 }
             }}
           />
           <Tooltip
@@ -82,7 +82,8 @@ export function ConfidenceComparisonChart({
               backgroundColor: "hsl(var(--card))",
               border: "1px solid hsl(var(--border))",
               borderRadius: "8px",
-              fontSize: "12px",
+              fontSize: "14px",
+              fontWeight: 500,
             }}
             cursor={{ fill: "hsl(var(--muted) / 0.5)" }}
             formatter={(value: number, name: string) => [

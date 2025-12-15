@@ -36,14 +36,14 @@ export function HorizontalBarChart({
         <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
         <XAxis
           type="number"
-          tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+          tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 16, fontWeight: 600 }}
           axisLine={{ stroke: "hsl(var(--border))" }}
         />
         <YAxis
           dataKey="name"
           type="category"
-          width={180}
-          tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
+          width={200}
+          tick={{ fill: "hsl(var(--foreground))", fontSize: 14, fontWeight: 500 }}
           axisLine={{ stroke: "hsl(var(--border))" }}
         />
         <Tooltip
@@ -51,7 +51,8 @@ export function HorizontalBarChart({
             backgroundColor: "hsl(var(--card))",
             border: "1px solid hsl(var(--border))",
             borderRadius: "8px",
-            fontSize: "12px",
+            fontSize: "14px",
+            fontWeight: 500,
           }}
           cursor={{ fill: "hsl(var(--muted) / 0.5)" }}
         />
