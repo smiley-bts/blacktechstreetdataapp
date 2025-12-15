@@ -5,12 +5,25 @@ import { MetricCard } from "./MetricCard";
 import { ChartCard } from "./ChartCard";
 import { HorizontalBarChart } from "./HorizontalBarChart";
 import { ConfidenceChart } from "./ConfidenceChart";
+import { ConfidenceComparisonChart } from "./ConfidenceComparisonChart";
+import { NPSCard } from "./NPSCard";
 import { Input } from "@/components/ui/input";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+
+interface NPSData {
+  nps: number;
+  promoters: number;
+  passives: number;
+  detractors: number;
+  total: number;
+  promotersCount: number;
+  passivesCount: number;
+  detractorsCount: number;
+}
 
 interface LTFMetrics {
   avgOverallRating: number;
@@ -26,6 +39,7 @@ interface LTFMetrics {
   futureUsePlans: { name: string; value: number }[];
   mostHelpful: { name: string; value: number }[];
   totalResponses: number;
+  nps: NPSData;
 }
 
 interface LTFParticipant {
@@ -166,6 +180,35 @@ export function LTFDashboard() {
     // Most helpful
     const mostHelpful = countResponses(rawData, "What part of the workshop was most helpful for you?");
 
+    // Calculate NPS based on overall rating (1-5 scale, map to NPS categories)
+    // 5 = Promoter, 4 = Passive, 1-3 = Detractor
+    let promotersCount = 0;
+    let passivesCount = 0;
+    let detractorsCount = 0;
+
+    overallRatings.forEach(rating => {
+      if (rating === 5) promotersCount++;
+      else if (rating === 4) passivesCount++;
+      else detractorsCount++;
+    });
+
+    const totalNPS = overallRatings.length;
+    const promotersPct = totalNPS > 0 ? Math.round((promotersCount / totalNPS) * 100) : 0;
+    const passivesPct = totalNPS > 0 ? Math.round((passivesCount / totalNPS) * 100) : 0;
+    const detractorsPct = totalNPS > 0 ? Math.round((detractorsCount / totalNPS) * 100) : 0;
+    const npsScore = promotersPct - detractorsPct;
+
+    const nps: NPSData = {
+      nps: npsScore,
+      promoters: promotersPct,
+      passives: passivesPct,
+      detractors: detractorsPct,
+      total: totalNPS,
+      promotersCount,
+      passivesCount,
+      detractorsCount,
+    };
+
     setMetrics({
       avgOverallRating,
       avgEngagement,
@@ -180,6 +223,7 @@ export function LTFDashboard() {
       futureUsePlans,
       mostHelpful,
       totalResponses: rawData.length,
+      nps,
     });
   };
 
@@ -281,8 +325,19 @@ export function LTFDashboard() {
         />
       </div>
 
-      {/* Confidence Before vs After */}
-      <ChartCard title="Confidence: Before vs After Workshop" delay={500}>
+      {/* NPS Score */}
+      <NPSCard data={metrics.nps} className="animate-fade-in" />
+
+      {/* Confidence Comparison Chart */}
+      <ChartCard title="Confidence Change: Before vs After Workshop" delay={500}>
+        <ConfidenceComparisonChart 
+          beforeData={metrics.confidenceBefore} 
+          afterData={metrics.confidenceAfter} 
+        />
+      </ChartCard>
+
+      {/* Confidence Before vs After - Individual Charts */}
+      <ChartCard title="Confidence Distribution Detail" delay={550}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <ConfidenceChart 
             data={metrics.confidenceBefore} 
