@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { PasswordGate } from "@/components/PasswordGate";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Users, ClipboardList, BarChart3 } from "lucide-react";
+import { ArrowRight, Users, ClipboardList, BarChart3, Rocket } from "lucide-react";
 import btsLogo from "@/assets/black-tech-street-logo.png";
 
 const dashboards = [
@@ -25,6 +25,13 @@ const dashboards = [
     path: "/pre-survey",
     icon: BarChart3,
     dataset: "aspire-pre-survey.csv",
+  },
+  {
+    title: "Build Day Projects",
+    description: "Project submissions from ASPIRE Build Day - team solutions, websites, and presentations",
+    path: "/build-day",
+    icon: Rocket,
+    dataset: "aspire-build-day-projects.csv",
   },
 ];
 
