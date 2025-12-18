@@ -3,6 +3,7 @@ import Papa from "papaparse";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ExternalLink, Users, Rocket, FileText, Globe } from "lucide-react";
 
 interface ProjectSubmission {
@@ -16,6 +17,30 @@ interface ProjectSubmission {
   uploadLink: string;
   projectLinks: string;
 }
+
+// Color palette for project avatars
+const avatarColors = [
+  "bg-rose-500",
+  "bg-orange-500",
+  "bg-amber-500",
+  "bg-emerald-500",
+  "bg-teal-500",
+  "bg-cyan-500",
+  "bg-blue-500",
+  "bg-indigo-500",
+  "bg-violet-500",
+  "bg-purple-500",
+  "bg-pink-500",
+  "bg-red-500",
+];
+
+// Spelling corrections for project names
+const nameCorrections: Record<string, string> = {
+  "Echos of Truth": "Echoes of Truth",
+  "YOuth Homeless Mission": "Youth Homeless Mission",
+  "Life flow": "LifeFlow",
+  "Rise-up Learning Hub": "Rise Up Learning Hub",
+};
 
 export default function BuildDayDashboard() {
   const [projects, setProjects] = useState<ProjectSubmission[]>([]);
@@ -63,6 +88,31 @@ export default function BuildDayDashboard() {
     if (!dateStr) return "";
     const date = new Date(dateStr);
     return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  };
+
+  const cleanProductName = (name: string): string => {
+    let cleaned = name.replace(/🌱/g, "").trim();
+    // Check for corrections
+    for (const [incorrect, correct] of Object.entries(nameCorrections)) {
+      if (cleaned.toLowerCase() === incorrect.toLowerCase()) {
+        return correct;
+      }
+    }
+    return cleaned;
+  };
+
+  const getInitials = (name: string): string => {
+    const cleaned = cleanProductName(name);
+    const words = cleaned.split(/\s+/).filter(w => w.length > 0);
+    if (words.length === 1) {
+      return words[0].substring(0, 2).toUpperCase();
+    }
+    return words.slice(0, 2).map(w => w[0]).join("").toUpperCase();
+  };
+
+  const getAvatarColor = (name: string): string => {
+    const hash = name.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    return avatarColors[hash % avatarColors.length];
   };
 
   if (loading) {
@@ -129,23 +179,31 @@ export default function BuildDayDashboard() {
             const links = extractLinks(project.projectLinks);
             const websiteLink = links.find(l => l.includes("lovable.app"));
             const presentationLink = links.find(l => l.includes("gamma.app") || l.includes("canva.com") || l.includes("beautiful.ai"));
+            const displayName = cleanProductName(project.productName);
 
             return (
               <Card key={project.submissionId} className="flex flex-col">
                 <CardHeader>
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <CardTitle className="text-lg leading-tight">
-                        {project.productName.replace(/🌱/g, "").trim()}
-                      </CardTitle>
+                  <div className="flex items-start gap-3">
+                    <Avatar className={`h-12 w-12 ${getAvatarColor(displayName)} shrink-0`}>
+                      <AvatarFallback className="bg-transparent text-white font-semibold text-sm">
+                        {getInitials(project.productName)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <CardTitle className="text-lg leading-tight">
+                          {displayName}
+                        </CardTitle>
+                        <Badge variant="outline" className="shrink-0">
+                          <Users className="h-3 w-3 mr-1" />
+                          {getTeammateCount(project.teammates)}
+                        </Badge>
+                      </div>
                       <CardDescription className="mt-1">
                         {project.teamRep}
                       </CardDescription>
                     </div>
-                    <Badge variant="outline" className="shrink-0">
-                      <Users className="h-3 w-3 mr-1" />
-                      {getTeammateCount(project.teammates)}
-                    </Badge>
                   </div>
                 </CardHeader>
                 <CardContent className="flex-1 flex flex-col">
