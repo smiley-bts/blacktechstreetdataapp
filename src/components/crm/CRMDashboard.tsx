@@ -8,6 +8,8 @@ import { EventFilterToggles, EventFilters } from "./EventFilterToggles";
 import { ExportModal } from "./ExportModal";
 import btsLogo from "@/assets/black-tech-street-logo.png";
 
+// CRM Dashboard v2 - Event Attendee Focus
+
 const defaultFilters: ContactFilter = {
   search: "",
   lifecycleStage: [],
