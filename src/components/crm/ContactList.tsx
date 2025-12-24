@@ -1,10 +1,9 @@
 import { useState, useMemo } from "react";
-import { Contact, ContactFilter } from "@/types/contact";
+import { Contact, ContactFilter, isEventAttendee, hasBuildDayData, hasEventFeedback } from "@/types/contact";
 import { ContactCard, ContactCardSkeleton } from "./ContactCard";
 import { ContactDetailModal } from "./ContactDetailModal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Users, UserCheck, UserPlus, Star, Sparkles } from "lucide-react";
+import { Users, UserCheck, UserPlus, Star, Sparkles, Calendar, Hammer } from "lucide-react";
 
 interface ContactListProps {
   contacts: Contact[];
@@ -27,27 +26,39 @@ const tabs: TabConfig[] = [
     filter: () => true,
   },
   {
+    id: "event-attendees",
+    label: "Event Attendees",
+    icon: Calendar,
+    filter: (c) => isEventAttendee(c),
+  },
+  {
+    id: "buildday",
+    label: "Build Day",
+    icon: Hammer,
+    filter: (c) => hasBuildDayData(c),
+  },
+  {
+    id: "feedback",
+    label: "Has Feedback",
+    icon: Star,
+    filter: (c) => hasEventFeedback(c),
+  },
+  {
     id: "leads",
     label: "Leads",
     icon: UserPlus,
     filter: (c) => c.lifecycleStage?.toLowerCase() === "lead",
   },
   {
-    id: "subscribers",
-    label: "Subscribers",
-    icon: UserCheck,
-    filter: (c) => c.lifecycleStage?.toLowerCase() === "subscriber",
-  },
-  {
     id: "emerging",
-    label: "Emerging AI Users",
+    label: "Emerging AI",
     icon: Sparkles,
     filter: (c) => c.aiExperienceLevel?.toLowerCase().includes("emerging"),
   },
   {
     id: "intermediate",
     label: "Intermediate+",
-    icon: Star,
+    icon: UserCheck,
     filter: (c) => 
       c.aiExperienceLevel?.toLowerCase().includes("intermediate") ||
       c.aiExperienceLevel?.toLowerCase().includes("advanced") ||

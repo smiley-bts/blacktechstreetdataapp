@@ -61,7 +61,9 @@ export function ContactSearchBar({
     filters.lifecycleStage.length +
     filters.aiExperienceLevel.length +
     filters.ageRange.length +
-    filters.incomeRange.length;
+    filters.incomeRange.length +
+    (filters.eventAttendeesOnly ? 1 : 0) +
+    (filters.buildDayOnly ? 1 : 0);
 
   const handleFilterToggle = (
     field: keyof Pick<ContactFilter, 'lifecycleStage' | 'aiExperienceLevel' | 'ageRange' | 'incomeRange'>,
@@ -82,6 +84,8 @@ export function ContactSearchBar({
       ageRange: [],
       incomeRange: [],
       cohort: [],
+      eventAttendeesOnly: false,
+      buildDayOnly: false,
     });
   };
 

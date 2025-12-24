@@ -51,6 +51,40 @@ export interface Contact {
   // Community & Engagement
   communityInvolvement: string;
   volunteerInterest: string;
+
+  // ============ NEW FIELDS ============
+  
+  // LinkedIn & Social
+  linkedinUrl: string;
+  
+  // Event Feedback - NPS & Post-Event
+  npsScore: string; // "How likely are you to recommend this event to someone else?"
+  afterEventOpportunities: string; // "After today, I see clear opportunities..."
+  newConceptLearned: string; // "New AI Concept or Tool Learned"
+  optionalQuote: string; // "Optional: Share a quote..."
+  
+  // Build Day Specific
+  teamBuildDescription: string; // "What did your team build today?"
+  aiToolsUsed: string; // "What AI tools did you use..."
+  rolesOnTeam: string; // "What role(s) did you primarily take on..."
+  teamImpact: string; // "What impact do you feel you had on your team..."
+  ahaMoment: string; // "What was the biggest aha moment..."
+  favoritePart: string; // "What was your favorite part of the Innovation Build Day?"
+  oneWayToUseAI: string; // "What's one real way you plan to use AI..."
+  wishCoveredMore: string; // "What's one thing you wish we had covered..."
+  attendFollowUp: string; // "Would you attend a follow-up session..."
+  
+  // AI Confidence & Understanding
+  postEventAIConfidence: string; // "On a scale of 1–5, how confident..."
+  responsibleAIPreparedness: string; // "How prepared do you feel to use AI responsibly..."
+  aiTaskUnderstanding: string; // "I understand which types of AI tools..."
+  strongestSkillAfterToday: string; // "Which skill do you feel strongest in..."
+  
+  // Team Dynamics
+  knewTeamBefore: string; // "Did you know any of your team members before today?"
+  spaceFeltWelcoming: string; // "Do you feel this space was welcoming..."
+  biasResponsibility: string; // "If an AI tool gives biased or harmful results..."
+  teamCommunityDesign: string; // "How did your team ensure your AI idea was designed to serve..."
   
   // Raw data for additional fields
   rawData: Record<string, string>;
@@ -63,6 +97,8 @@ export interface ContactFilter {
   ageRange: string[];
   incomeRange: string[];
   cohort: string[];
+  eventAttendeesOnly: boolean;
+  buildDayOnly: boolean;
 }
 
 export interface SavedSearch {
@@ -110,6 +146,30 @@ export const csvFieldMappings: Record<string, keyof Contact | 'rawData'> = {
   "Record source": "recordSource",
   "In what ways, big or small, do you currently feel connected to or supportive of your community? This could include involvement with projects, nonprofits, small businesses, causes, or even personal actions or intentions.": "communityInvolvement",
   "Volunteer at Future Events": "volunteerInterest",
+  
+  // NEW FIELD MAPPINGS
+  "LinkedIn URL": "linkedinUrl",
+  "How likely are you to recommend this event to someone else?": "npsScore",
+  "After today, I see clear opportunities to continue using AI tools in my work, life, or creative projects.": "afterEventOpportunities",
+  "New AI Concept or Tool Learned": "newConceptLearned",
+  "Optional: Share a quote about what this experience meant to you.": "optionalQuote",
+  "What did your team build today? (Share a description and links to examples.)": "teamBuildDescription",
+  "What AI tools did you use to bring your idea to life? \n(Check all that apply.)": "aiToolsUsed",
+  "What role(s) did you primarily take on during your team's project? (Check all that apply)": "rolesOnTeam",
+  "What impact do you feel you had on your team through this role (or roles)?": "teamImpact",
+  'What was the biggest "aha moment" or discovery you had during today\'s session?': "ahaMoment",
+  "What was your favorite part of the Innovation Build Day?": "favoritePart",
+  "What's one real way you plan to use AI in your life, work, or community starting this month?": "oneWayToUseAI",
+  "What's one thing you wish we had covered more or differently?": "wishCoveredMore",
+  "Would you attend a follow-up session to continue working with your team to develop your prototype into a real product or startup?": "attendFollowUp",
+  "On a scale of 1–5, how confident do you feel applying AI tools in your work, life, and community after today?": "postEventAIConfidence",
+  "How prepared do you feel to use AI responsibly (with care, critical thinking, and community impact in mind)?": "responsibleAIPreparedness",
+  "I understand which types of AI tools are best suited for different tasks.": "aiTaskUnderstanding",
+  "Which skill do you feel strongest in after today?": "strongestSkillAfterToday",
+  "Did you know any of your team members before today?": "knewTeamBefore",
+  "Do you feel this space was welcoming to all skill levels? Why or why not?": "spaceFeltWelcoming",
+  "If an AI tool gives biased or harmful results, who is responsible, and how should that be addressed?": "biasResponsibility",
+  "How did your team ensure your AI idea was designed to serve the needs of the broader community and avoid unintended harm?": "teamCommunityDesign",
 };
 
 export function parseContact(row: Record<string, string>): Contact {
@@ -162,6 +222,60 @@ export function parseContact(row: Record<string, string>): Contact {
     recordSource: contact.recordSource || '',
     communityInvolvement: contact.communityInvolvement || '',
     volunteerInterest: contact.volunteerInterest || '',
+    // New fields
+    linkedinUrl: contact.linkedinUrl || '',
+    npsScore: contact.npsScore || '',
+    afterEventOpportunities: contact.afterEventOpportunities || '',
+    newConceptLearned: contact.newConceptLearned || '',
+    optionalQuote: contact.optionalQuote || '',
+    teamBuildDescription: contact.teamBuildDescription || '',
+    aiToolsUsed: contact.aiToolsUsed || '',
+    rolesOnTeam: contact.rolesOnTeam || '',
+    teamImpact: contact.teamImpact || '',
+    ahaMoment: contact.ahaMoment || '',
+    favoritePart: contact.favoritePart || '',
+    oneWayToUseAI: contact.oneWayToUseAI || '',
+    wishCoveredMore: contact.wishCoveredMore || '',
+    attendFollowUp: contact.attendFollowUp || '',
+    postEventAIConfidence: contact.postEventAIConfidence || '',
+    responsibleAIPreparedness: contact.responsibleAIPreparedness || '',
+    aiTaskUnderstanding: contact.aiTaskUnderstanding || '',
+    strongestSkillAfterToday: contact.strongestSkillAfterToday || '',
+    knewTeamBefore: contact.knewTeamBefore || '',
+    spaceFeltWelcoming: contact.spaceFeltWelcoming || '',
+    biasResponsibility: contact.biasResponsibility || '',
+    teamCommunityDesign: contact.teamCommunityDesign || '',
     rawData: contact.rawData || {},
   };
+}
+
+// Helper to check if contact has event feedback
+export function hasEventFeedback(contact: Contact): boolean {
+  return !!(
+    contact.npsScore ||
+    contact.ahaMoment ||
+    contact.favoritePart ||
+    contact.newConceptLearned ||
+    contact.optionalQuote
+  );
+}
+
+// Helper to check if contact participated in Build Day
+export function hasBuildDayData(contact: Contact): boolean {
+  return !!(
+    contact.teamBuildDescription ||
+    contact.aiToolsUsed ||
+    contact.rolesOnTeam ||
+    contact.teamImpact
+  );
+}
+
+// Helper to check if contact is an event attendee
+export function isEventAttendee(contact: Contact): boolean {
+  return !!(
+    contact.eventsAttended ||
+    contact.sept27thReg ||
+    hasEventFeedback(contact) ||
+    hasBuildDayData(contact)
+  );
 }

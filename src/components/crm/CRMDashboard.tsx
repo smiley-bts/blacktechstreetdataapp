@@ -14,6 +14,8 @@ const defaultFilters: ContactFilter = {
   ageRange: [],
   incomeRange: [],
   cohort: [],
+  eventAttendeesOnly: false,
+  buildDayOnly: false,
 };
 
 export default function CRMDashboard() {

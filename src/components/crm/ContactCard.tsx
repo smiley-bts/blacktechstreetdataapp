@@ -2,8 +2,9 @@ import { Contact } from "@/types/contact";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Mail, Phone, MapPin, Building2, Eye, ChevronRight } from "lucide-react";
+import { Mail, Phone, MapPin, Building2, ChevronRight, Star, Hammer, StickyNote } from "lucide-react";
+import { hasEventFeedback, hasBuildDayData } from "@/types/contact";
+import { useContactNotes } from "@/hooks/useContactNotes";
 
 interface ContactCardProps {
   contact: Contact;
@@ -11,35 +12,19 @@ interface ContactCardProps {
 }
 
 const aiLevelColors: Record<string, string> = {
-  "beginner": "bg-blue-500",
-  "emerging": "bg-cyan-500",
-  "intermediate": "bg-emerald-500",
-  "advanced": "bg-purple-500",
-  "expert": "bg-pink-500",
+  "beginner": "from-blue-500 to-blue-600",
+  "emerging": "from-cyan-500 to-teal-500",
+  "intermediate": "from-emerald-500 to-green-500",
+  "advanced": "from-purple-500 to-violet-500",
+  "expert": "from-pink-500 to-rose-500",
 };
 
-const lifecycleColors: Record<string, string> = {
-  "lead": "bg-amber-500",
-  "subscriber": "bg-blue-500",
-  "opportunity": "bg-emerald-500",
-  "customer": "bg-primary",
-  "evangelist": "bg-pink-500",
-};
-
-function getAiLevelColor(level: string): string {
+function getAiLevelGradient(level: string): string {
   const lowerLevel = level.toLowerCase();
-  for (const [key, color] of Object.entries(aiLevelColors)) {
-    if (lowerLevel.includes(key)) return color;
+  for (const [key, gradient] of Object.entries(aiLevelColors)) {
+    if (lowerLevel.includes(key)) return gradient;
   }
-  return "bg-muted";
-}
-
-function getLifecycleColor(stage: string): string {
-  const lowerStage = stage.toLowerCase();
-  for (const [key, color] of Object.entries(lifecycleColors)) {
-    if (lowerStage.includes(key)) return color;
-  }
-  return "bg-muted";
+  return "from-muted to-muted";
 }
 
 function getInitials(contact: Contact): string {
@@ -56,40 +41,47 @@ function getShortAiLevel(level: string): string {
   if (level.toLowerCase().includes("intermediate")) return "Intermediate";
   if (level.toLowerCase().includes("advanced")) return "Advanced";
   if (level.toLowerCase().includes("expert")) return "Expert";
-  return level.substring(0, 15);
+  return level.substring(0, 12);
 }
 
 export function ContactCard({ contact, onClick }: ContactCardProps) {
   const location = [contact.city, contact.state].filter(Boolean).join(", ");
+  const { hasNote } = useContactNotes();
+  const contactHasNote = hasNote(contact.recordId);
+  const hasFeedback = hasEventFeedback(contact);
+  const hasBuildDay = hasBuildDayData(contact);
 
   return (
     <Card 
-      className="hover:border-primary/50 hover:shadow-md transition-all cursor-pointer group"
+      className="group relative overflow-hidden border-border/50 bg-card/80 backdrop-blur-sm hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 cursor-pointer card-shine"
       onClick={onClick}
     >
-      <CardHeader className="pb-3">
+      {/* Subtle gradient overlay on hover */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-transparent to-accent/0 group-hover:from-primary/5 group-hover:to-accent/5 transition-all duration-500 pointer-events-none" />
+      
+      <CardHeader className="pb-3 relative">
         <div className="flex items-start gap-3">
-          <Avatar className={`h-12 w-12 ${getAiLevelColor(contact.aiExperienceLevel)} shrink-0`}>
-            <AvatarFallback className="bg-transparent text-white font-semibold">
+          <Avatar className={`h-12 w-12 bg-gradient-to-br ${getAiLevelGradient(contact.aiExperienceLevel)} shrink-0 ring-2 ring-transparent group-hover:ring-primary/30 transition-all`}>
+            <AvatarFallback className="bg-transparent text-foreground font-semibold">
               {getInitials(contact)}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <div>
-                <h3 className="font-semibold text-foreground leading-tight">
+                <h3 className="font-semibold text-foreground leading-tight group-hover:text-primary transition-colors">
                   {contact.fullName || `${contact.firstName} ${contact.lastName}`.trim() || "Unknown"}
                 </h3>
                 <p className="text-xs text-muted-foreground font-mono mt-0.5">
                   {contact.uid || `ID: ${contact.recordId}`}
                 </p>
               </div>
-              <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+              <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
             </div>
           </div>
         </div>
       </CardHeader>
-      <CardContent className="pt-0 space-y-3">
+      <CardContent className="pt-0 space-y-3 relative">
         {/* Contact Info */}
         <div className="space-y-1.5 text-sm">
           {contact.email && (
@@ -114,7 +106,7 @@ export function ContactCard({ contact, onClick }: ContactCardProps) {
             <div className="flex items-center gap-2 text-muted-foreground">
               <Building2 className="h-3.5 w-3.5 shrink-0" />
               <span className="truncate">
-                {[contact.jobTitle, contact.companyName].filter(Boolean).join(" at ")}
+                {[contact.jobTitle, contact.companyName].filter(Boolean).join(" @ ")}
               </span>
             </div>
           )}
@@ -123,20 +115,30 @@ export function ContactCard({ contact, onClick }: ContactCardProps) {
         {/* Badges */}
         <div className="flex flex-wrap gap-1.5">
           {contact.lifecycleStage && (
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-xs border-primary/30 text-primary">
               {contact.lifecycleStage}
             </Badge>
           )}
           {contact.aiExperienceLevel && (
-            <Badge 
-              className={`text-xs ${getAiLevelColor(contact.aiExperienceLevel)} text-white border-0`}
-            >
+            <Badge className={`text-xs bg-gradient-to-r ${getAiLevelGradient(contact.aiExperienceLevel)} text-foreground border-0`}>
               {getShortAiLevel(contact.aiExperienceLevel)}
             </Badge>
           )}
-          {contact.ageRange && (
-            <Badge variant="secondary" className="text-xs">
-              {contact.ageRange}
+          {hasFeedback && (
+            <Badge className="text-xs bg-gold/20 text-gold border-gold/30">
+              <Star className="h-3 w-3 mr-1" />
+              Feedback
+            </Badge>
+          )}
+          {hasBuildDay && (
+            <Badge className="text-xs bg-chart-purple/20 text-chart-purple border-chart-purple/30">
+              <Hammer className="h-3 w-3 mr-1" />
+              Build Day
+            </Badge>
+          )}
+          {contactHasNote && (
+            <Badge className="text-xs bg-gold/20 text-gold border-gold/30">
+              <StickyNote className="h-3 w-3" />
             </Badge>
           )}
         </div>
@@ -147,7 +149,7 @@ export function ContactCard({ contact, onClick }: ContactCardProps) {
 
 export function ContactCardSkeleton() {
   return (
-    <Card className="animate-pulse">
+    <Card className="animate-pulse bg-card/50">
       <CardHeader className="pb-3">
         <div className="flex items-start gap-3">
           <div className="h-12 w-12 rounded-full bg-muted" />
