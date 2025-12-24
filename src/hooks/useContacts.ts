@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import Papa from "papaparse";
-import { Contact, ContactFilter, parseContact } from "@/types/contact";
+import { Contact, ContactFilter, parseContact, hasEventFeedback, hasBuildDayData, isDec6Workshop, isDec13LTF, isSept27BuildDay } from "@/types/contact";
 
 export function useContacts() {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -74,6 +74,13 @@ export function useFilteredContacts(contacts: Contact[], filters: ContactFilter)
       if (filters.incomeRange.length > 0) {
         if (!filters.incomeRange.includes(contact.incomeRange)) return false;
       }
+
+      // Event-specific filters
+      if (filters.dec6Workshop && !isDec6Workshop(contact)) return false;
+      if (filters.dec13LTF && !isDec13LTF(contact)) return false;
+      if (filters.sept27BuildDay && !isSept27BuildDay(contact)) return false;
+      if (filters.hasFeedback && !hasEventFeedback(contact)) return false;
+      if (filters.hasProject && !hasBuildDayData(contact)) return false;
 
       return true;
     });
