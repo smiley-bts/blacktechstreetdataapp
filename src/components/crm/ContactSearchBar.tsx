@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Filter, Download, X, Save } from "lucide-react";
+import { Search, Filter, X, Save } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,13 +11,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -36,7 +29,6 @@ interface ContactSearchBarProps {
   onSaveSearch: (name: string) => void;
   onLoadSearch: (search: SavedSearch) => void;
   onDeleteSearch: (id: string) => void;
-  onExport: () => void;
 }
 
 export function ContactSearchBar({
@@ -52,7 +44,6 @@ export function ContactSearchBar({
   onSaveSearch,
   onLoadSearch,
   onDeleteSearch,
-  onExport,
 }: ContactSearchBarProps) {
   const [saveSearchName, setSaveSearchName] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
@@ -86,6 +77,11 @@ export function ContactSearchBar({
       cohort: [],
       eventAttendeesOnly: false,
       buildDayOnly: false,
+      dec6Workshop: false,
+      dec13LTF: false,
+      sept27BuildDay: false,
+      hasFeedback: false,
+      hasProject: false,
     });
   };
 
@@ -262,12 +258,6 @@ export function ContactSearchBar({
             </ScrollArea>
           </SheetContent>
         </Sheet>
-
-        {/* Export Button */}
-        <Button variant="outline" onClick={onExport}>
-          <Download className="h-4 w-4 mr-2" />
-          Export
-        </Button>
       </div>
 
       {/* Results count and active filters */}

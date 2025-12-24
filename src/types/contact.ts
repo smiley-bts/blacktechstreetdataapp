@@ -99,6 +99,12 @@ export interface ContactFilter {
   cohort: string[];
   eventAttendeesOnly: boolean;
   buildDayOnly: boolean;
+  // Event-specific filters
+  dec6Workshop: boolean;
+  dec13LTF: boolean;
+  sept27BuildDay: boolean;
+  hasFeedback: boolean;
+  hasProject: boolean;
 }
 
 export interface SavedSearch {
@@ -277,5 +283,34 @@ export function isEventAttendee(contact: Contact): boolean {
     contact.sept27thReg ||
     hasEventFeedback(contact) ||
     hasBuildDayData(contact)
+  );
+}
+
+// Helper to check Dec 6 Workshop attendance (via feedback survey data)
+export function isDec6Workshop(contact: Contact): boolean {
+  // Dec 6 attendees would have post-workshop mindset, NPS, or the specific feedback fields
+  return !!(
+    contact.postWorkshopMindset ||
+    (contact.npsScore && contact.strongestSkillAfterToday) ||
+    contact.spaceFeltWelcoming
+  );
+}
+
+// Helper to check Dec 13 LTF (Lead The Future - youth program)
+export function isDec13LTF(contact: Contact): boolean {
+  // LTF data would come from the ltf-feedback CSV which has grade level data
+  // We can detect LTF participants by checking for specific patterns
+  return !!(
+    contact.rawData?.["Which grade are you currently in? (Optional)"] ||
+    contact.rawData?.["The workshop was engaging and held my attention."]
+  );
+}
+
+// Helper to check Sept 27 Build Day participation  
+export function isSept27BuildDay(contact: Contact): boolean {
+  return !!(
+    contact.sept27thReg ||
+    contact.teamBuildDescription ||
+    (contact.eventsAttended && contact.eventsAttended.includes("Sept"))
   );
 }
