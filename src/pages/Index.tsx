@@ -2,6 +2,7 @@ import { LTFDashboard } from "@/components/dashboard/LTFDashboard";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { LogIn } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import btsLogo from "@/assets/black-tech-street-logo.png";
 
 const Index = () => {
@@ -11,7 +12,7 @@ const Index = () => {
         {/* Header */}
         <header className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-24" /> {/* Spacer for centering */}
+            <ThemeToggle />
             <img 
               src={btsLogo} 
               alt="Black Tech Street Logo" 

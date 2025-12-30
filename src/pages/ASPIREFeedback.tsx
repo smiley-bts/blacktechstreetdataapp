@@ -2,6 +2,7 @@ import { ASPIREWorkshopDashboard } from "@/components/dashboard/ASPIREWorkshopDa
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import btsLogo from "@/assets/black-tech-street-logo.png";
 
 export default function ASPIREFeedback() {
@@ -21,6 +22,7 @@ export default function ASPIREFeedback() {
               alt="Black Tech Street Logo" 
               className="h-12 w-auto"
             />
+            <ThemeToggle />
           </div>
           <div className="text-center">
             <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
