@@ -353,6 +353,19 @@ function isValidName(name: string): boolean {
   return true;
 }
 
+// Check if a contact has a valid display name (not falling back to UID or ID)
+export function hasValidDisplayName(contact: Contact): boolean {
+  const fullName = contact.fullName?.trim();
+  if (fullName && isValidName(fullName)) return true;
+  
+  const combined = `${contact.firstName || ''} ${contact.lastName || ''}`.trim();
+  if (combined && isValidName(combined)) return true;
+  
+  if (contact.firstName && isValidName(contact.firstName)) return true;
+  
+  return false;
+}
+
 // Smart display name with validation and UID fallback
 export function getDisplayName(contact: Contact): string {
   // Try full name first
