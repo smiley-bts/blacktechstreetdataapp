@@ -1,4 +1,4 @@
-import { Contact, hasEventFeedback, hasBuildDayData } from "@/types/contact";
+import { Contact, hasEventFeedback, hasBuildDayData, getDisplayName, getContactInitials } from "@/types/contact";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Mail, Phone, MapPin, Building2, Star, Hammer, StickyNote, ChevronRight } from "lucide-react";
@@ -26,14 +26,6 @@ function getAiLevelGradient(level: string): string {
   return "from-muted to-muted";
 }
 
-function getInitials(contact: Contact): string {
-  const first = contact.firstName?.[0] || '';
-  const last = contact.lastName?.[0] || '';
-  if (first || last) return (first + last).toUpperCase();
-  if (contact.email) return contact.email[0].toUpperCase();
-  return "?";
-}
-
 function getShortAiLevel(level: string): string {
   if (level.toLowerCase().includes("beginner")) return "Beginner";
   if (level.toLowerCase().includes("emerging")) return "Emerging";
@@ -58,13 +50,13 @@ export function ContactListRow({ contact, onClick, variant }: ContactListRowProp
       >
         <Avatar className={`h-8 w-8 bg-gradient-to-br ${getAiLevelGradient(contact.aiExperienceLevel)} shrink-0`}>
           <AvatarFallback className="bg-transparent text-foreground text-xs font-semibold">
-            {getInitials(contact)}
+            {getContactInitials(contact)}
           </AvatarFallback>
         </Avatar>
         
         <div className="flex-1 min-w-0 flex items-center gap-4">
           <span className="font-medium text-foreground truncate min-w-[120px] max-w-[180px]">
-            {contact.fullName || `${contact.firstName} ${contact.lastName}`.trim() || "Unknown"}
+            {getDisplayName(contact)}
           </span>
           <span className="text-sm text-muted-foreground truncate hidden sm:block max-w-[200px]">
             {contact.email}
@@ -97,7 +89,7 @@ export function ContactListRow({ contact, onClick, variant }: ContactListRowProp
     >
       <Avatar className={`h-10 w-10 bg-gradient-to-br ${getAiLevelGradient(contact.aiExperienceLevel)} shrink-0 ring-2 ring-transparent group-hover:ring-primary/30 transition-all`}>
         <AvatarFallback className="bg-transparent text-foreground font-semibold">
-          {getInitials(contact)}
+          {getContactInitials(contact)}
         </AvatarFallback>
       </Avatar>
       
@@ -105,7 +97,7 @@ export function ContactListRow({ contact, onClick, variant }: ContactListRowProp
         {/* Name & ID */}
         <div className="min-w-0">
           <div className="font-semibold text-foreground truncate group-hover:text-primary transition-colors">
-            {contact.fullName || `${contact.firstName} ${contact.lastName}`.trim() || "Unknown"}
+            {getDisplayName(contact)}
           </div>
           <div className="text-xs text-muted-foreground font-mono truncate">
             {contact.uid || `ID: ${contact.recordId}`}

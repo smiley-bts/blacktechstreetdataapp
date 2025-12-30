@@ -1,9 +1,8 @@
-import { Contact } from "@/types/contact";
+import { Contact, hasEventFeedback, hasBuildDayData, getDisplayName, getContactInitials } from "@/types/contact";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Mail, Phone, MapPin, Building2, ChevronRight, Star, Hammer, StickyNote } from "lucide-react";
-import { hasEventFeedback, hasBuildDayData } from "@/types/contact";
 import { useContactNotes } from "@/hooks/useContactNotes";
 
 interface ContactCardProps {
@@ -25,14 +24,6 @@ function getAiLevelGradient(level: string): string {
     if (lowerLevel.includes(key)) return gradient;
   }
   return "from-muted to-muted";
-}
-
-function getInitials(contact: Contact): string {
-  const first = contact.firstName?.[0] || '';
-  const last = contact.lastName?.[0] || '';
-  if (first || last) return (first + last).toUpperCase();
-  if (contact.email) return contact.email[0].toUpperCase();
-  return "?";
 }
 
 function getShortAiLevel(level: string): string {
@@ -63,14 +54,14 @@ export function ContactCard({ contact, onClick }: ContactCardProps) {
         <div className="flex items-start gap-3">
           <Avatar className={`h-12 w-12 bg-gradient-to-br ${getAiLevelGradient(contact.aiExperienceLevel)} shrink-0 ring-2 ring-transparent group-hover:ring-primary/30 transition-all`}>
             <AvatarFallback className="bg-transparent text-foreground font-semibold">
-              {getInitials(contact)}
+              {getContactInitials(contact)}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <div>
                 <h3 className="font-semibold text-foreground leading-tight group-hover:text-primary transition-colors">
-                  {contact.fullName || `${contact.firstName} ${contact.lastName}`.trim() || "Unknown"}
+                  {getDisplayName(contact)}
                 </h3>
                 <p className="text-xs text-muted-foreground font-mono mt-0.5">
                   {contact.uid || `ID: ${contact.recordId}`}

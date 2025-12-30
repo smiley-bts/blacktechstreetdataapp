@@ -314,3 +314,36 @@ export function isSept27BuildDay(contact: Contact): boolean {
     (contact.eventsAttended && contact.eventsAttended.includes("Sept"))
   );
 }
+
+// Smart display name with email fallback
+export function getDisplayName(contact: Contact): string {
+  // Try full name first
+  if (contact.fullName?.trim()) return contact.fullName.trim();
+  
+  // Try first + last name
+  const combined = `${contact.firstName || ''} ${contact.lastName || ''}`.trim();
+  if (combined) return combined;
+  
+  // Extract from email (john.doe@email.com -> John Doe)
+  if (contact.email) {
+    const username = contact.email.split('@')[0];
+    return username
+      .replace(/[._-]/g, ' ')
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  }
+  
+  // Last resort: use record ID
+  return `Contact #${contact.recordId?.slice(-4) || '???'}`;
+}
+
+// Get initials from display name
+export function getContactInitials(contact: Contact): string {
+  const name = getDisplayName(contact);
+  const words = name.split(' ').filter(Boolean);
+  if (words.length >= 2) {
+    return (words[0][0] + words[words.length - 1][0]).toUpperCase();
+  }
+  return name.slice(0, 2).toUpperCase();
+}
