@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from "react";
-import { Contact, ContactFilter, isEventAttendee, hasBuildDayData, hasEventFeedback } from "@/types/contact";
+import { Contact, ContactFilter, isEventAttendee, hasBuildDayData, hasEventFeedback, hasValidDisplayName } from "@/types/contact";
 import { ContactCard, ContactCardSkeleton } from "./ContactCard";
 import { ContactListRow, ContactListRowSkeleton } from "./ContactListRow";
 import { ContactDetailModal } from "./ContactDetailModal";
@@ -70,6 +70,14 @@ const tabs: TabConfig[] = [
 
 function sortContacts(contacts: Contact[], field: SortField, direction: SortDirection): Contact[] {
   return [...contacts].sort((a, b) => {
+    // First priority: contacts with valid names come first
+    const aHasValidName = hasValidDisplayName(a);
+    const bHasValidName = hasValidDisplayName(b);
+    
+    if (aHasValidName && !bHasValidName) return -1;
+    if (!aHasValidName && bHasValidName) return 1;
+
+    // Then apply the regular sort within each group
     let valueA: string = "";
     let valueB: string = "";
 
