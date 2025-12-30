@@ -315,27 +315,64 @@ export function isSept27BuildDay(contact: Contact): boolean {
   );
 }
 
-// Smart display name with email fallback
+// Blocklist of corporate/non-name terms
+const NON_NAME_TERMS = new Set([
+  'info', 'admin', 'contact', 'support', 'hello', 'team', 'sales', 'hr',
+  'marketing', 'office', 'general', 'service', 'help', 'billing', 'accounts',
+  'executive director', 'director', 'manager', 'president', 'ceo', 'cfo', 'cto',
+  'founder', 'owner', 'partner', 'associate', 'coordinator', 'specialist',
+  'analyst', 'consultant', 'advisor', 'assistant', 'administrator', 'supervisor',
+  'lead', 'head', 'chief', 'principal', 'senior', 'junior', 'intern',
+  'representative', 'agent', 'officer', 'secretary', 'treasurer', 'chair',
+  'board', 'committee', 'department', 'division', 'unit', 'group', 'section',
+  'unknown', 'n/a', 'na', 'none', 'test', 'demo', 'sample', 'example',
+]);
+
+// Check if a name looks like a real name (not a corporate term)
+function isValidName(name: string): boolean {
+  if (!name || name.length < 2) return false;
+  const normalized = name.toLowerCase().trim();
+  
+  // Check against blocklist
+  if (NON_NAME_TERMS.has(normalized)) return false;
+  
+  // Check if any blocklist term is contained in the name
+  for (const term of NON_NAME_TERMS) {
+    if (normalized === term || (term.length > 4 && normalized.includes(term))) {
+      return false;
+    }
+  }
+  
+  // Names with only one word that are all caps or all lowercase are suspicious
+  const words = normalized.split(' ').filter(Boolean);
+  if (words.length === 1 && (name === name.toUpperCase() || name === name.toLowerCase())) {
+    // Single word, check if it looks corporate
+    if (normalized.length < 3) return false;
+  }
+  
+  return true;
+}
+
+// Smart display name with validation and UID fallback
 export function getDisplayName(contact: Contact): string {
   // Try full name first
-  if (contact.fullName?.trim()) return contact.fullName.trim();
+  const fullName = contact.fullName?.trim();
+  if (fullName && isValidName(fullName)) return fullName;
   
   // Try first + last name
   const combined = `${contact.firstName || ''} ${contact.lastName || ''}`.trim();
-  if (combined) return combined;
+  if (combined && isValidName(combined)) return combined;
   
-  // Extract from email (john.doe@email.com -> John Doe)
-  if (contact.email) {
-    const username = contact.email.split('@')[0];
-    return username
-      .replace(/[._-]/g, ' ')
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(' ');
+  // Try just first name if it's valid
+  if (contact.firstName && isValidName(contact.firstName)) {
+    return contact.firstName.trim();
   }
   
+  // Fallback to UID if available
+  if (contact.uid?.trim()) return contact.uid.trim();
+  
   // Last resort: use record ID
-  return `Contact #${contact.recordId?.slice(-4) || '???'}`;
+  return `ID: ${contact.recordId?.slice(-6) || '???'}`;
 }
 
 // Get initials from display name

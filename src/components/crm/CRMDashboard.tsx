@@ -6,6 +6,7 @@ import { ContactList } from "./ContactList";
 import { QuickStats } from "./QuickStats";
 import { EventFilterToggles, EventFilters } from "./EventFilterToggles";
 import { ExportModal } from "./ExportModal";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import btsLogo from "@/assets/black-tech-street-logo.png";
 
 // CRM Dashboard v2 - Event Attendee Focus
@@ -106,7 +107,10 @@ export default function CRMDashboard() {
               </p>
             </div>
           </div>
-          <ExportModal contacts={contacts} filteredContacts={filteredContacts} />
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <ExportModal contacts={contacts} filteredContacts={filteredContacts} />
+          </div>
         </header>
 
         {/* Quick Stats */}

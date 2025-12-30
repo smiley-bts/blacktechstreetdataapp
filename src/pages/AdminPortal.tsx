@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { PasswordGate } from "@/components/PasswordGate";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, Users, ClipboardList, BarChart3, Rocket, Contact } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import btsLogo from "@/assets/black-tech-street-logo.png";
 
 const dashboards = [
@@ -46,20 +47,24 @@ function AdminPortalContent() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto py-8 px-4">
-        <header className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
+        <header className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <ThemeToggle />
             <img 
               src={btsLogo} 
               alt="Black Tech Street Logo" 
               className="h-16 w-auto"
             />
+            <div className="w-9" /> {/* Spacer for balance */}
           </div>
-          <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
-            ASPIRE Dashboard Portal
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            Select a dashboard to view
-          </p>
+          <div className="text-center">
+            <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
+              ASPIRE Dashboard Portal
+            </h1>
+            <p className="text-lg text-muted-foreground">
+              Select a dashboard to view
+            </p>
+          </div>
         </header>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
