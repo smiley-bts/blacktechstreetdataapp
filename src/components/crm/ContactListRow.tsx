@@ -1,8 +1,10 @@
-import { Contact, hasEventFeedback, hasBuildDayData, getDisplayName, getContactInitials } from "@/types/contact";
+import { Contact, hasEventFeedback, hasBuildDayData, getDisplayName, getContactInitials, hasValidDisplayName } from "@/types/contact";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Mail, Phone, MapPin, Building2, Star, Hammer, StickyNote, ChevronRight } from "lucide-react";
 import { useContactNotes } from "@/hooks/useContactNotes";
+import { useNameOverrides } from "@/hooks/useNameOverrides";
+import { NameQualityBadge } from "./NameQualityBadge";
 
 interface ContactListRowProps {
   contact: Contact;
@@ -38,9 +40,12 @@ function getShortAiLevel(level: string): string {
 export function ContactListRow({ contact, onClick, variant }: ContactListRowProps) {
   const location = [contact.city, contact.state].filter(Boolean).join(", ");
   const { hasNote } = useContactNotes();
+  const { getOverride, hasOverride } = useNameOverrides();
   const contactHasNote = hasNote(contact.recordId);
   const hasFeedback = hasEventFeedback(contact);
   const hasBuildDay = hasBuildDayData(contact);
+  const nameOverride = getOverride(contact.recordId);
+  const displayName = nameOverride || getDisplayName(contact);
 
   if (variant === "compact") {
     return (
@@ -55,9 +60,12 @@ export function ContactListRow({ contact, onClick, variant }: ContactListRowProp
         </Avatar>
         
         <div className="flex-1 min-w-0 flex items-center gap-4">
-          <span className="font-medium text-foreground truncate min-w-[120px] max-w-[180px]">
-            {getDisplayName(contact)}
-          </span>
+          <div className="flex items-center gap-1.5">
+            <span className="font-medium text-foreground truncate min-w-[120px] max-w-[180px]">
+              {displayName}
+            </span>
+            <NameQualityBadge contact={contact} hasOverride={hasOverride(contact.recordId)} size="sm" />
+          </div>
           <span className="text-sm text-muted-foreground truncate hidden sm:block max-w-[200px]">
             {contact.email}
           </span>
@@ -96,8 +104,11 @@ export function ContactListRow({ contact, onClick, variant }: ContactListRowProp
       <div className="flex-1 min-w-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-1">
         {/* Name & ID */}
         <div className="min-w-0">
-          <div className="font-semibold text-foreground truncate group-hover:text-primary transition-colors">
-            {getDisplayName(contact)}
+          <div className="flex items-center gap-1.5">
+            <div className="font-semibold text-foreground truncate group-hover:text-primary transition-colors">
+              {displayName}
+            </div>
+            <NameQualityBadge contact={contact} hasOverride={hasOverride(contact.recordId)} size="sm" />
           </div>
           <div className="text-xs text-muted-foreground font-mono truncate">
             {contact.uid || `ID: ${contact.recordId}`}
