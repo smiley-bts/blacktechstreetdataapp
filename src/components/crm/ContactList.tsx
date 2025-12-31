@@ -5,7 +5,8 @@ import { ContactListRow, ContactListRowSkeleton } from "./ContactListRow";
 import { ContactDetailModal } from "./ContactDetailModal";
 import { ViewOptionsBar, ViewMode, SortField, SortDirection } from "./ViewOptionsBar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, UserCheck, UserPlus, Star, Sparkles, Calendar, Hammer } from "lucide-react";
+import { Users, UserCheck, UserPlus, Star, Sparkles, Calendar, Hammer, AlertCircle } from "lucide-react";
+import { getCompletenessScore } from "@/lib/contactCompleteness";
 
 interface ContactListProps {
   contacts: Contact[];
@@ -66,10 +67,23 @@ const tabs: TabConfig[] = [
       c.aiExperienceLevel?.toLowerCase().includes("advanced") ||
       c.aiExperienceLevel?.toLowerCase().includes("expert"),
   },
+  {
+    id: "incomplete",
+    label: "Needs Attention",
+    icon: AlertCircle,
+    filter: (c) => getCompletenessScore(c) < 50,
+  },
 ];
 
 function sortContacts(contacts: Contact[], field: SortField, direction: SortDirection): Contact[] {
   return [...contacts].sort((a, b) => {
+    // Special handling for completeness sort
+    if (field === "completeness") {
+      const scoreA = getCompletenessScore(a);
+      const scoreB = getCompletenessScore(b);
+      return direction === "asc" ? scoreA - scoreB : scoreB - scoreA;
+    }
+
     // First priority: contacts with valid names come first
     const aHasValidName = hasValidDisplayName(a);
     const bHasValidName = hasValidDisplayName(b);

@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export type ViewMode = "cards" | "list" | "compact";
-export type SortField = "name" | "email" | "lifecycleStage" | "aiExperienceLevel" | "createdAt" | "city";
+export type SortField = "name" | "email" | "lifecycleStage" | "aiExperienceLevel" | "createdAt" | "city" | "completeness";
 export type SortDirection = "asc" | "desc";
 
 interface ViewOptionsBarProps {
@@ -40,6 +40,7 @@ const sortOptions: { field: SortField; label: string }[] = [
   { field: "aiExperienceLevel", label: "AI Level" },
   { field: "city", label: "City" },
   { field: "createdAt", label: "Date Added" },
+  { field: "completeness", label: "Data Quality" },
 ];
 
 export function ViewOptionsBar({
