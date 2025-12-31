@@ -1,6 +1,7 @@
-import { TrendingUp, Users, Star, Hammer, Brain, Award, Target, Sparkles } from "lucide-react";
+import { TrendingUp, Users, Star, Hammer, Brain, Award, Target, Sparkles, AlertCircle } from "lucide-react";
 import { Contact, hasEventFeedback, hasBuildDayData } from "@/types/contact";
 import { cn } from "@/lib/utils";
+import { getCompletenessScore } from "@/lib/contactCompleteness";
 
 interface QuickStatsProps {
   contacts: Contact[];
@@ -8,6 +9,8 @@ interface QuickStatsProps {
 
 export function QuickStats({ contacts }: QuickStatsProps) {
   // Calculate all stats
+  const incompleteCount = contacts.filter(c => getCompletenessScore(c) < 50).length;
+  
   const stats = {
     total: contacts.length,
     withEmail: contacts.filter(c => c.email).length,
@@ -25,6 +28,7 @@ export function QuickStats({ contacts }: QuickStatsProps) {
       const nps = parseInt(c.npsScore);
       return !isNaN(nps) && nps >= 4;
     }).length,
+    incomplete: incompleteCount,
   };
 
   // Calculate NPS
@@ -91,6 +95,13 @@ export function QuickStats({ contacts }: QuickStatsProps) {
       icon: TrendingUp,
       gradient: npsScore && npsScore >= 50 ? "from-emerald-500 to-green-600" : "from-slate-500 to-gray-600",
       glow: npsScore && npsScore >= 50 ? "shadow-emerald-500/20" : "shadow-slate-500/20",
+    },
+    {
+      label: "Needs Attention",
+      value: stats.incomplete.toLocaleString(),
+      icon: AlertCircle,
+      gradient: "from-red-500 to-rose-600",
+      glow: "shadow-red-500/20",
     },
   ];
 

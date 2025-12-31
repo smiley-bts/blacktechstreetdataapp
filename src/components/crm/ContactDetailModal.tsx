@@ -39,11 +39,14 @@ import {
   X,
   UserCheck,
   UserX,
+  CircleCheck,
+  CircleX,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useContactNotes } from "@/hooks/useContactNotes";
 import { useNameOverrides } from "@/hooks/useNameOverrides";
 import { NameQualityBadge } from "./NameQualityBadge";
+import { getCompletenessScore, getCompletenessColor, getFilledFields, getMissingFields } from "@/lib/contactCompleteness";
 
 interface ContactDetailModalProps {
   contact: Contact | null;
@@ -362,6 +365,46 @@ export function ContactDetailModal({ contact, open, onOpenChange }: ContactDetai
           <ScrollArea className="h-[380px]">
             {/* OVERVIEW TAB */}
             <TabsContent value="overview" className="m-0 space-y-6 animate-fade-in">
+              {/* Profile Completeness */}
+              {(() => {
+                const score = getCompletenessScore(contact);
+                const colors = getCompletenessColor(score);
+                const filled = getFilledFields(contact);
+                const missing = getMissingFields(contact);
+                return (
+                  <div className="p-4 rounded-xl bg-gradient-to-br from-secondary/50 to-secondary/20 border border-border/50">
+                    <div className="flex items-center gap-4">
+                      <div className="relative h-16 w-16">
+                        <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                          <circle cx="18" cy="18" r="14" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted/30" />
+                          <circle cx="18" cy="18" r="14" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray={2 * Math.PI * 14} strokeDashoffset={2 * Math.PI * 14 * (1 - score / 100)} strokeLinecap="round" className={colors.text} />
+                        </svg>
+                        <span className={`absolute inset-0 flex items-center justify-center text-lg font-bold ${colors.text}`}>
+                          {score}%
+                        </span>
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-semibold text-foreground">Profile Completeness</p>
+                        <div className="flex flex-wrap gap-1.5 mt-2">
+                          {filled.map((f) => (
+                            <Badge key={f} variant="outline" className="text-xs text-emerald-500 border-emerald-500/30 bg-emerald-500/10">
+                              <CircleCheck className="h-3 w-3 mr-1" />
+                              {f}
+                            </Badge>
+                          ))}
+                          {missing.map((f) => (
+                            <Badge key={f} variant="outline" className="text-xs text-muted-foreground border-border bg-muted/30">
+                              <CircleX className="h-3 w-3 mr-1" />
+                              {f}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
               {/* Contact Info */}
               <div className="grid gap-1 bg-secondary/30 rounded-xl p-2 border border-border/50">
                 <InfoRow icon={Mail} label="Email" value={contact.email} copyable highlight />

@@ -5,6 +5,7 @@ import { Mail, Phone, MapPin, Building2, Star, Hammer, StickyNote, ChevronRight 
 import { useContactNotes } from "@/hooks/useContactNotes";
 import { useNameOverrides } from "@/hooks/useNameOverrides";
 import { NameQualityBadge } from "./NameQualityBadge";
+import { CompletenesssDot } from "./CompletenessIndicator";
 
 interface ContactListRowProps {
   contact: Contact;
@@ -75,6 +76,7 @@ export function ContactListRow({ contact, onClick, variant }: ContactListRowProp
         </div>
 
         <div className="flex items-center gap-1.5 shrink-0">
+          <CompletenesssDot contact={contact} />
           {contact.lifecycleStage && (
             <Badge variant="outline" className="text-xs hidden lg:flex">
               {contact.lifecycleStage}
@@ -166,6 +168,7 @@ export function ContactListRow({ contact, onClick, variant }: ContactListRowProp
 
       {/* Right Side Indicators */}
       <div className="flex items-center gap-2 shrink-0">
+        <CompletenesssDot contact={contact} />
         {hasFeedback && (
           <Badge className="text-xs bg-gold/20 text-gold border-gold/30 hidden md:flex">
             <Star className="h-3 w-3" />

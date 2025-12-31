@@ -6,6 +6,7 @@ import { Mail, Phone, MapPin, Building2, ChevronRight, Star, Hammer, StickyNote 
 import { useContactNotes } from "@/hooks/useContactNotes";
 import { useNameOverrides } from "@/hooks/useNameOverrides";
 import { NameQualityBadge } from "./NameQualityBadge";
+import { CompletenessIndicator } from "./CompletenessIndicator";
 
 interface ContactCardProps {
   contact: Contact;
@@ -57,11 +58,16 @@ export function ContactCard({ contact, onClick }: ContactCardProps) {
       
       <CardHeader className="pb-3 relative">
         <div className="flex items-start gap-3">
-          <Avatar className={`h-12 w-12 bg-gradient-to-br ${getAiLevelGradient(contact.aiExperienceLevel)} shrink-0 ring-2 ring-transparent group-hover:ring-primary/30 transition-all`}>
-            <AvatarFallback className="bg-transparent text-foreground font-semibold">
-              {getContactInitials(contact)}
-            </AvatarFallback>
-          </Avatar>
+          <div className="relative">
+            <Avatar className={`h-12 w-12 bg-gradient-to-br ${getAiLevelGradient(contact.aiExperienceLevel)} shrink-0 ring-2 ring-transparent group-hover:ring-primary/30 transition-all`}>
+              <AvatarFallback className="bg-transparent text-foreground font-semibold">
+                {getContactInitials(contact)}
+              </AvatarFallback>
+            </Avatar>
+            <div className="absolute -bottom-1 -right-1">
+              <CompletenessIndicator contact={contact} size="sm" />
+            </div>
+          </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <div>
