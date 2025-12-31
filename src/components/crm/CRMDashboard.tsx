@@ -7,6 +7,7 @@ import { QuickStats } from "./QuickStats";
 import { EventFilterToggles, EventFilters } from "./EventFilterToggles";
 import { ExportModal } from "./ExportModal";
 import { ImportContactsModal } from "./ImportContactsModal";
+import { DeduplicationModal } from "./DeduplicationModal";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import btsLogo from "@/assets/black-tech-street-logo.png";
 
@@ -29,7 +30,7 @@ const defaultFilters: ContactFilter = {
 };
 
 export default function CRMDashboard() {
-  const { contacts, loading, error, addContacts } = useContacts();
+  const { contacts, loading, error, addContacts, mergeContacts } = useContacts();
   const [filters, setFilters] = useState<ContactFilter>(defaultFilters);
   const [savedSearches, setSavedSearches] = useState<SavedSearch[]>(() => {
     const saved = localStorage.getItem("crm-saved-searches");
@@ -86,6 +87,10 @@ export default function CRMDashboard() {
     addContacts(newContacts);
   }, [addContacts]);
 
+  const handleMergeContacts = useCallback((merged: Contact, removedIds: string[]) => {
+    mergeContacts(merged, removedIds);
+  }, [mergeContacts]);
+
   if (error) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -114,6 +119,7 @@ export default function CRMDashboard() {
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
+            <DeduplicationModal contacts={contacts} onMerge={handleMergeContacts} />
             <ImportContactsModal onImport={handleImportContacts} />
             <ExportModal contacts={contacts} filteredContacts={filteredContacts} />
           </div>
