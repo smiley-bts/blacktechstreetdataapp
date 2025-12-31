@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import Papa from "papaparse";
 import { Contact, ContactFilter, parseContact, hasEventFeedback, hasBuildDayData, isDec6Workshop, isDec13LTF, isSept27BuildDay } from "@/types/contact";
 
@@ -31,7 +31,23 @@ export function useContacts() {
       });
   }, []);
 
-  return { contacts, loading, error };
+  const addContacts = useCallback((newContacts: Contact[]) => {
+    setContacts(prev => {
+      // Merge by recordId or email to avoid duplicates
+      const existingIds = new Set(prev.map(c => c.recordId));
+      const existingEmails = new Set(prev.map(c => c.email?.toLowerCase()).filter(Boolean));
+      
+      const uniqueNew = newContacts.filter(c => {
+        const isDuplicateId = c.recordId && existingIds.has(c.recordId);
+        const isDuplicateEmail = c.email && existingEmails.has(c.email.toLowerCase());
+        return !isDuplicateId && !isDuplicateEmail;
+      });
+      
+      return [...prev, ...uniqueNew];
+    });
+  }, []);
+
+  return { contacts, loading, error, addContacts };
 }
 
 export function useFilteredContacts(contacts: Contact[], filters: ContactFilter) {

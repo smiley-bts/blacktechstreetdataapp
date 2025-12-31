@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Contact } from "@/types/contact";
+import { Contact, getDisplayName, hasValidDisplayName } from "@/types/contact";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import {
   Mail,
   Phone,
@@ -34,9 +35,15 @@ import {
   Linkedin,
   DollarSign,
   CheckCircle,
+  Edit,
+  X,
+  UserCheck,
+  UserX,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useContactNotes } from "@/hooks/useContactNotes";
+import { useNameOverrides } from "@/hooks/useNameOverrides";
+import { NameQualityBadge } from "./NameQualityBadge";
 
 interface ContactDetailModalProps {
   contact: Contact | null;
@@ -130,13 +137,18 @@ function SectionTitle({ children, icon: Icon }: { children: React.ReactNode; ico
 
 export function ContactDetailModal({ contact, open, onOpenChange }: ContactDetailModalProps) {
   const { getNote, setNote } = useContactNotes();
+  const { getOverride, setOverride, hasOverride, removeOverride } = useNameOverrides();
   const [noteValue, setNoteValue] = useState("");
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [nameOverrideValue, setNameOverrideValue] = useState("");
   
   useEffect(() => {
     if (contact) {
       setNoteValue(getNote(contact.recordId));
+      setNameOverrideValue(getOverride(contact.recordId) || "");
+      setIsEditingName(false);
     }
-  }, [contact, getNote]);
+  }, [contact, getNote, getOverride]);
 
   if (!contact) return null;
 
@@ -144,6 +156,21 @@ export function ContactDetailModal({ contact, open, onOpenChange }: ContactDetai
     setNote(contact.recordId, noteValue);
     toast({ title: "Note saved!", description: "Your note has been saved" });
   };
+
+  const handleSaveNameOverride = () => {
+    setOverride(contact.recordId, nameOverrideValue);
+    setIsEditingName(false);
+    toast({ title: "Name updated!", description: "Custom name has been saved" });
+  };
+
+  const handleRemoveNameOverride = () => {
+    removeOverride(contact.recordId);
+    setNameOverrideValue("");
+    setIsEditingName(false);
+    toast({ title: "Name reset", description: "Using original name display" });
+  };
+
+  const displayName = getOverride(contact.recordId) || getDisplayName(contact);
 
   const getInitials = () => {
     const first = contact.firstName?.[0] || '';
@@ -196,9 +223,50 @@ export function ContactDetailModal({ contact, open, onOpenChange }: ContactDetai
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 pt-1">
-                <DialogTitle className="text-2xl font-display font-bold text-foreground">
-                  {contact.fullName || `${contact.firstName} ${contact.lastName}`.trim() || "Unknown Contact"}
-                </DialogTitle>
+                <div className="flex items-center gap-2">
+                  {isEditingName ? (
+                    <div className="flex items-center gap-2 flex-1">
+                      <Input
+                        value={nameOverrideValue}
+                        onChange={(e) => setNameOverrideValue(e.target.value)}
+                        placeholder="Enter custom name..."
+                        className="h-9 text-lg font-display font-bold bg-card border-primary/50"
+                        autoFocus
+                      />
+                      <Button size="sm" onClick={handleSaveNameOverride} className="h-9">
+                        Save
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => setIsEditingName(false)} className="h-9">
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <>
+                      <DialogTitle className="text-2xl font-display font-bold text-foreground">
+                        {displayName}
+                      </DialogTitle>
+                      <NameQualityBadge contact={contact} hasOverride={hasOverride(contact.recordId)} size="md" />
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        className="h-7 w-7 p-0 hover:text-primary"
+                        onClick={() => setIsEditingName(true)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      {hasOverride(contact.recordId) && (
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          className="h-7 text-xs text-muted-foreground hover:text-destructive"
+                          onClick={handleRemoveNameOverride}
+                        >
+                          Reset
+                        </Button>
+                      )}
+                    </>
+                  )}
+                </div>
                 <p className="text-sm text-muted-foreground font-mono mt-1 flex items-center gap-2">
                   <span className="px-2 py-0.5 rounded bg-secondary/80 text-primary">
                     {contact.uid || `ID: ${contact.recordId}`}

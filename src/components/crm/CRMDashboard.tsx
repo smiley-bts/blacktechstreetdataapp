@@ -1,11 +1,12 @@
 import { useState, useCallback, useMemo } from "react";
 import { useContacts, useFilteredContacts, getUniqueValues } from "@/hooks/useContacts";
-import { ContactFilter, SavedSearch, hasEventFeedback, hasBuildDayData, isDec6Workshop, isDec13LTF, isSept27BuildDay } from "@/types/contact";
+import { ContactFilter, SavedSearch, hasEventFeedback, hasBuildDayData, isDec6Workshop, isDec13LTF, isSept27BuildDay, Contact } from "@/types/contact";
 import { ContactSearchBar } from "./ContactSearchBar";
 import { ContactList } from "./ContactList";
 import { QuickStats } from "./QuickStats";
 import { EventFilterToggles, EventFilters } from "./EventFilterToggles";
 import { ExportModal } from "./ExportModal";
+import { ImportContactsModal } from "./ImportContactsModal";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import btsLogo from "@/assets/black-tech-street-logo.png";
 
@@ -28,7 +29,7 @@ const defaultFilters: ContactFilter = {
 };
 
 export default function CRMDashboard() {
-  const { contacts, loading, error } = useContacts();
+  const { contacts, loading, error, addContacts } = useContacts();
   const [filters, setFilters] = useState<ContactFilter>(defaultFilters);
   const [savedSearches, setSavedSearches] = useState<SavedSearch[]>(() => {
     const saved = localStorage.getItem("crm-saved-searches");
@@ -81,6 +82,10 @@ export default function CRMDashboard() {
     }));
   }, []);
 
+  const handleImportContacts = useCallback((newContacts: Contact[]) => {
+    addContacts(newContacts);
+  }, [addContacts]);
+
   if (error) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -109,6 +114,7 @@ export default function CRMDashboard() {
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
+            <ImportContactsModal onImport={handleImportContacts} />
             <ExportModal contacts={contacts} filteredContacts={filteredContacts} />
           </div>
         </header>

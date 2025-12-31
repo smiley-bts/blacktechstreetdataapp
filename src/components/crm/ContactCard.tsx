@@ -1,9 +1,11 @@
-import { Contact, hasEventFeedback, hasBuildDayData, getDisplayName, getContactInitials } from "@/types/contact";
+import { Contact, hasEventFeedback, hasBuildDayData, getDisplayName, getContactInitials, hasValidDisplayName } from "@/types/contact";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Mail, Phone, MapPin, Building2, ChevronRight, Star, Hammer, StickyNote } from "lucide-react";
 import { useContactNotes } from "@/hooks/useContactNotes";
+import { useNameOverrides } from "@/hooks/useNameOverrides";
+import { NameQualityBadge } from "./NameQualityBadge";
 
 interface ContactCardProps {
   contact: Contact;
@@ -38,9 +40,12 @@ function getShortAiLevel(level: string): string {
 export function ContactCard({ contact, onClick }: ContactCardProps) {
   const location = [contact.city, contact.state].filter(Boolean).join(", ");
   const { hasNote } = useContactNotes();
+  const { getOverride, hasOverride } = useNameOverrides();
   const contactHasNote = hasNote(contact.recordId);
   const hasFeedback = hasEventFeedback(contact);
   const hasBuildDay = hasBuildDayData(contact);
+  const nameOverride = getOverride(contact.recordId);
+  const displayName = nameOverride || getDisplayName(contact);
 
   return (
     <Card 
@@ -60,9 +65,12 @@ export function ContactCard({ contact, onClick }: ContactCardProps) {
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <div>
-                <h3 className="font-semibold text-foreground leading-tight group-hover:text-primary transition-colors">
-                  {getDisplayName(contact)}
-                </h3>
+                <div className="flex items-center gap-1.5">
+                  <h3 className="font-semibold text-foreground leading-tight group-hover:text-primary transition-colors">
+                    {displayName}
+                  </h3>
+                  <NameQualityBadge contact={contact} hasOverride={hasOverride(contact.recordId)} />
+                </div>
                 <p className="text-xs text-muted-foreground font-mono mt-0.5">
                   {contact.uid || `ID: ${contact.recordId}`}
                 </p>
