@@ -47,7 +47,18 @@ export function useContacts() {
     });
   }, []);
 
-  return { contacts, loading, error, addContacts };
+  const mergeContacts = useCallback((mergedContact: Contact, removedIds: string[]) => {
+    setContacts(prev => {
+      // Remove the contacts that were merged
+      const filtered = prev.filter(c => !removedIds.includes(c.recordId));
+      // Update the primary contact with merged data
+      return filtered.map(c => 
+        c.recordId === mergedContact.recordId ? mergedContact : c
+      );
+    });
+  }, []);
+
+  return { contacts, loading, error, addContacts, mergeContacts };
 }
 
 export function useFilteredContacts(contacts: Contact[], filters: ContactFilter) {
