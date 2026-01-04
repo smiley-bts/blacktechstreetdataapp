@@ -253,6 +253,8 @@ function ProjectCard({ project, onSelect }: { project: Project; onSelect: () => 
 function LocalFilePreview({ file }: { file: LocalProjectFile }) {
   const [showPreview, setShowPreview] = useState(false);
   const isImage = isImageFile(file.path);
+  const isPdf = file.type === 'pdf';
+  const canPreview = isImage || isPdf;
 
   const getIcon = () => {
     switch (file.type) {
@@ -264,39 +266,54 @@ function LocalFilePreview({ file }: { file: LocalProjectFile }) {
     }
   };
 
+  const getTypeLabel = () => {
+    switch (file.type) {
+      case 'pdf': return 'PDF';
+      case 'pptx': return 'PowerPoint';
+      case 'docx': return 'Word';
+      case 'image': return 'Image';
+      default: return 'File';
+    }
+  };
+
+  // For download, we need the full path
+  const downloadFile = () => {
+    const link = document.createElement('a');
+    link.href = file.path;
+    link.download = file.path.split('/').pop() || 'file';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2 p-3 bg-secondary/30 rounded-lg">
         {getIcon()}
-        <span className="flex-1 text-sm font-medium">{file.label}</span>
-        <div className="flex items-center gap-2">
-          {isImage && (
+        <div className="flex-1 min-w-0">
+          <span className="text-sm font-medium block truncate">{file.label}</span>
+          <span className="text-xs text-muted-foreground">{getTypeLabel()}</span>
+        </div>
+        <div className="flex items-center gap-1">
+          {canPreview && (
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setShowPreview(!showPreview)}
-              className="text-xs"
+              className="text-xs h-8"
             >
               {showPreview ? "Hide" : "Preview"}
             </Button>
           )}
-          <a
-            href={file.path}
-            download
-            className="p-1.5 hover:bg-background rounded transition-colors"
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={downloadFile}
             title="Download"
           >
             <Download className="h-4 w-4 text-muted-foreground hover:text-primary" />
-          </a>
-          <a
-            href={file.path}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-1.5 hover:bg-background rounded transition-colors"
-            title="Open in new tab"
-          >
-            <ExternalLink className="h-4 w-4 text-muted-foreground hover:text-primary" />
-          </a>
+          </Button>
         </div>
       </div>
       
@@ -306,7 +323,18 @@ function LocalFilePreview({ file }: { file: LocalProjectFile }) {
           <img 
             src={file.path} 
             alt={file.label}
-            className="w-full h-auto max-h-[300px] object-contain"
+            className="w-full h-auto max-h-[400px] object-contain"
+          />
+        </div>
+      )}
+
+      {/* PDF Preview */}
+      {isPdf && showPreview && (
+        <div className="rounded-lg overflow-hidden border bg-background">
+          <iframe
+            src={file.path}
+            title={file.label}
+            className="w-full h-[500px] border-0"
           />
         </div>
       )}
