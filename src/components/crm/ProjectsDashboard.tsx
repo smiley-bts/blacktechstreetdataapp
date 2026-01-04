@@ -258,10 +258,10 @@ function LocalFilePreview({ file }: { file: LocalProjectFile }) {
   const isDocx = file.type === 'docx';
   const canPreview = isImage || isPdf || isPptx || isDocx;
   
-  // Get full URL for Office Online viewer
-  const getOfficeViewerUrl = () => {
+  // Get full URL for Google Docs viewer (works better with dev environments)
+  const getGoogleViewerUrl = () => {
     const fullUrl = `${window.location.origin}${file.path}`;
-    return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fullUrl)}`;
+    return `https://docs.google.com/gview?url=${encodeURIComponent(fullUrl)}&embedded=true`;
   };
 
   const getIcon = () => {
@@ -347,15 +347,20 @@ function LocalFilePreview({ file }: { file: LocalProjectFile }) {
         </div>
       )}
 
-      {/* PowerPoint/Word Preview via Office Online */}
+      {/* PowerPoint/Word Preview via Google Docs Viewer */}
       {(isPptx || isDocx) && showPreview && (
-        <div className="rounded-lg overflow-hidden border bg-background">
-          <iframe
-            src={getOfficeViewerUrl()}
-            title={file.label}
-            className="w-full h-[500px] border-0"
-            allowFullScreen
-          />
+        <div className="space-y-2">
+          <div className="rounded-lg overflow-hidden border bg-background">
+            <iframe
+              src={getGoogleViewerUrl()}
+              title={file.label}
+              className="w-full h-[500px] border-0"
+              allowFullScreen
+            />
+          </div>
+          <p className="text-xs text-muted-foreground text-center">
+            If preview doesn't load, <a href={file.path} download className="text-primary hover:underline">download the file</a> to view locally.
+          </p>
         </div>
       )}
     </div>
