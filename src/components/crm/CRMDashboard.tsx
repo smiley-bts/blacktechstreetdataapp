@@ -12,10 +12,13 @@ import { ExecutiveSummary } from "./ExecutiveSummary";
 import { SavedReports } from "./SavedReports";
 import { ShareReportButton } from "./ShareReportButton";
 import { TagFilter } from "./TagFilter";
+import { FeedbackDashboard } from "./FeedbackDashboard";
+import { ProjectsDashboard } from "./ProjectsDashboard";
+import { ContactDetailModal } from "./ContactDetailModal";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, FileText, Printer } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Printer, MessageSquare, Folder } from "lucide-react";
 import { useContactTags } from "@/hooks/useContactTags";
 import { getFiltersFromUrl, serializeFilters } from "@/lib/urlState";
 import { openPrintView } from "./PrintableReport";
@@ -56,6 +59,17 @@ export default function CRMDashboard() {
     return saved ? JSON.parse(saved) : [];
   });
   const [activeTab, setActiveTab] = useState("overview");
+  const [selectedContactEmail, setSelectedContactEmail] = useState<string | null>(null);
+
+  // Find contact by email for modal
+  const selectedContact = useMemo(() => {
+    if (!selectedContactEmail) return null;
+    return contacts.find(c => c.email?.toLowerCase() === selectedContactEmail.toLowerCase()) || null;
+  }, [contacts, selectedContactEmail]);
+
+  const handleContactClick = useCallback((email: string) => {
+    setSelectedContactEmail(email);
+  }, []);
 
   // Sync filters to URL (debounced)
   useEffect(() => {
@@ -241,7 +255,7 @@ export default function CRMDashboard() {
 
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full max-w-md grid-cols-3 bg-secondary/50">
+          <TabsList className="grid w-full max-w-2xl grid-cols-5 bg-secondary/50">
             <TabsTrigger value="overview" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <LayoutDashboard className="h-4 w-4" />
               Overview
@@ -249,6 +263,14 @@ export default function CRMDashboard() {
             <TabsTrigger value="contacts" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Users className="h-4 w-4" />
               Contacts
+            </TabsTrigger>
+            <TabsTrigger value="feedback" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <MessageSquare className="h-4 w-4" />
+              Feedback
+            </TabsTrigger>
+            <TabsTrigger value="projects" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <Folder className="h-4 w-4" />
+              Projects
             </TabsTrigger>
             <TabsTrigger value="reports" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <FileText className="h-4 w-4" />
@@ -328,6 +350,22 @@ export default function CRMDashboard() {
             />
           </TabsContent>
 
+          {/* Feedback Tab */}
+          <TabsContent value="feedback" className="mt-6">
+            <FeedbackDashboard 
+              contacts={contacts}
+              onContactClick={handleContactClick}
+            />
+          </TabsContent>
+
+          {/* Projects Tab */}
+          <TabsContent value="projects" className="mt-6">
+            <ProjectsDashboard 
+              contacts={contacts}
+              onContactClick={handleContactClick}
+            />
+          </TabsContent>
+
           {/* Reports Tab */}
           <TabsContent value="reports" className="mt-6">
             <SavedReports 
@@ -337,6 +375,13 @@ export default function CRMDashboard() {
             />
           </TabsContent>
         </Tabs>
+
+        {/* Contact Detail Modal for feedback/project links */}
+        <ContactDetailModal
+          contact={selectedContact}
+          open={!!selectedContact}
+          onOpenChange={(open) => !open && setSelectedContactEmail(null)}
+        />
       </div>
     </div>
   );
