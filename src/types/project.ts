@@ -22,9 +22,9 @@ export function parseProject(row: string[]): Project {
   // Determine event name based on date
   let eventName = "Build Day";
   if (eventDate.startsWith("2025-09-27")) {
-    eventName = "September 27 Build Day";
+    eventName = "September 27, 2025 ASPIRE Build Day";
   } else if (eventDate.startsWith("2025-12-06")) {
-    eventName = "December 6 ASPIRE Workshop";
+    eventName = "December 6, 2025 ASPIRE Workshop";
   }
 
   // Parse team members (they're newline separated in the CSV)
