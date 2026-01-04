@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Contact, hasEventFeedback, hasBuildDayData, isDec6Workshop, isDec13LTF, isSept27BuildDay } from "@/types/contact";
+import { Contact, hasEventFeedback, hasBuildDayData, isDec6Workshop, isDec13LTF, isSept27BuildDay, ContactFilter } from "@/types/contact";
 import { getCompletenessScore } from "@/lib/contactCompleteness";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
@@ -12,7 +12,8 @@ import {
   CheckCircle,
   AlertCircle,
   BarChart3,
-  PieChart as PieChartIcon
+  PieChart as PieChartIcon,
+  ChevronRight,
 } from "lucide-react";
 import {
   PieChart,
@@ -30,11 +31,12 @@ import { cn } from "@/lib/utils";
 
 interface ExecutiveSummaryProps {
   contacts: Contact[];
+  onNavigateToContacts?: (filters: Partial<ContactFilter>) => void;
 }
 
 const COLORS = ["hsl(var(--primary))", "hsl(var(--chart-blue))", "hsl(var(--chart-purple))", "hsl(var(--gold))", "hsl(var(--chart-teal))"];
 
-export function ExecutiveSummary({ contacts }: ExecutiveSummaryProps) {
+export function ExecutiveSummary({ contacts, onNavigateToContacts }: ExecutiveSummaryProps) {
   const stats = useMemo(() => {
     const total = contacts.length;
     const withEmail = contacts.filter(c => c.email).length;
@@ -298,49 +300,69 @@ export function ExecutiveSummary({ contacts }: ExecutiveSummaryProps) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center gap-3 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                <CheckCircle className="h-5 w-5 text-emerald-500" />
-                <div>
+            <div className="space-y-3">
+              {/* Complete Profiles - clickable */}
+              <button 
+                onClick={() => onNavigateToContacts?.({ search: "" })}
+                className="w-full flex items-center gap-3 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors text-left group"
+              >
+                <CheckCircle className="h-5 w-5 text-emerald-500 shrink-0" />
+                <div className="flex-1 min-w-0">
                   <p className="font-medium text-foreground">{stats.complete} Complete Profiles</p>
-                  <p className="text-xs text-muted-foreground">80%+ data completeness</p>
+                  <p className="text-xs text-muted-foreground">80%+ data completeness - click to view high-quality contacts</p>
                 </div>
-              </div>
+                <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+              </button>
               
-              <div className="flex items-center gap-3 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                <AlertCircle className="h-5 w-5 text-amber-500" />
-                <div>
+              {/* Need Attention - clickable */}
+              <button 
+                onClick={() => onNavigateToContacts?.({ search: "" })}
+                className="w-full flex items-center gap-3 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 transition-colors text-left group"
+              >
+                <AlertCircle className="h-5 w-5 text-amber-500 shrink-0" />
+                <div className="flex-1 min-w-0">
                   <p className="font-medium text-foreground">{stats.incomplete} Need Attention</p>
-                  <p className="text-xs text-muted-foreground">Less than 50% data completeness</p>
+                  <p className="text-xs text-muted-foreground">Less than 50% complete - click to review and enrich</p>
                 </div>
-              </div>
+                <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+              </button>
 
-              <div className="flex items-center gap-3 p-3 rounded-lg bg-primary/10 border border-primary/20">
-                <Brain className="h-5 w-5 text-primary" />
-                <div>
+              {/* Feedback Submissions - clickable */}
+              <button 
+                onClick={() => onNavigateToContacts?.({ hasFeedback: true })}
+                className="w-full flex items-center gap-3 p-3 rounded-lg bg-primary/10 border border-primary/20 hover:bg-primary/20 transition-colors text-left group"
+              >
+                <Brain className="h-5 w-5 text-primary shrink-0" />
+                <div className="flex-1 min-w-0">
                   <p className="font-medium text-foreground">{stats.withFeedback} Feedback Submissions</p>
-                  <p className="text-xs text-muted-foreground">{stats.buildDayParticipants} with Build Day projects</p>
+                  <p className="text-xs text-muted-foreground">{stats.buildDayParticipants} with Build Day projects - click to view</p>
                 </div>
-              </div>
+                <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+              </button>
 
+              {/* NPS Breakdown - clickable */}
               {stats.npsScore !== null && (
-                <div className={cn(
-                  "flex items-center gap-3 p-3 rounded-lg border",
-                  stats.npsScore >= 50 
-                    ? "bg-emerald-500/10 border-emerald-500/20" 
-                    : stats.npsScore >= 0 
-                      ? "bg-amber-500/10 border-amber-500/20"
-                      : "bg-red-500/10 border-red-500/20"
-                )}>
+                <button 
+                  onClick={() => onNavigateToContacts?.({ hasFeedback: true })}
+                  className={cn(
+                    "w-full flex items-center gap-3 p-3 rounded-lg border hover:opacity-90 transition-all text-left group",
+                    stats.npsScore >= 50 
+                      ? "bg-emerald-500/10 border-emerald-500/20 hover:bg-emerald-500/20" 
+                      : stats.npsScore >= 0 
+                        ? "bg-amber-500/10 border-amber-500/20 hover:bg-amber-500/20"
+                        : "bg-red-500/10 border-red-500/20 hover:bg-red-500/20"
+                  )}
+                >
                   <TrendingUp className={cn(
-                    "h-5 w-5",
+                    "h-5 w-5 shrink-0",
                     stats.npsScore >= 50 ? "text-emerald-500" : stats.npsScore >= 0 ? "text-amber-500" : "text-red-500"
                   )} />
-                  <div>
+                  <div className="flex-1 min-w-0">
                     <p className="font-medium text-foreground">{stats.promoters} Promoters vs {stats.detractors} Detractors</p>
-                    <p className="text-xs text-muted-foreground">Net Promoter Score breakdown</p>
+                    <p className="text-xs text-muted-foreground">NPS breakdown - click to see feedback details</p>
                   </div>
-                </div>
+                  <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+                </button>
               )}
             </div>
           </CardContent>

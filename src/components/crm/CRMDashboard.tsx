@@ -258,7 +258,13 @@ export default function CRMDashboard() {
 
           {/* Overview Tab */}
           <TabsContent value="overview" className="mt-6">
-            <ExecutiveSummary contacts={contacts} />
+            <ExecutiveSummary 
+              contacts={contacts} 
+              onNavigateToContacts={(partialFilters) => {
+                setFilters(prev => ({ ...prev, ...partialFilters }));
+                setActiveTab("contacts");
+              }}
+            />
           </TabsContent>
 
           {/* Contacts Tab */}
