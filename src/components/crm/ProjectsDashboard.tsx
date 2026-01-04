@@ -254,7 +254,15 @@ function LocalFilePreview({ file }: { file: LocalProjectFile }) {
   const [showPreview, setShowPreview] = useState(false);
   const isImage = isImageFile(file.path);
   const isPdf = file.type === 'pdf';
-  const canPreview = isImage || isPdf;
+  const isPptx = file.type === 'pptx';
+  const isDocx = file.type === 'docx';
+  const canPreview = isImage || isPdf || isPptx || isDocx;
+  
+  // Get full URL for Office Online viewer
+  const getOfficeViewerUrl = () => {
+    const fullUrl = `${window.location.origin}${file.path}`;
+    return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fullUrl)}`;
+  };
 
   const getIcon = () => {
     switch (file.type) {
@@ -335,6 +343,18 @@ function LocalFilePreview({ file }: { file: LocalProjectFile }) {
             src={file.path}
             title={file.label}
             className="w-full h-[500px] border-0"
+          />
+        </div>
+      )}
+
+      {/* PowerPoint/Word Preview via Office Online */}
+      {(isPptx || isDocx) && showPreview && (
+        <div className="rounded-lg overflow-hidden border bg-background">
+          <iframe
+            src={getOfficeViewerUrl()}
+            title={file.label}
+            className="w-full h-[500px] border-0"
+            allowFullScreen
           />
         </div>
       )}
