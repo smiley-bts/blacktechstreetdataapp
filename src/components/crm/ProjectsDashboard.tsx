@@ -22,10 +22,13 @@ import {
   Search,
   ChevronRight,
   Briefcase,
-  Globe
+  Globe,
+  Download,
+  Image as ImageIcon
 } from "lucide-react";
 import { Project } from "@/types/project";
 import { Contact } from "@/types/contact";
+import { getLocalFilesForProject, LocalProjectFile, isImageFile } from "@/lib/projectFiles";
 
 interface ProjectsDashboardProps {
   contacts: Contact[];
@@ -247,6 +250,70 @@ function ProjectCard({ project, onSelect }: { project: Project; onSelect: () => 
   );
 }
 
+function LocalFilePreview({ file }: { file: LocalProjectFile }) {
+  const [showPreview, setShowPreview] = useState(false);
+  const isImage = isImageFile(file.path);
+
+  const getIcon = () => {
+    switch (file.type) {
+      case 'pdf': return <FileText className="h-4 w-4 text-red-500" />;
+      case 'pptx': return <FileText className="h-4 w-4 text-orange-500" />;
+      case 'docx': return <FileText className="h-4 w-4 text-blue-500" />;
+      case 'image': return <ImageIcon className="h-4 w-4 text-emerald-500" />;
+      default: return <FileText className="h-4 w-4 text-muted-foreground" />;
+    }
+  };
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center gap-2 p-3 bg-secondary/30 rounded-lg">
+        {getIcon()}
+        <span className="flex-1 text-sm font-medium">{file.label}</span>
+        <div className="flex items-center gap-2">
+          {isImage && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowPreview(!showPreview)}
+              className="text-xs"
+            >
+              {showPreview ? "Hide" : "Preview"}
+            </Button>
+          )}
+          <a
+            href={file.path}
+            download
+            className="p-1.5 hover:bg-background rounded transition-colors"
+            title="Download"
+          >
+            <Download className="h-4 w-4 text-muted-foreground hover:text-primary" />
+          </a>
+          <a
+            href={file.path}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-1.5 hover:bg-background rounded transition-colors"
+            title="Open in new tab"
+          >
+            <ExternalLink className="h-4 w-4 text-muted-foreground hover:text-primary" />
+          </a>
+        </div>
+      </div>
+      
+      {/* Image Preview */}
+      {isImage && showPreview && (
+        <div className="rounded-lg overflow-hidden border bg-background">
+          <img 
+            src={file.path} 
+            alt={file.label}
+            className="w-full h-auto max-h-[300px] object-contain"
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
 interface ProjectDetailModalProps {
   project: Project;
   onClose: () => void;
@@ -372,43 +439,68 @@ function ProjectDetailModal({
               </div>
             )}
 
-            {/* Files */}
-            {project.fileUrls.length > 0 && (
-              <div>
-                <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
-                  <FileText className="h-4 w-4" />
-                  Project Files
-                </h4>
-                <div className="space-y-2">
-                  {project.fileUrls.map((url, i) => {
-                    const isPdf = url.includes(".pdf");
-                    const isImage = url.includes(".jpg") || url.includes(".jpeg") || url.includes(".png");
-                    const isPptx = url.includes(".pptx");
-                    const isDocx = url.includes(".docx");
-
-                    let label = "File";
-                    if (isPdf) label = "PDF Document";
-                    else if (isImage) label = "Image";
-                    else if (isPptx) label = "PowerPoint";
-                    else if (isDocx) label = "Word Document";
-
-                    return (
-                      <a
-                        key={i}
-                        href={url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 p-3 bg-secondary/30 rounded-lg hover:bg-secondary/50 transition-colors group"
-                      >
-                        <FileText className="h-4 w-4 text-muted-foreground" />
-                        <span className="flex-1 text-sm">{label}</span>
-                        <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                      </a>
-                    );
-                  })}
+            {/* Local Files (hosted on Lovable) */}
+            {(() => {
+              const localFiles = getLocalFilesForProject(project.projectName);
+              if (localFiles.length === 0) return null;
+              
+              return (
+                <div>
+                  <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+                    <FileText className="h-4 w-4" />
+                    Project Files
+                  </h4>
+                  <div className="space-y-3">
+                    {localFiles.map((file, i) => (
+                      <LocalFilePreview key={i} file={file} />
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
+
+            {/* External Files (Tally links - fallback) */}
+            {(() => {
+              const localFiles = getLocalFilesForProject(project.projectName);
+              if (localFiles.length > 0 || project.fileUrls.length === 0) return null;
+              
+              return (
+                <div>
+                  <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+                    <FileText className="h-4 w-4" />
+                    Project Files (External)
+                  </h4>
+                  <div className="space-y-2">
+                    {project.fileUrls.map((url, i) => {
+                      const isPdf = url.includes(".pdf");
+                      const isImage = url.includes(".jpg") || url.includes(".jpeg") || url.includes(".png");
+                      const isPptx = url.includes(".pptx");
+                      const isDocx = url.includes(".docx");
+
+                      let label = "File";
+                      if (isPdf) label = "PDF Document";
+                      else if (isImage) label = "Image";
+                      else if (isPptx) label = "PowerPoint";
+                      else if (isDocx) label = "Word Document";
+
+                      return (
+                        <a
+                          key={i}
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 p-3 bg-secondary/30 rounded-lg hover:bg-secondary/50 transition-colors group"
+                        >
+                          <FileText className="h-4 w-4 text-muted-foreground" />
+                          <span className="flex-1 text-sm">{label}</span>
+                          <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                        </a>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Metadata */}
             <div className="pt-4 border-t text-xs text-muted-foreground">
