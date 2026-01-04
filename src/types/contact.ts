@@ -97,6 +97,7 @@ export interface ContactFilter {
   ageRange: string[];
   incomeRange: string[];
   cohort: string[];
+  tags: string[];
   eventAttendeesOnly: boolean;
   buildDayOnly: boolean;
   // Event-specific filters

@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { useContacts, useFilteredContacts, getUniqueValues } from "@/hooks/useContacts";
 import { ContactFilter, SavedSearch, hasEventFeedback, hasBuildDayData, isDec6Workshop, isDec13LTF, isSept27BuildDay, Contact } from "@/types/contact";
 import { ContactSearchBar } from "./ContactSearchBar";
@@ -10,9 +10,15 @@ import { ImportContactsModal } from "./ImportContactsModal";
 import { DeduplicationModal } from "./DeduplicationModal";
 import { ExecutiveSummary } from "./ExecutiveSummary";
 import { SavedReports } from "./SavedReports";
+import { ShareReportButton } from "./ShareReportButton";
+import { TagFilter } from "./TagFilter";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LayoutDashboard, Users, FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { LayoutDashboard, Users, FileText, Printer } from "lucide-react";
+import { useContactTags } from "@/hooks/useContactTags";
+import { getFiltersFromUrl, serializeFilters } from "@/lib/urlState";
+import { openPrintView } from "./PrintableReport";
 import btsLogo from "@/assets/black-tech-street-logo.png";
 
 // CRM Dashboard v2 - Event Attendee Focus
@@ -24,6 +30,7 @@ const defaultFilters: ContactFilter = {
   ageRange: [],
   incomeRange: [],
   cohort: [],
+  tags: [],
   eventAttendeesOnly: false,
   buildDayOnly: false,
   dec6Workshop: false,
@@ -35,20 +42,104 @@ const defaultFilters: ContactFilter = {
 
 export default function CRMDashboard() {
   const { contacts, loading, error, addContacts, mergeContacts } = useContacts();
-  const [filters, setFilters] = useState<ContactFilter>(defaultFilters);
+  const { getAllUniqueTags, getContactsWithTag } = useContactTags();
+  const [filters, setFilters] = useState<ContactFilter>(() => {
+    // Check URL for shared filters
+    const urlFilters = getFiltersFromUrl();
+    if (urlFilters) {
+      return { ...defaultFilters, ...urlFilters };
+    }
+    return defaultFilters;
+  });
   const [savedSearches, setSavedSearches] = useState<SavedSearch[]>(() => {
     const saved = localStorage.getItem("crm-saved-searches");
     return saved ? JSON.parse(saved) : [];
   });
   const [activeTab, setActiveTab] = useState("overview");
 
-  const filteredContacts = useFilteredContacts(contacts, filters);
+  // Sync filters to URL (debounced)
+  useEffect(() => {
+    const encoded = serializeFilters(filters);
+    const url = new URL(window.location.href);
+    if (encoded) {
+      url.searchParams.set("filters", encoded);
+    } else {
+      url.searchParams.delete("filters");
+    }
+    window.history.replaceState({}, "", url.toString());
+  }, [filters]);
+
+  // Filter contacts including tag-based filtering
+  const filteredContacts = useMemo(() => {
+    let result = contacts;
+    
+    // Apply standard filters via hook
+    result = result.filter((contact) => {
+      // Search filter
+      if (filters.search) {
+        const searchLower = filters.search.toLowerCase();
+        const searchMatch = 
+          contact.uid?.toLowerCase().includes(searchLower) ||
+          contact.firstName?.toLowerCase().includes(searchLower) ||
+          contact.lastName?.toLowerCase().includes(searchLower) ||
+          contact.fullName?.toLowerCase().includes(searchLower) ||
+          contact.email?.toLowerCase().includes(searchLower) ||
+          contact.phone?.includes(filters.search) ||
+          contact.recordId?.includes(filters.search);
+        if (!searchMatch) return false;
+      }
+
+      // Lifecycle stage filter
+      if (filters.lifecycleStage.length > 0) {
+        if (!filters.lifecycleStage.includes(contact.lifecycleStage)) return false;
+      }
+
+      // AI Experience filter
+      if (filters.aiExperienceLevel.length > 0) {
+        const hasMatch = filters.aiExperienceLevel.some(level => 
+          contact.aiExperienceLevel?.toLowerCase().includes(level.toLowerCase())
+        );
+        if (!hasMatch) return false;
+      }
+
+      // Age range filter
+      if (filters.ageRange.length > 0) {
+        if (!filters.ageRange.includes(contact.ageRange)) return false;
+      }
+
+      // Income range filter  
+      if (filters.incomeRange.length > 0) {
+        if (!filters.incomeRange.includes(contact.incomeRange)) return false;
+      }
+
+      // Event-specific filters
+      if (filters.dec6Workshop && !isDec6Workshop(contact)) return false;
+      if (filters.dec13LTF && !isDec13LTF(contact)) return false;
+      if (filters.sept27BuildDay && !isSept27BuildDay(contact)) return false;
+      if (filters.hasFeedback && !hasEventFeedback(contact)) return false;
+      if (filters.hasProject && !hasBuildDayData(contact)) return false;
+
+      return true;
+    });
+
+    // Apply tag filter
+    if (filters.tags.length > 0) {
+      const contactsWithSelectedTags = new Set<string>();
+      filters.tags.forEach(tag => {
+        getContactsWithTag(tag).forEach(id => contactsWithSelectedTags.add(id));
+      });
+      result = result.filter(c => contactsWithSelectedTags.has(c.recordId));
+    }
+
+    return result;
+  }, [contacts, filters, getContactsWithTag]);
 
   // Get unique values for filters
   const uniqueLifecycleStages = useMemo(() => getUniqueValues(contacts, "lifecycleStage"), [contacts]);
   const uniqueAiLevels = useMemo(() => getUniqueValues(contacts, "aiExperienceLevel"), [contacts]);
   const uniqueAgeRanges = useMemo(() => getUniqueValues(contacts, "ageRange"), [contacts]);
   const uniqueIncomeRanges = useMemo(() => getUniqueValues(contacts, "incomeRange"), [contacts]);
+  const allTags = useMemo(() => getAllUniqueTags(), [getAllUniqueTags]);
 
   // Event filter counts
   const eventCounts = useMemo(() => ({
@@ -88,6 +179,10 @@ export default function CRMDashboard() {
     }));
   }, []);
 
+  const handleTagsChange = useCallback((tags: string[]) => {
+    setFilters(prev => ({ ...prev, tags }));
+  }, []);
+
   const handleImportContacts = useCallback((newContacts: Contact[]) => {
     addContacts(newContacts);
   }, [addContacts]);
@@ -100,6 +195,10 @@ export default function CRMDashboard() {
     setFilters(reportFilters);
     setActiveTab("contacts");
   }, []);
+
+  const handlePrint = useCallback(() => {
+    openPrintView(filteredContacts, filters, "Contact Report");
+  }, [filteredContacts, filters]);
 
   if (error) {
     return (
@@ -128,6 +227,11 @@ export default function CRMDashboard() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <ShareReportButton filters={filters} />
+            <Button variant="outline" size="sm" onClick={handlePrint} className="gap-2">
+              <Printer className="h-4 w-4" />
+              Print
+            </Button>
             <ThemeToggle />
             <DeduplicationModal contacts={contacts} onMerge={handleMergeContacts} />
             <ImportContactsModal onImport={handleImportContacts} />
@@ -162,22 +266,36 @@ export default function CRMDashboard() {
             {/* Quick Stats */}
             <QuickStats contacts={contacts} />
 
-            {/* Event Filter Toggles */}
+            {/* Event Filter Toggles + Tag Filter */}
             <div className="bg-card/50 border border-border/30 rounded-xl p-4">
-              <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wider font-medium">
-                Filter by Event
-              </p>
-              <EventFilterToggles
-                filters={{
-                  dec6Workshop: filters.dec6Workshop,
-                  dec13LTF: filters.dec13LTF,
-                  sept27BuildDay: filters.sept27BuildDay,
-                  hasFeedback: filters.hasFeedback,
-                  hasProject: filters.hasProject,
-                }}
-                onFiltersChange={handleEventFiltersChange}
-                counts={eventCounts}
-              />
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wider font-medium">
+                    Filter by Event
+                  </p>
+                  <EventFilterToggles
+                    filters={{
+                      dec6Workshop: filters.dec6Workshop,
+                      dec13LTF: filters.dec13LTF,
+                      sept27BuildDay: filters.sept27BuildDay,
+                      hasFeedback: filters.hasFeedback,
+                      hasProject: filters.hasProject,
+                    }}
+                    onFiltersChange={handleEventFiltersChange}
+                    counts={eventCounts}
+                  />
+                </div>
+                <div className="border-l border-border pl-4">
+                  <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wider font-medium">
+                    Filter by Tags
+                  </p>
+                  <TagFilter
+                    selectedTags={filters.tags}
+                    allTags={allTags}
+                    onChange={handleTagsChange}
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Search Bar */}
