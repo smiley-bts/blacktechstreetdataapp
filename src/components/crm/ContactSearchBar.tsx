@@ -75,6 +75,7 @@ export function ContactSearchBar({
       ageRange: [],
       incomeRange: [],
       cohort: [],
+      tags: [],
       eventAttendeesOnly: false,
       buildDayOnly: false,
       dec6Workshop: false,

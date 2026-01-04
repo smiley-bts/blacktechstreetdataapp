@@ -41,11 +41,17 @@ import {
   UserX,
   CircleCheck,
   CircleX,
+  Tag,
+  Pencil,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useContactNotes } from "@/hooks/useContactNotes";
 import { useNameOverrides } from "@/hooks/useNameOverrides";
+import { useContactTags } from "@/hooks/useContactTags";
+import { useContactOverrides } from "@/hooks/useContactOverrides";
 import { NameQualityBadge } from "./NameQualityBadge";
+import { TagInput } from "./TagInput";
+import { ContactEditForm } from "./ContactEditForm";
 import { getCompletenessScore, getCompletenessColor, getFilledFields, getMissingFields } from "@/lib/contactCompleteness";
 
 interface ContactDetailModalProps {
@@ -141,19 +147,38 @@ function SectionTitle({ children, icon: Icon }: { children: React.ReactNode; ico
 export function ContactDetailModal({ contact, open, onOpenChange }: ContactDetailModalProps) {
   const { getNote, setNote } = useContactNotes();
   const { getOverride, setOverride, hasOverride, removeOverride } = useNameOverrides();
+  const { getTags, addTag, removeTag, getAllUniqueTags } = useContactTags();
+  const { 
+    getOverrides: getFieldOverrides, 
+    setMultipleOverrides, 
+    clearAllOverrides, 
+    hasOverrides: hasFieldOverrides,
+    mergeWithOverrides 
+  } = useContactOverrides();
+  
   const [noteValue, setNoteValue] = useState("");
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameOverrideValue, setNameOverrideValue] = useState("");
+  const [isEditingContact, setIsEditingContact] = useState(false);
+  const [activeTab, setActiveTab] = useState("overview");
   
   useEffect(() => {
     if (contact) {
       setNoteValue(getNote(contact.recordId));
       setNameOverrideValue(getOverride(contact.recordId) || "");
       setIsEditingName(false);
+      setIsEditingContact(false);
+      setActiveTab("overview");
     }
   }, [contact, getNote, getOverride]);
 
   if (!contact) return null;
+
+  // Merge contact with any field overrides
+  const displayContact = mergeWithOverrides(contact);
+  const contactTags = getTags(contact.recordId);
+  const allTags = getAllUniqueTags();
+  const fieldOverrides = getFieldOverrides(contact.recordId);
 
   const handleSaveNote = () => {
     setNote(contact.recordId, noteValue);
@@ -171,6 +196,17 @@ export function ContactDetailModal({ contact, open, onOpenChange }: ContactDetai
     setNameOverrideValue("");
     setIsEditingName(false);
     toast({ title: "Name reset", description: "Using original name display" });
+  };
+
+  const handleSaveFieldOverrides = (fields: Record<string, string>) => {
+    setMultipleOverrides(contact.recordId, fields);
+    setIsEditingContact(false);
+  };
+
+  const handleClearFieldOverrides = () => {
+    clearAllOverrides(contact.recordId);
+    setIsEditingContact(false);
+    toast({ title: "All edits cleared", description: "Contact restored to original data" });
   };
 
   const displayName = getOverride(contact.recordId) || getDisplayName(contact);
@@ -343,10 +379,14 @@ export function ContactDetailModal({ contact, open, onOpenChange }: ContactDetai
           </DialogHeader>
         </div>
 
-        <Tabs defaultValue="overview" className="px-6 pb-6">
-          <TabsList className="grid grid-cols-5 w-full bg-secondary/50 p-1 mb-4">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="px-6 pb-6">
+          <TabsList className="grid grid-cols-6 w-full bg-secondary/50 p-1 mb-4">
             <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               Overview
+            </TabsTrigger>
+            <TabsTrigger value="tags" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <Tag className="h-3 w-3 mr-1" />
+              Tags
             </TabsTrigger>
             <TabsTrigger value="feedback" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               Feedback
@@ -354,8 +394,9 @@ export function ContactDetailModal({ contact, open, onOpenChange }: ContactDetai
             <TabsTrigger value="buildday" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               Build Day
             </TabsTrigger>
-            <TabsTrigger value="demographics" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              Demographics
+            <TabsTrigger value="edit" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <Pencil className="h-3 w-3 mr-1" />
+              Edit
             </TabsTrigger>
             <TabsTrigger value="notes" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               Notes
@@ -433,6 +474,39 @@ export function ContactDetailModal({ contact, open, onOpenChange }: ContactDetai
                   <InfoRow icon={Sparkles} label="Post-Workshop Mindset" value={contact.postWorkshopMindset} />
                 </div>
               </div>
+            </TabsContent>
+
+            {/* TAGS TAB */}
+            <TabsContent value="tags" className="m-0 space-y-6 animate-fade-in">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-gold/5 via-transparent to-transparent border border-gold/20">
+                <div className="flex items-center gap-2 mb-3">
+                  <Tag className="h-5 w-5 text-gold" />
+                  <h4 className="font-semibold text-foreground">Contact Tags</h4>
+                </div>
+                <p className="text-xs text-muted-foreground mb-4">
+                  Add tags to organize and categorize this contact. Tags are saved locally.
+                </p>
+                <TagInput
+                  tags={contactTags}
+                  allTags={allTags}
+                  onAddTag={(tag) => addTag(contact.recordId, tag)}
+                  onRemoveTag={(tag) => removeTag(contact.recordId, tag)}
+                />
+              </div>
+              
+              {contactTags.length > 0 && (
+                <div className="p-4 rounded-xl bg-secondary/30 border border-border/50">
+                  <p className="text-xs text-muted-foreground mb-2">Applied Tags ({contactTags.length})</p>
+                  <div className="flex flex-wrap gap-2">
+                    {contactTags.map(tag => (
+                      <Badge key={tag} variant="outline" className="bg-primary/10 text-primary border-primary/30">
+                        <Tag className="h-3 w-3 mr-1" />
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
             </TabsContent>
 
             {/* FEEDBACK TAB */}
@@ -555,6 +629,17 @@ export function ContactDetailModal({ contact, open, onOpenChange }: ContactDetai
                   <InfoRow icon={MessageSquareQuote} label="Community Involvement" value={contact.communityInvolvement} />
                 </div>
               </div>
+            </TabsContent>
+
+            {/* EDIT TAB */}
+            <TabsContent value="edit" className="m-0 animate-fade-in">
+              <ContactEditForm
+                contact={contact}
+                overrides={fieldOverrides}
+                onSave={handleSaveFieldOverrides}
+                onClear={handleClearFieldOverrides}
+                onCancel={() => setActiveTab("overview")}
+              />
             </TabsContent>
 
             {/* NOTES TAB */}
