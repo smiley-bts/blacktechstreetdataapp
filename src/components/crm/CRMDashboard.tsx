@@ -8,7 +8,11 @@ import { EventFilterToggles, EventFilters } from "./EventFilterToggles";
 import { ExportModal } from "./ExportModal";
 import { ImportContactsModal } from "./ImportContactsModal";
 import { DeduplicationModal } from "./DeduplicationModal";
+import { ExecutiveSummary } from "./ExecutiveSummary";
+import { SavedReports } from "./SavedReports";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { LayoutDashboard, Users, FileText } from "lucide-react";
 import btsLogo from "@/assets/black-tech-street-logo.png";
 
 // CRM Dashboard v2 - Event Attendee Focus
@@ -36,6 +40,7 @@ export default function CRMDashboard() {
     const saved = localStorage.getItem("crm-saved-searches");
     return saved ? JSON.parse(saved) : [];
   });
+  const [activeTab, setActiveTab] = useState("overview");
 
   const filteredContacts = useFilteredContacts(contacts, filters);
 
@@ -91,6 +96,11 @@ export default function CRMDashboard() {
     mergeContacts(merged, removedIds);
   }, [mergeContacts]);
 
+  const handleLoadReport = useCallback((reportFilters: ContactFilter) => {
+    setFilters(reportFilters);
+    setActiveTab("contacts");
+  }, []);
+
   if (error) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -125,49 +135,84 @@ export default function CRMDashboard() {
           </div>
         </header>
 
-        {/* Quick Stats */}
-        <QuickStats contacts={contacts} />
+        {/* Main Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full max-w-md grid-cols-3 bg-secondary/50">
+            <TabsTrigger value="overview" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <LayoutDashboard className="h-4 w-4" />
+              Overview
+            </TabsTrigger>
+            <TabsTrigger value="contacts" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <Users className="h-4 w-4" />
+              Contacts
+            </TabsTrigger>
+            <TabsTrigger value="reports" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <FileText className="h-4 w-4" />
+              Reports
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Event Filter Toggles */}
-        <div className="bg-card/50 border border-border/30 rounded-xl p-4">
-          <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wider font-medium">
-            Filter by Event
-          </p>
-          <EventFilterToggles
-            filters={{
-              dec6Workshop: filters.dec6Workshop,
-              dec13LTF: filters.dec13LTF,
-              sept27BuildDay: filters.sept27BuildDay,
-              hasFeedback: filters.hasFeedback,
-              hasProject: filters.hasProject,
-            }}
-            onFiltersChange={handleEventFiltersChange}
-            counts={eventCounts}
-          />
-        </div>
+          {/* Overview Tab */}
+          <TabsContent value="overview" className="mt-6">
+            <ExecutiveSummary contacts={contacts} />
+          </TabsContent>
 
-        {/* Search Bar */}
-        <ContactSearchBar
-          filters={filters}
-          onFiltersChange={setFilters}
-          totalCount={contacts.length}
-          filteredCount={filteredContacts.length}
-          uniqueLifecycleStages={uniqueLifecycleStages}
-          uniqueAiLevels={uniqueAiLevels}
-          uniqueAgeRanges={uniqueAgeRanges}
-          uniqueIncomeRanges={uniqueIncomeRanges}
-          savedSearches={savedSearches}
-          onSaveSearch={handleSaveSearch}
-          onLoadSearch={handleLoadSearch}
-          onDeleteSearch={handleDeleteSearch}
-        />
+          {/* Contacts Tab */}
+          <TabsContent value="contacts" className="mt-6 space-y-6">
+            {/* Quick Stats */}
+            <QuickStats contacts={contacts} />
 
-        {/* Contact List */}
-        <ContactList
-          contacts={filteredContacts}
-          loading={loading}
-          filters={filters}
-        />
+            {/* Event Filter Toggles */}
+            <div className="bg-card/50 border border-border/30 rounded-xl p-4">
+              <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wider font-medium">
+                Filter by Event
+              </p>
+              <EventFilterToggles
+                filters={{
+                  dec6Workshop: filters.dec6Workshop,
+                  dec13LTF: filters.dec13LTF,
+                  sept27BuildDay: filters.sept27BuildDay,
+                  hasFeedback: filters.hasFeedback,
+                  hasProject: filters.hasProject,
+                }}
+                onFiltersChange={handleEventFiltersChange}
+                counts={eventCounts}
+              />
+            </div>
+
+            {/* Search Bar */}
+            <ContactSearchBar
+              filters={filters}
+              onFiltersChange={setFilters}
+              totalCount={contacts.length}
+              filteredCount={filteredContacts.length}
+              uniqueLifecycleStages={uniqueLifecycleStages}
+              uniqueAiLevels={uniqueAiLevels}
+              uniqueAgeRanges={uniqueAgeRanges}
+              uniqueIncomeRanges={uniqueIncomeRanges}
+              savedSearches={savedSearches}
+              onSaveSearch={handleSaveSearch}
+              onLoadSearch={handleLoadSearch}
+              onDeleteSearch={handleDeleteSearch}
+            />
+
+            {/* Contact List */}
+            <ContactList
+              contacts={filteredContacts}
+              loading={loading}
+              filters={filters}
+            />
+          </TabsContent>
+
+          {/* Reports Tab */}
+          <TabsContent value="reports" className="mt-6">
+            <SavedReports 
+              contacts={contacts} 
+              currentFilters={filters} 
+              onLoadReport={handleLoadReport}
+            />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
