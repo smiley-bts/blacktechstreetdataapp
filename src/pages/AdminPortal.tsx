@@ -9,14 +9,14 @@ const dashboards = [
   {
     title: "Contact CRM",
     description: "Full contact management with search, filters, and detailed profiles - 3,300+ contacts",
-    path: "/crm",
+    path: "/",
     icon: Contact,
     dataset: "contacts.csv",
   },
   {
     title: "Student Dashboard (LTF)",
     description: "Lead the Future workshop feedback - student experience and learning outcomes",
-    path: "/",
+    path: "/student-dashboard",
     icon: Users,
     dataset: "aspire-ltf-feedback.csv",
   },

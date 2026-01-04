@@ -9,7 +9,7 @@ import AdminPortal from "./pages/AdminPortal";
 import ASPIREFeedback from "./pages/ASPIREFeedback";
 import PreSurvey from "./pages/PreSurvey";
 import BuildDayProjects from "./pages/BuildDayProjects";
-import CRM from "./pages/CRM";
+import StudentDashboard from "./pages/StudentDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,7 +27,7 @@ const App = () => (
             <Route path="/aspire-feedback" element={<ASPIREFeedback />} />
             <Route path="/pre-survey" element={<PreSurvey />} />
             <Route path="/build-day" element={<BuildDayProjects />} />
-            <Route path="/crm" element={<CRM />} />
+            <Route path="/student-dashboard" element={<StudentDashboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
