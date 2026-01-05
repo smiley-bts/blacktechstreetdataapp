@@ -5,10 +5,12 @@ import {
   WorkshopFeedback,
   PreSurveyFeedback,
   BuildDayFeedback,
+  Sep2025WorkshopFeedback,
   parseLTFFeedback, 
   parseWorkshopFeedback,
   parsePreSurveyFeedback,
-  parseBuildDayFeedback
+  parseBuildDayFeedback,
+  parseSep2025WorkshopFeedback
 } from "@/types/feedback";
 
 export function useFeedback() {
@@ -16,6 +18,7 @@ export function useFeedback() {
   const [workshopFeedback, setWorkshopFeedback] = useState<WorkshopFeedback[]>([]);
   const [preSurveyFeedback, setPreSurveyFeedback] = useState<PreSurveyFeedback[]>([]);
   const [buildDayFeedback, setBuildDayFeedback] = useState<BuildDayFeedback[]>([]);
+  const [sep2025WorkshopFeedback, setSep2025WorkshopFeedback] = useState<Sep2025WorkshopFeedback[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,17 +26,19 @@ export function useFeedback() {
     const loadFeedback = async () => {
       try {
         // Load all feedback files in parallel
-        const [ltfResponse, workshopResponse, preResponse, buildDayResponse] = await Promise.all([
+        const [ltfResponse, workshopResponse, preResponse, buildDayResponse, sep2025WorkshopResponse] = await Promise.all([
           fetch("/aspire-ltf-feedback.csv"),
           fetch("/aspire-feedback-survey.csv"),
           fetch("/aspire-pre-survey.csv").catch(() => null),
-          fetch("/aspire-sep2025-build-feedback.csv").catch(() => null)
+          fetch("/aspire-sep2025-build-feedback.csv").catch(() => null),
+          fetch("/aspire-sep2025-workshop-feedback.csv").catch(() => null)
         ]);
 
         const ltfText = await ltfResponse.text();
         const workshopText = await workshopResponse.text();
         const preText = preResponse ? await preResponse.text() : "";
         const buildDayText = buildDayResponse ? await buildDayResponse.text() : "";
+        const sep2025WorkshopText = sep2025WorkshopResponse ? await sep2025WorkshopResponse.text() : "";
         
         // Parse LTF feedback
         Papa.parse(ltfText, {
@@ -79,6 +84,19 @@ export function useFeedback() {
                 .filter(row => row[0] && row[0].trim() !== "")
                 .map(parseBuildDayFeedback);
               setBuildDayFeedback(parsed);
+            },
+          });
+        }
+
+        // Parse Sep 2025 workshop feedback if available
+        if (sep2025WorkshopText) {
+          Papa.parse(sep2025WorkshopText, {
+            complete: (result) => {
+              const rows = result.data as string[][];
+              const parsed = rows.slice(1)
+                .filter(row => row[0] && row[0].trim() !== "")
+                .map(parseSep2025WorkshopFeedback);
+              setSep2025WorkshopFeedback(parsed);
             },
           });
         }
@@ -140,15 +158,27 @@ export function useFeedback() {
       : 0,
   };
 
+  const sep2025WorkshopSummary = {
+    totalResponses: sep2025WorkshopFeedback.length,
+    averageRecommendation: sep2025WorkshopFeedback.length > 0
+      ? sep2025WorkshopFeedback.reduce((sum, f) => sum + f.recommendLikelihood, 0) / sep2025WorkshopFeedback.length
+      : 0,
+    averageConfidence: sep2025WorkshopFeedback.length > 0
+      ? sep2025WorkshopFeedback.reduce((sum, f) => sum + f.confidenceUnderstanding, 0) / sep2025WorkshopFeedback.length
+      : 0,
+  };
+
   return {
     ltfFeedback,
     workshopFeedback,
     preSurveyFeedback,
     buildDayFeedback,
+    sep2025WorkshopFeedback,
     ltfSummary,
     workshopSummary,
     preSurveySummary,
     buildDaySummary,
+    sep2025WorkshopSummary,
     loading,
     error,
   };

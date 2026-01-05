@@ -93,6 +93,38 @@ export interface BuildDayFeedback {
   improvementSuggestion: string;
 }
 
+export interface Sep2025WorkshopFeedback {
+  submissionId: string;
+  respondentId: string;
+  submittedAt: string;
+  name: string;
+  email: string;
+  industry: string;
+  industryOther: string;
+  mindsetBefore: string;
+  mindsetAfter: string;
+  confidenceUnderstanding: number;
+  trustAgreement: number;
+  newConceptLearned: string;
+  aiDataTruth: string;
+  abilityToGuide: string;
+  biasResponsibility: string;
+  strongestSkill: string;
+  strongestSkillOther: string;
+  realWayToUseAI: string;
+  preparedForResponsibleUse: string;
+  ahaMoment: string;
+  coverMoreDifferently: string;
+  wasWelcoming: string;
+  recommendLikelihood: number;
+  referralInfo: string;
+  emailAddress: string;
+  wouldVolunteer: boolean;
+  volunteerYes: boolean;
+  volunteerNo: boolean;
+  shapeFutureWorkshop: string;
+}
+
 export function parseBuildDayFeedback(row: string[]): BuildDayFeedback {
   return {
     submissionId: row[0] || "",
@@ -121,6 +153,40 @@ export function parseBuildDayFeedback(row: string[]): BuildDayFeedback {
     recommendLikelihood: parseInt(row[23]?.match(/\d/)?.[0] || "0"),
     referralInfo: row[24] || "",
     improvementSuggestion: row[26] || "",
+  };
+}
+
+export function parseSep2025WorkshopFeedback(row: string[]): Sep2025WorkshopFeedback {
+  return {
+    submissionId: row[0] || "",
+    respondentId: row[1] || "",
+    submittedAt: row[2] || "",
+    name: row[3] || "",
+    email: row[4] || "",
+    industry: row[5] || "",
+    industryOther: row[6] || "",
+    mindsetBefore: row[7] || "",
+    mindsetAfter: row[8] || "",
+    confidenceUnderstanding: parseInt(row[9]?.match(/\d/)?.[0] || "0"),
+    trustAgreement: parseInt(row[10]?.match(/\d/)?.[0] || "0"),
+    newConceptLearned: row[11] || "",
+    aiDataTruth: row[12] || "",
+    abilityToGuide: row[13] || "",
+    biasResponsibility: row[14] || "",
+    strongestSkill: row[15] || "",
+    strongestSkillOther: row[16] || "",
+    realWayToUseAI: row[17] || "",
+    preparedForResponsibleUse: row[18] || "",
+    ahaMoment: row[19] || "",
+    coverMoreDifferently: row[20] || "",
+    wasWelcoming: row[21] || "",
+    recommendLikelihood: parseInt(row[22]?.match(/\d/)?.[0] || "0"),
+    referralInfo: row[23] || "",
+    emailAddress: row[24] || "",
+    wouldVolunteer: row[25] === "Yes",
+    volunteerYes: row[26] === "true",
+    volunteerNo: row[27] === "true",
+    shapeFutureWorkshop: row[28] || "",
   };
 }
 
