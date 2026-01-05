@@ -396,9 +396,12 @@ function ProjectDetailModal({
   const teamRepContact = findContactByEmail(project.teamRepEmail);
 
   return (
-    <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <Card className="w-full max-w-2xl max-h-[90vh] overflow-hidden">
-        <CardHeader className="border-b">
+    <div 
+      className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <Card className="w-full max-w-2xl max-h-[90vh] flex flex-col">
+        <CardHeader className="border-b flex-shrink-0">
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-1">
               <CardTitle className="text-xl">{project.projectName}</CardTitle>
@@ -409,7 +412,7 @@ function ProjectDetailModal({
             </Button>
           </div>
         </CardHeader>
-        <ScrollArea className="max-h-[70vh]">
+        <div className="flex-1 overflow-y-auto">
           <CardContent className="pt-6 space-y-6">
             {/* Description */}
             <div>
@@ -572,7 +575,7 @@ function ProjectDetailModal({
               <p>Contact: {project.teamRepEmail}</p>
             </div>
           </CardContent>
-        </ScrollArea>
+        </div>
       </Card>
     </div>
   );
