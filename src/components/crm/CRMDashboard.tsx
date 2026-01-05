@@ -228,9 +228,9 @@ export default function CRMDashboard() {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto py-6 px-4 space-y-6">
         {/* Header */}
-        <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-fade-in">
           <div className="flex items-center gap-3">
-            <img src={btsLogo} alt="Black Tech Street" className="h-10 w-auto" />
+            <img src={btsLogo} alt="Black Tech Street" className="h-10 w-auto hover-scale" />
             <div>
               <h1 className="text-2xl font-display font-bold text-foreground">
                 Contact CRM
@@ -254,7 +254,7 @@ export default function CRMDashboard() {
         </header>
 
         {/* Main Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full animate-fade-in" style={{ animationDelay: '0.1s' }}>
           <TabsList className="grid w-full max-w-2xl grid-cols-5 bg-secondary/50">
             <TabsTrigger value="overview" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <LayoutDashboard className="h-4 w-4" />
