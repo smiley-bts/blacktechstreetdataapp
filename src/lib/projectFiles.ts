@@ -62,6 +62,28 @@ const projectFileMap: Record<string, LocalProjectFile[]> = {
   ],
   "tulsatogether": [
     // No local file uploaded yet
+  ],
+  // === 6/27-28 ASPIRE Event Projects ===
+  "vibecheck nd": [
+    { path: "/project-files/VibeCheck_ND.png", type: "image", label: "VibeCheck ND Promo" }
+  ],
+  "greenwood strong": [
+    { path: "/project-files/Greenwood_Strong.pdf", type: "pdf", label: "Greenwood Strong Pitch Deck" }
+  ],
+  "tulsacares4you": [
+    { path: "/project-files/TulsaCares4You.png", type: "image", label: "TulsaCares4You Flyer" }
+  ],
+  "gv sport creatives": [
+    { path: "/project-files/GV_Sport_Creatives.jpg", type: "image", label: "GV Sport Creatives Team Photo" }
+  ],
+  "gws resource genie": [
+    { path: "/project-files/GWS_Resource_Genie.pdf", type: "pdf", label: "Greenwood Guide Pitch Deck" }
+  ],
+  "p.r.i.d.e.": [
+    { path: "/project-files/PRIDE_Hub.png", type: "image", label: "P.R.I.D.E. Hub Flyer" }
+  ],
+  "here 2 help": [
+    { path: "/project-files/Here2Help_Tulsa.jpg", type: "image", label: "Here2Help Tulsa Screenshot" }
   ]
 };
 
