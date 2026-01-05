@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 import { Project } from "@/types/project";
 import { Contact } from "@/types/contact";
-import { getLocalFilesForProject, LocalProjectFile, isImageFile } from "@/lib/projectFiles";
+import { getLocalFilesForProject, LocalProjectFile, isImageFile, getProjectFileUrl } from "@/lib/projectFiles";
 
 interface ProjectsDashboardProps {
   contacts: Contact[];
@@ -252,6 +252,10 @@ function ProjectCard({ project, onSelect }: { project: Project; onSelect: () => 
 
 function LocalFilePreview({ file }: { file: LocalProjectFile }) {
   const [showPreview, setShowPreview] = useState(false);
+  
+  // Get the actual URL (handles both local and cloud storage)
+  const fileUrl = getProjectFileUrl(file);
+  
   const isImage = isImageFile(file.path);
   const isPdf = file.type === 'pdf';
   const isPptx = file.type === 'pptx';
@@ -260,7 +264,8 @@ function LocalFilePreview({ file }: { file: LocalProjectFile }) {
   
   // Get full URL for Google Docs viewer (works better with dev environments)
   const getGoogleViewerUrl = () => {
-    const fullUrl = `${window.location.origin}${file.path}`;
+    // For cloud storage, use the direct URL; for local, construct full URL
+    const fullUrl = file.isCloudStorage ? fileUrl : `${window.location.origin}${file.path}`;
     return `https://docs.google.com/gview?url=${encodeURIComponent(fullUrl)}&embedded=true`;
   };
 
@@ -284,10 +289,10 @@ function LocalFilePreview({ file }: { file: LocalProjectFile }) {
     }
   };
 
-  // For download, we need the full path
+  // For download, use the resolved file URL
   const downloadFile = () => {
     const link = document.createElement('a');
-    link.href = file.path;
+    link.href = fileUrl;
     link.download = file.path.split('/').pop() || 'file';
     document.body.appendChild(link);
     link.click();
@@ -329,7 +334,7 @@ function LocalFilePreview({ file }: { file: LocalProjectFile }) {
       {isImage && showPreview && (
         <div className="rounded-lg overflow-hidden border bg-background">
           <img 
-            src={file.path} 
+            src={fileUrl} 
             alt={file.label}
             className="w-full h-auto max-h-[400px] object-contain"
           />
@@ -340,7 +345,7 @@ function LocalFilePreview({ file }: { file: LocalProjectFile }) {
       {isPdf && showPreview && (
         <div className="rounded-lg overflow-hidden border bg-background">
           <iframe
-            src={file.path}
+            src={fileUrl}
             title={file.label}
             className="w-full h-[500px] border-0"
           />
@@ -359,7 +364,7 @@ function LocalFilePreview({ file }: { file: LocalProjectFile }) {
             />
           </div>
           <p className="text-xs text-muted-foreground text-center">
-            If preview doesn't load, <a href={file.path} download className="text-primary hover:underline">download the file</a> to view locally.
+            If preview doesn't load, <a href={fileUrl} download className="text-primary hover:underline">download the file</a> to view locally.
           </p>
         </div>
       )}

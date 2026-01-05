@@ -1,10 +1,25 @@
-// Mapping of project names to local file paths
-// These files are hosted in public/project-files/
+// Mapping of project names to file paths
+// Files can be hosted locally in public/project-files/ or in Cloud Storage
+
+import { getCloudStorageUrl } from './cloudStorage';
 
 export interface LocalProjectFile {
   path: string;
   type: 'pdf' | 'pptx' | 'docx' | 'image';
   label: string;
+  // If true, file is in Cloud Storage; if false/undefined, file is in public folder
+  isCloudStorage?: boolean;
+}
+
+/**
+ * Get the actual URL for a project file (handles both local and cloud storage)
+ */
+export function getProjectFileUrl(file: LocalProjectFile): string {
+  if (file.isCloudStorage) {
+    return getCloudStorageUrl(file.path);
+  }
+  // Local file in public folder
+  return file.path;
 }
 
 // Map project names (normalized) to their local files
