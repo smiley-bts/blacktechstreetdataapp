@@ -15,10 +15,12 @@ import {
   GraduationCap,
   ClipboardList,
   Folder,
-  Hammer
+  Hammer,
+  GitBranch
 } from "lucide-react";
 import { LTFFeedback, WorkshopFeedback, PreSurveyFeedback, BuildDayFeedback, Sep2025WorkshopFeedback, Sep2025PreSurveyFeedback } from "@/types/feedback";
 import { Contact } from "@/types/contact";
+import { ParticipantJourneyView } from "./ParticipantJourneyView";
 
 interface FeedbackDashboardProps {
   contacts: Contact[];
@@ -92,7 +94,7 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
   } = useFeedback();
   
   const [selectedEvent, setSelectedEvent] = useState("sep-2025");
-  const [view, setView] = useState<"summary" | "responses">("summary");
+  const [view, setView] = useState<"summary" | "responses" | "journeys">("summary");
 
   // Get the current event config
   const currentEvent = EVENTS.find(e => e.id === selectedEvent) || EVENTS[0];
@@ -170,28 +172,39 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
             ))}
           </TabsList>
 
-          <div className="flex gap-2">
+          <div className="flex gap-1.5 sm:gap-2 flex-wrap">
             <button
               onClick={() => setView("summary")}
-              className={`flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
+              className={`flex-1 sm:flex-none px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
                 view === "summary" 
                   ? "bg-primary text-primary-foreground shadow-md" 
                   : "bg-secondary/50 text-muted-foreground hover:bg-secondary"
               }`}
             >
-              <span className="hidden sm:inline">Summary Dashboard</span>
-              <span className="sm:hidden">Summary</span>
+              <span className="hidden sm:inline">Summary</span>
+              <span className="sm:hidden">📊</span>
+            </button>
+            <button
+              onClick={() => setView("journeys")}
+              className={`flex-1 sm:flex-none px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 flex items-center justify-center gap-1 ${
+                view === "journeys" 
+                  ? "bg-primary text-primary-foreground shadow-md" 
+                  : "bg-secondary/50 text-muted-foreground hover:bg-secondary"
+              }`}
+            >
+              <GitBranch className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">Journeys</span>
             </button>
             <button
               onClick={() => setView("responses")}
-              className={`flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
+              className={`flex-1 sm:flex-none px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
                 view === "responses" 
                   ? "bg-primary text-primary-foreground shadow-md" 
                   : "bg-secondary/50 text-muted-foreground hover:bg-secondary"
               }`}
             >
-              <span className="hidden sm:inline">Individual Responses</span>
-              <span className="sm:hidden">Responses</span>
+              <span className="hidden sm:inline">Responses</span>
+              <span className="sm:hidden">📋</span>
             </button>
           </div>
         </div>
@@ -244,7 +257,7 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
               </div>
             </div>
 
-            {view === "summary" ? (
+            {view === "summary" && (
               <FeedbackSummaryView 
                 ltfSummary={ltfSummary}
                 workshopSummary={workshopSummary}
@@ -257,7 +270,19 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
                 sep2025PreSurveyFeedback={eventFeedback.sep2025pre}
                 eventId={event.id}
               />
-            ) : (
+            )}
+            
+            {view === "journeys" && (
+              <ParticipantJourneyView
+                preSurveyData={eventFeedback.sep2025pre.length > 0 ? eventFeedback.sep2025pre : []}
+                workshopData={eventFeedback.sep2025workshop.length > 0 ? eventFeedback.sep2025workshop : []}
+                buildDayData={eventFeedback.buildday}
+                findContactByEmail={findContactByEmail}
+                onContactClick={onContactClick}
+              />
+            )}
+            
+            {view === "responses" && (
               <FeedbackResponsesView
                 ltfFeedback={eventFeedback.ltf}
                 workshopFeedback={eventFeedback.workshop}
