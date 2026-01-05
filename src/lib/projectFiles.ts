@@ -84,6 +84,24 @@ const projectFileMap: Record<string, LocalProjectFile[]> = {
   ],
   "here 2 help": [
     { path: "/project-files/Here2Help_Tulsa.jpg", type: "image", label: "Here2Help Tulsa Screenshot" }
+  ],
+  "focus fuel": [
+    { path: "/project-files/Focus_Fuel.jpg", type: "image", label: "Focus Fuel App Screenshot" }
+  ],
+  "family daily planner": [
+    { path: "/project-files/Family_Daily_Planner.pdf", type: "pdf", label: "Family Daily Planner Pitch Deck" }
+  ],
+  "creative pathways": [
+    { path: "/project-files/Creative_Pathways.png", type: "image", label: "Creative Pathways Careers Infographic" }
+  ],
+  "the shek space": [
+    { path: "/project-files/The_SHEK_Space.pdf", type: "pdf", label: "The SHĒK Space Pitch Deck" }
+  ],
+  "tipsync": [
+    { path: "/project-files/TIPSYNC.pdf", type: "pdf", label: "TIPSYNC Pitch Deck" }
+  ],
+  "truevoice": [
+    { path: "/project-files/TrueVoice_Pitch_Deck.pdf", type: "pdf", label: "TrueVoice Pitch Deck" }
   ]
 };
 
