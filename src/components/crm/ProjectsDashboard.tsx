@@ -86,10 +86,10 @@ export function ProjectsDashboard({ contacts, onContactClick }: ProjectsDashboar
     <div className="space-y-6">
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+        <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 hover:shadow-lg hover:-translate-y-1 card-shine">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary/20 rounded-lg">
+              <div className="p-2 bg-primary/20 rounded-lg transition-transform duration-300 group-hover:scale-110">
                 <Folder className="h-5 w-5 text-primary" />
               </div>
               <div>
@@ -100,7 +100,7 @@ export function ProjectsDashboard({ contacts, onContactClick }: ProjectsDashboar
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border-blue-500/20">
+        <Card className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border-blue-500/20 hover:shadow-lg hover:-translate-y-1 card-shine">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-blue-500/20 rounded-lg">
@@ -114,7 +114,7 @@ export function ProjectsDashboard({ contacts, onContactClick }: ProjectsDashboar
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 border-emerald-500/20">
+        <Card className="bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 border-emerald-500/20 hover:shadow-lg hover:-translate-y-1 card-shine">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-emerald-500/20 rounded-lg">
@@ -128,7 +128,7 @@ export function ProjectsDashboard({ contacts, onContactClick }: ProjectsDashboar
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-amber-500/10 to-amber-500/5 border-amber-500/20">
+        <Card className="bg-gradient-to-br from-amber-500/10 to-amber-500/5 border-amber-500/20 hover:shadow-lg hover:-translate-y-1 card-shine">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-amber-500/20 rounded-lg">
@@ -173,12 +173,17 @@ export function ProjectsDashboard({ contacts, onContactClick }: ProjectsDashboar
 
       {/* Projects Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredProjects.map((project) => (
-          <ProjectCard 
-            key={project.id} 
-            project={project}
-            onSelect={() => setSelectedProject(project)}
-          />
+        {filteredProjects.map((project, index) => (
+          <div 
+            key={project.id}
+            className="animate-fade-in"
+            style={{ animationDelay: `${Math.min(index * 0.03, 0.3)}s` }}
+          >
+            <ProjectCard 
+              project={project}
+              onSelect={() => setSelectedProject(project)}
+            />
+          </div>
         ))}
       </div>
 
@@ -205,7 +210,7 @@ export function ProjectsDashboard({ contacts, onContactClick }: ProjectsDashboar
 function ProjectCard({ project, onSelect }: { project: Project; onSelect: () => void }) {
   return (
     <Card 
-      className="hover:shadow-lg transition-all cursor-pointer group border-border/50 hover:border-primary/30"
+      className="hover:shadow-lg hover:-translate-y-1 cursor-pointer group border-border/50 hover:border-primary/30 card-shine"
       onClick={onSelect}
     >
       <CardHeader className="pb-2">

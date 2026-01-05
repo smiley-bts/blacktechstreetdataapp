@@ -107,17 +107,18 @@ export function QuickStats({ contacts }: QuickStatsProps) {
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-      {statCards.map((stat) => (
+      {statCards.map((stat, index) => (
         <div
           key={stat.label}
           className={cn(
             "relative overflow-hidden rounded-xl p-3",
             "bg-gradient-to-br from-card/80 to-card/40",
             "border border-border/30",
-            "hover:border-primary/30 transition-all duration-300",
-            "group cursor-default",
+            "hover:border-primary/30 hover:-translate-y-1 transition-all duration-300",
+            "group cursor-default animate-fade-in",
             `hover:shadow-lg ${stat.glow}`
           )}
+          style={{ animationDelay: `${index * 0.05}s` }}
         >
           {/* Gradient overlay */}
           <div className={cn(
@@ -128,7 +129,7 @@ export function QuickStats({ contacts }: QuickStatsProps) {
           <div className="relative z-10">
             <stat.icon className={cn(
               "h-4 w-4 mb-2",
-              "text-muted-foreground group-hover:text-primary transition-colors"
+              "text-muted-foreground group-hover:text-primary group-hover:scale-110 transition-all duration-200"
             )} />
             <p className="text-xl font-bold tracking-tight text-foreground">
               {stat.value}
