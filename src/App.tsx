@@ -7,6 +7,8 @@ import { ThemeProvider } from "next-themes";
 import { PageTransition } from "@/components/PageTransition";
 import Index from "./pages/Index";
 import AdminPortal from "./pages/AdminPortal";
+import Auth from "./pages/Auth";
+import AdminDashboard from "./pages/AdminDashboard";
 import ASPIREFeedback from "./pages/ASPIREFeedback";
 import PreSurvey from "./pages/PreSurvey";
 import BuildDayProjects from "./pages/BuildDayProjects";
@@ -23,6 +25,8 @@ function AnimatedRoutes() {
       <Routes location={location}>
         <Route path="/" element={<Index />} />
         <Route path="/admin" element={<AdminPortal />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/aspire-feedback" element={<ASPIREFeedback />} />
         <Route path="/pre-survey" element={<PreSurvey />} />
         <Route path="/build-day" element={<BuildDayProjects />} />
