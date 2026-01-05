@@ -10,20 +10,43 @@ export function useProjects() {
   useEffect(() => {
     const loadProjects = async () => {
       try {
-        const response = await fetch("/aspire-build-day-projects.csv");
-        const text = await response.text();
+        // Load both CSV files
+        const [response1, response2] = await Promise.all([
+          fetch("/aspire-build-day-projects.csv"),
+          fetch("/aspire-june-2025-projects.csv")
+        ]);
         
-        Papa.parse(text, {
+        const [text1, text2] = await Promise.all([
+          response1.text(),
+          response2.text()
+        ]);
+        
+        const allProjects: Project[] = [];
+        
+        // Parse first CSV
+        Papa.parse(text1, {
           complete: (result) => {
             const rows = result.data as string[][];
-            // Skip header row
             const parsed = rows.slice(1)
               .filter(row => row[0] && row[0].trim() !== "")
               .map(parseProject);
-            setProjects(parsed);
-            setLoading(false);
+            allProjects.push(...parsed);
           },
         });
+        
+        // Parse second CSV
+        Papa.parse(text2, {
+          complete: (result) => {
+            const rows = result.data as string[][];
+            const parsed = rows.slice(1)
+              .filter(row => row[0] && row[0].trim() !== "")
+              .map(parseProject);
+            allProjects.push(...parsed);
+          },
+        });
+        
+        setProjects(allProjects);
+        setLoading(false);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load projects");
         setLoading(false);
