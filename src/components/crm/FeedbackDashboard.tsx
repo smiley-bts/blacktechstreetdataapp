@@ -13,9 +13,11 @@ import {
   Quote,
   Calendar,
   GraduationCap,
-  ClipboardList
+  ClipboardList,
+  Folder,
+  Hammer
 } from "lucide-react";
-import { LTFFeedback, WorkshopFeedback, PreSurveyFeedback } from "@/types/feedback";
+import { LTFFeedback, WorkshopFeedback, PreSurveyFeedback, BuildDayFeedback } from "@/types/feedback";
 import { Contact } from "@/types/contact";
 
 interface FeedbackDashboardProps {
@@ -32,11 +34,20 @@ interface EventConfig {
   surveys: {
     id: string;
     name: string;
-    type: "pre" | "post" | "ltf" | "workshop";
+    type: "pre" | "post" | "ltf" | "workshop" | "buildday";
   }[];
 }
 
 const EVENTS: EventConfig[] = [
+  {
+    id: "sep-2025",
+    name: "September 2025 ASPIRE Build Day",
+    shortName: "Sep 2025",
+    dates: "Sep 27-28, 2025",
+    surveys: [
+      { id: "buildday", name: "Build Day Feedback", type: "buildday" },
+    ]
+  },
   {
     id: "dec-2025",
     name: "December 2025 ASPIRE",
@@ -55,7 +66,7 @@ const EVENTS: EventConfig[] = [
     dates: "Jun 27-28, 2025",
     surveys: [
       { id: "pre", name: "Pre-Survey", type: "pre" },
-      { id: "post", name: "Post-Survey", type: "workshop" },
+      { id: "buildday", name: "Build Day Feedback", type: "buildday" },
     ]
   }
 ];
@@ -65,14 +76,16 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
     ltfFeedback, 
     workshopFeedback, 
     preSurveyFeedback,
+    buildDayFeedback,
     ltfSummary, 
     workshopSummary,
     preSurveySummary,
+    buildDaySummary,
     loading, 
     error 
   } = useFeedback();
   
-  const [selectedEvent, setSelectedEvent] = useState("dec-2025");
+  const [selectedEvent, setSelectedEvent] = useState("sep-2025");
   const [view, setView] = useState<"summary" | "responses">("summary");
 
   // Get the current event config
@@ -80,21 +93,30 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
 
   // Filter feedback by event date
   const eventFeedback = useMemo(() => {
-    if (selectedEvent === "dec-2025") {
+    if (selectedEvent === "sep-2025") {
+      return {
+        ltf: [],
+        workshop: [],
+        pre: [],
+        buildday: buildDayFeedback.filter(f => f.submittedAt.startsWith("2025-09")),
+      };
+    } else if (selectedEvent === "dec-2025") {
       return {
         ltf: ltfFeedback.filter(f => f.submittedAt.startsWith("2025-12")),
         workshop: workshopFeedback.filter(f => f.submittedAt.startsWith("2025-12")),
         pre: preSurveyFeedback.filter(f => f.submittedAt.startsWith("2025-12") || f.submittedAt.startsWith("2025-11")),
+        buildday: [],
       };
     } else if (selectedEvent === "jun-2025") {
       return {
-        ltf: ltfFeedback.filter(f => f.submittedAt.startsWith("2025-06")),
-        workshop: workshopFeedback.filter(f => f.submittedAt.startsWith("2025-06")),
+        ltf: [],
+        workshop: [],
         pre: preSurveyFeedback.filter(f => f.submittedAt.startsWith("2025-06")),
+        buildday: buildDayFeedback.filter(f => f.submittedAt.startsWith("2025-06")),
       };
     }
-    return { ltf: [], workshop: [], pre: [] };
-  }, [selectedEvent, ltfFeedback, workshopFeedback, preSurveyFeedback]);
+    return { ltf: [], workshop: [], pre: [], buildday: [] };
+  }, [selectedEvent, ltfFeedback, workshopFeedback, preSurveyFeedback, buildDayFeedback]);
 
   if (loading) {
     return (
@@ -116,7 +138,7 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
     return contacts.find(c => c.email?.toLowerCase() === email?.toLowerCase());
   };
 
-  const totalResponses = eventFeedback.ltf.length + eventFeedback.workshop.length + eventFeedback.pre.length;
+  const totalResponses = eventFeedback.ltf.length + eventFeedback.workshop.length + eventFeedback.pre.length + eventFeedback.buildday.length;
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -187,6 +209,12 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
                     LTF: {eventFeedback.ltf.length}
                   </Badge>
                 )}
+                {eventFeedback.buildday.length > 0 && (
+                  <Badge variant="outline" className="gap-1">
+                    <Folder className="h-3 w-3" />
+                    Build Day: {eventFeedback.buildday.length}
+                  </Badge>
+                )}
               </div>
             </div>
 
@@ -198,6 +226,7 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
                 ltfFeedback={eventFeedback.ltf}
                 workshopFeedback={eventFeedback.workshop}
                 preSurveyFeedback={eventFeedback.pre}
+                buildDayFeedback={eventFeedback.buildday}
                 eventId={event.id}
               />
             ) : (
@@ -205,6 +234,7 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
                 ltfFeedback={eventFeedback.ltf}
                 workshopFeedback={eventFeedback.workshop}
                 preSurveyFeedback={eventFeedback.pre}
+                buildDayFeedback={eventFeedback.buildday}
                 surveys={event.surveys}
                 findContactByEmail={findContactByEmail}
                 onContactClick={onContactClick}
@@ -238,6 +268,7 @@ interface FeedbackSummaryViewProps {
   ltfFeedback: LTFFeedback[];
   workshopFeedback: WorkshopFeedback[];
   preSurveyFeedback: PreSurveyFeedback[];
+  buildDayFeedback: BuildDayFeedback[];
   eventId: string;
 }
 
@@ -248,12 +279,18 @@ function FeedbackSummaryView({
   ltfFeedback, 
   workshopFeedback,
   preSurveyFeedback,
+  buildDayFeedback,
   eventId 
 }: FeedbackSummaryViewProps) {
-  // Extract notable quotes (from workshop feedback highlights)
-  const notableQuotes = workshopFeedback
-    .filter(f => f.highlightTakeaway && f.highlightTakeaway.length > 20 && f.sharePermission)
-    .slice(0, 5);
+  // Extract notable quotes (from workshop or build day feedback)
+  const notableQuotes = [
+    ...workshopFeedback
+      .filter(f => f.highlightTakeaway && f.highlightTakeaway.length > 20 && f.sharePermission)
+      .map(f => ({ text: f.highlightTakeaway, name: `${f.firstName} ${f.lastName}` })),
+    ...buildDayFeedback
+      .filter(f => f.quote && f.quote.length > 10 && f.shareQuotePermission)
+      .map(f => ({ text: f.quote, name: f.name }))
+  ].slice(0, 5);
 
   // Calculate grade distribution for LTF
   const gradeDistribution = ltfFeedback.reduce((acc, f) => {
@@ -269,7 +306,15 @@ function FeedbackSummaryView({
     anchors: workshopFeedback.filter(f => f.mindsetAfter?.includes("Anchor")).length,
   };
 
-  const totalResponses = ltfFeedback.length + workshopFeedback.length + preSurveyFeedback.length;
+  // Calculate build day stats
+  const buildDayStats = {
+    wouldFollowUp: buildDayFeedback.filter(f => f.wouldAttendFollowup).length,
+    avgConfidence: buildDayFeedback.length > 0
+      ? buildDayFeedback.reduce((sum, f) => sum + f.confidenceSolving, 0) / buildDayFeedback.length
+      : 0,
+  };
+
+  const totalResponses = ltfFeedback.length + workshopFeedback.length + preSurveyFeedback.length + buildDayFeedback.length;
 
   return (
     <div className="space-y-6">
@@ -463,15 +508,15 @@ function FeedbackSummaryView({
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-2 gap-4">
-              {notableQuotes.map((feedback, i) => (
+              {notableQuotes.map((quote, i) => (
                 <div 
                   key={i} 
                   className="p-4 bg-secondary/30 rounded-lg border border-border/50 animate-fade-in"
                   style={{ animationDelay: `${i * 0.1}s` }}
                 >
-                  <p className="text-sm italic text-foreground/80">"{feedback.highlightTakeaway}"</p>
+                  <p className="text-sm italic text-foreground/80">"{quote.text}"</p>
                   <p className="text-xs text-muted-foreground mt-2">
-                    — {feedback.firstName} {feedback.lastName}
+                    — {quote.name}
                   </p>
                 </div>
               ))}
@@ -487,6 +532,7 @@ interface FeedbackResponsesViewProps {
   ltfFeedback: LTFFeedback[];
   workshopFeedback: WorkshopFeedback[];
   preSurveyFeedback: PreSurveyFeedback[];
+  buildDayFeedback: BuildDayFeedback[];
   surveys: EventConfig["surveys"];
   findContactByEmail: (email: string) => Contact | undefined;
   onContactClick?: (email: string) => void;
@@ -496,6 +542,7 @@ function FeedbackResponsesView({
   ltfFeedback, 
   workshopFeedback,
   preSurveyFeedback,
+  buildDayFeedback,
   surveys,
   findContactByEmail,
   onContactClick
@@ -507,6 +554,7 @@ function FeedbackResponsesView({
     if (s.type === "ltf") return ltfFeedback.length > 0;
     if (s.type === "workshop" || s.type === "post") return workshopFeedback.length > 0;
     if (s.type === "pre") return preSurveyFeedback.length > 0;
+    if (s.type === "buildday") return buildDayFeedback.length > 0;
     return false;
   });
 
@@ -520,6 +568,7 @@ function FeedbackResponsesView({
               <Badge variant="secondary" className="ml-2 text-xs">
                 {survey.type === "ltf" ? ltfFeedback.length : 
                  survey.type === "pre" ? preSurveyFeedback.length :
+                 survey.type === "buildday" ? buildDayFeedback.length :
                  workshopFeedback.length}
               </Badge>
             </TabsTrigger>
@@ -548,6 +597,14 @@ function FeedbackResponsesView({
                 ))}
                 {survey.type === "pre" && preSurveyFeedback.map((feedback) => (
                   <PreSurveyResponseCard 
+                    key={feedback.submissionId} 
+                    feedback={feedback}
+                    contact={findContactByEmail(feedback.email)}
+                    onContactClick={onContactClick}
+                  />
+                ))}
+                {survey.type === "buildday" && buildDayFeedback.map((feedback) => (
+                  <BuildDayResponseCard 
                     key={feedback.submissionId} 
                     feedback={feedback}
                     contact={findContactByEmail(feedback.email)}
@@ -753,6 +810,84 @@ function PreSurveyResponseCard({
                 {feedback.aiApplicationPlans.length > 3 && (
                   <Badge variant="outline" className="text-xs">
                     +{feedback.aiApplicationPlans.length - 3} more
+                  </Badge>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className="text-right text-xs text-muted-foreground">
+            {new Date(feedback.submittedAt).toLocaleDateString()}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function BuildDayResponseCard({ 
+  feedback, 
+  contact,
+  onContactClick 
+}: { 
+  feedback: BuildDayFeedback; 
+  contact?: Contact;
+  onContactClick?: (email: string) => void;
+}) {
+  return (
+    <Card className="hover:shadow-md transition-all duration-200">
+      <CardContent className="pt-4">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1 space-y-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-medium">{feedback.name}</span>
+              <Badge 
+                variant={feedback.confidenceSolving >= 4 ? "default" : "secondary"}
+                className="gap-1"
+              >
+                <TrendingUp className="h-3 w-3" />
+                Confidence: {feedback.confidenceSolving}/5
+              </Badge>
+              {feedback.wouldAttendFollowup && (
+                <Badge className="bg-emerald-500 text-white">
+                  Wants Follow-up
+                </Badge>
+              )}
+              {contact && (
+                <button
+                  onClick={() => onContactClick?.(feedback.email)}
+                  className="text-xs text-primary hover:underline flex items-center gap-1"
+                >
+                  View Contact <ChevronRight className="h-3 w-3" />
+                </button>
+              )}
+            </div>
+
+            {feedback.teamBuildDescription && (
+              <p className="text-sm">
+                <span className="text-muted-foreground">Built: </span>
+                {feedback.teamBuildDescription.slice(0, 150)}
+                {feedback.teamBuildDescription.length > 150 && "..."}
+              </p>
+            )}
+
+            {feedback.favoritePart && (
+              <p className="text-sm italic text-foreground/80">
+                <span className="text-muted-foreground not-italic">Favorite: </span>
+                {feedback.favoritePart}
+              </p>
+            )}
+
+            {feedback.roles.length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                {feedback.roles.slice(0, 3).map((role, i) => (
+                  <Badge key={i} variant="outline" className="text-xs">
+                    {role}
+                  </Badge>
+                ))}
+                {feedback.roles.length > 3 && (
+                  <Badge variant="outline" className="text-xs">
+                    +{feedback.roles.length - 3} more
                   </Badge>
                 )}
               </div>

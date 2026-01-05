@@ -64,6 +64,66 @@ export interface WorkshopFeedback {
   wouldVolunteer: boolean;
 }
 
+export interface BuildDayFeedback {
+  submissionId: string;
+  respondentId: string;
+  submittedAt: string;
+  name: string;
+  email: string;
+  teamBuildDescription: string;
+  additionalFiles: string;
+  communityHarmAvoidance: string;
+  toolsUsed: string[];
+  toolsOther: string;
+  understandsTools: number;
+  howAiWorks: string;
+  confidenceSolving: number;
+  confidenceApplying: number;
+  favoritePart: string;
+  knewTeamMembers: string;
+  roles: string[];
+  teamInfluence: string;
+  seesOpportunities: number;
+  wouldAttendFollowup: boolean;
+  followupExplanation: string;
+  quote: string;
+  shareQuotePermission: boolean;
+  recommendLikelihood: number;
+  referralInfo: string;
+  improvementSuggestion: string;
+}
+
+export function parseBuildDayFeedback(row: string[]): BuildDayFeedback {
+  return {
+    submissionId: row[0] || "",
+    respondentId: row[1] || "",
+    submittedAt: row[2] || "",
+    name: row[3] || "",
+    email: row[4] || "",
+    teamBuildDescription: row[5] || "",
+    additionalFiles: row[6] || "",
+    communityHarmAvoidance: row[7] || "",
+    toolsUsed: row[8]?.split(", ") || [],
+    toolsOther: row[9] || "",
+    understandsTools: parseInt(row[10]?.match(/\d/)?.[0] || "0"),
+    howAiWorks: row[11] || "",
+    confidenceSolving: parseInt(row[12]?.match(/\d/)?.[0] || "0"),
+    confidenceApplying: parseInt(row[13]?.match(/\d/)?.[0] || "0"),
+    favoritePart: row[14] || "",
+    knewTeamMembers: row[15] || "",
+    roles: row[16]?.split(", ") || [],
+    teamInfluence: row[17] || "",
+    seesOpportunities: parseInt(row[18]?.match(/\d/)?.[0] || "0"),
+    wouldAttendFollowup: row[19] === "Yes",
+    followupExplanation: row[20] || "",
+    quote: row[21] || "",
+    shareQuotePermission: row[22] === "Yes",
+    recommendLikelihood: parseInt(row[23]?.match(/\d/)?.[0] || "0"),
+    referralInfo: row[24] || "",
+    improvementSuggestion: row[26] || "",
+  };
+}
+
 export interface FeedbackSummary {
   totalResponses: number;
   averageRating: number;
