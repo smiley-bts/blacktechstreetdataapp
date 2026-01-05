@@ -45,7 +45,9 @@ const defaultFilters: ContactFilter = {
 
 const TAGLINES = [
   "Manage your community contacts",
-  "When In Doubt Email Smiley! 😉"
+  "When In Doubt Email Smiley! 😉",
+  "Warning: May cause excessive organization 📋",
+  "Your people. Your data. 🚀"
 ];
 
 export default function CRMDashboard() {
@@ -62,7 +64,7 @@ export default function CRMDashboard() {
         setTaglineIndex((prev) => (prev + 1) % TAGLINES.length);
         setTaglineFading(false);
       }, 300);
-    }, 30000);
+    }, 20000);
     return () => clearInterval(interval);
   }, []);
   
