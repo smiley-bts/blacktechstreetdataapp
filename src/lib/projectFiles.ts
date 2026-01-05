@@ -117,6 +117,9 @@ const projectFileMap: Record<string, LocalProjectFile[]> = {
   ],
   "truevoice": [
     { path: "/project-files/TrueVoice_Pitch_Deck.pdf", type: "pdf", label: "TrueVoice Pitch Deck" }
+  ],
+  "youth, ai inner work coach": [
+    { path: "/project-files/YOUth_AI_Inner_Work_Coach.png", type: "image", label: "YOUth AI Screenshot" }
   ]
 };
 
