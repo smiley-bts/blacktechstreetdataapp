@@ -42,7 +42,7 @@ export function ProjectsDashboard({ contacts, onContactClick }: ProjectsDashboar
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   const filteredProjects = useMemo(() => {
-    return projects.filter(project => {
+    const filtered = projects.filter(project => {
       const matchesSearch = searchQuery === "" || 
         project.projectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -53,6 +53,9 @@ export function ProjectsDashboard({ contacts, onContactClick }: ProjectsDashboar
 
       return matchesSearch && matchesEvent;
     });
+    
+    // Sort by event name by default
+    return filtered.sort((a, b) => a.eventName.localeCompare(b.eventName));
   }, [projects, searchQuery, eventFilter]);
 
   const findContactByEmail = (email: string) => {
