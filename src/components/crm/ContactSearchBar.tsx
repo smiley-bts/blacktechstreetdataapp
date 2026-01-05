@@ -120,14 +120,14 @@ export function ContactSearchBar({
               )}
             </Button>
           </SheetTrigger>
-          <SheetContent className="w-[400px] sm:max-w-[540px]">
+          <SheetContent className="w-[90vw] sm:w-[400px] sm:max-w-[540px]">
             <SheetHeader>
               <SheetTitle>Advanced Filters</SheetTitle>
               <SheetDescription>
                 Filter contacts by multiple criteria
               </SheetDescription>
             </SheetHeader>
-            <ScrollArea className="h-[calc(100vh-200px)] pr-4 mt-4">
+            <ScrollArea className="h-[calc(100vh-180px)] sm:h-[calc(100vh-200px)] pr-4 mt-4">
               <div className="space-y-6">
                 {/* Lifecycle Stage */}
                 <div>

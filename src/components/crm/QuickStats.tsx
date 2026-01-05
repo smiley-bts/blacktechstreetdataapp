@@ -106,12 +106,12 @@ export function QuickStats({ contacts }: QuickStatsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+    <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-9 gap-2 sm:gap-3">
       {statCards.map((stat, index) => (
         <div
           key={stat.label}
           className={cn(
-            "relative overflow-hidden rounded-xl p-3",
+            "relative overflow-hidden rounded-lg sm:rounded-xl p-2 sm:p-3",
             "bg-gradient-to-br from-card/80 to-card/40",
             "border border-border/30",
             "hover:border-primary/30 hover:-translate-y-1 transition-all duration-300",
@@ -128,13 +128,13 @@ export function QuickStats({ contacts }: QuickStatsProps) {
           
           <div className="relative z-10">
             <stat.icon className={cn(
-              "h-4 w-4 mb-2",
+              "h-3.5 w-3.5 sm:h-4 sm:w-4 mb-1 sm:mb-2",
               "text-muted-foreground group-hover:text-primary group-hover:scale-110 transition-all duration-200"
             )} />
-            <p className="text-xl font-bold tracking-tight text-foreground">
+            <p className="text-lg sm:text-xl font-bold tracking-tight text-foreground">
               {stat.value}
             </p>
-            <p className="text-xs text-muted-foreground truncate">
+            <p className="text-[10px] sm:text-xs text-muted-foreground truncate">
               {stat.label}
             </p>
           </div>

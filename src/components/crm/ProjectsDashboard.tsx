@@ -83,60 +83,60 @@ export function ProjectsDashboard({ contacts, onContactClick }: ProjectsDashboar
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Summary Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
         <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 hover:shadow-lg hover:-translate-y-1 card-shine">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary/20 rounded-lg transition-transform duration-300 group-hover:scale-110">
-                <Folder className="h-5 w-5 text-primary" />
+          <CardContent className="pt-4 sm:pt-6 p-3 sm:p-6">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-1.5 sm:p-2 bg-primary/20 rounded-lg transition-transform duration-300 group-hover:scale-110">
+                <Folder className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{summary.totalProjects}</p>
-                <p className="text-xs text-muted-foreground">Total Projects</p>
+                <p className="text-xl sm:text-2xl font-bold">{summary.totalProjects}</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">Total Projects</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border-blue-500/20 hover:shadow-lg hover:-translate-y-1 card-shine">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-500/20 rounded-lg">
-                <Users className="h-5 w-5 text-blue-500" />
+          <CardContent className="pt-4 sm:pt-6 p-3 sm:p-6">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-1.5 sm:p-2 bg-blue-500/20 rounded-lg">
+                <Users className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{summary.totalTeamMembers}</p>
-                <p className="text-xs text-muted-foreground">Participants</p>
+                <p className="text-xl sm:text-2xl font-bold">{summary.totalTeamMembers}</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">Participants</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 border-emerald-500/20 hover:shadow-lg hover:-translate-y-1 card-shine">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-emerald-500/20 rounded-lg">
-                <Globe className="h-5 w-5 text-emerald-500" />
+          <CardContent className="pt-4 sm:pt-6 p-3 sm:p-6">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-1.5 sm:p-2 bg-emerald-500/20 rounded-lg">
+                <Globe className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-500" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{summary.projectsWithLinks}</p>
-                <p className="text-xs text-muted-foreground">Live Demos</p>
+                <p className="text-xl sm:text-2xl font-bold">{summary.projectsWithLinks}</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">Live Demos</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-to-br from-amber-500/10 to-amber-500/5 border-amber-500/20 hover:shadow-lg hover:-translate-y-1 card-shine">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-amber-500/20 rounded-lg">
-                <Calendar className="h-5 w-5 text-amber-500" />
+          <CardContent className="pt-4 sm:pt-6 p-3 sm:p-6">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-1.5 sm:p-2 bg-amber-500/20 rounded-lg">
+                <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-amber-500" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{summary.eventsCount}</p>
-                <p className="text-xs text-muted-foreground">Events</p>
+                <p className="text-xl sm:text-2xl font-bold">{summary.eventsCount}</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">Events</p>
               </div>
             </div>
           </CardContent>
@@ -145,15 +145,16 @@ export function ProjectsDashboard({ contacts, onContactClick }: ProjectsDashboar
 
       {/* Event Tabs */}
       <Tabs value={eventFilter} onValueChange={setEventFilter} className="w-full">
-        <TabsList className="w-full h-auto flex-wrap justify-start gap-1 bg-muted/50 p-1">
-          <TabsTrigger value="all" className="text-sm">
-            All Events ({projects.length})
+        <TabsList className="w-full h-auto flex-wrap justify-start gap-1 bg-muted/50 p-1 overflow-x-auto">
+          <TabsTrigger value="all" className="text-xs sm:text-sm whitespace-nowrap">
+            All ({projects.length})
           </TabsTrigger>
           {uniqueEvents.map(event => {
             const count = projects.filter(p => p.eventName === event).length;
             return (
-              <TabsTrigger key={event} value={event} className="text-sm">
-                {event} ({count})
+              <TabsTrigger key={event} value={event} className="text-xs sm:text-sm whitespace-nowrap">
+                <span className="hidden sm:inline">{event}</span>
+                <span className="sm:hidden">{event.replace('ASPIRE AI ', '').substring(0, 8)}</span> ({count})
               </TabsTrigger>
             );
           })}
@@ -161,18 +162,18 @@ export function ProjectsDashboard({ contacts, onContactClick }: ProjectsDashboar
       </Tabs>
 
       {/* Search */}
-      <div className="relative max-w-md">
+      <div className="relative max-w-full sm:max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Search projects, teams, or members..."
+          placeholder="Search projects..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10"
+          className="pl-10 text-sm"
         />
       </div>
 
       {/* Projects Grid */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {filteredProjects.map((project, index) => (
           <div 
             key={project.id}
@@ -397,17 +398,17 @@ function ProjectDetailModal({
 
   return (
     <div 
-      className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <Card className="w-full max-w-2xl max-h-[90vh] flex flex-col">
-        <CardHeader className="border-b flex-shrink-0">
-          <div className="flex items-start justify-between gap-4">
-            <div className="space-y-1">
-              <CardTitle className="text-xl">{project.projectName}</CardTitle>
-              <Badge variant="outline">{project.eventName}</Badge>
+        <CardHeader className="border-b flex-shrink-0 p-3 sm:p-6">
+          <div className="flex items-start justify-between gap-2 sm:gap-4">
+            <div className="space-y-1 min-w-0 flex-1">
+              <CardTitle className="text-base sm:text-xl truncate">{project.projectName}</CardTitle>
+              <Badge variant="outline" className="text-xs">{project.eventName}</Badge>
             </div>
-            <Button variant="ghost" size="sm" onClick={onClose}>
+            <Button variant="ghost" size="sm" onClick={onClose} className="shrink-0">
               ✕
             </Button>
           </div>

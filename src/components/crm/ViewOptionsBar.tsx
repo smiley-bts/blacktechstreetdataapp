@@ -56,10 +56,10 @@ export function ViewOptionsBar({
   const currentSortLabel = sortOptions.find(o => o.field === sortField)?.label || "Sort";
 
   return (
-    <div className="flex items-center justify-between gap-4 py-3 px-4 bg-card/50 border border-border/30 rounded-lg">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-3 px-3 sm:px-4 bg-card/50 border border-border/30 rounded-lg">
       {/* Left: View Mode Toggle */}
-      <div className="flex items-center gap-3">
-        <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium hidden sm:block">
+      <div className="flex items-center gap-2 sm:gap-3">
+        <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium hidden lg:block">
           View
         </span>
         <ToggleGroup 
@@ -71,31 +71,37 @@ export function ViewOptionsBar({
           <ToggleGroupItem 
             value="cards" 
             aria-label="Card view"
-            className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground px-3"
+            className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground px-2 sm:px-3"
           >
             <LayoutGrid className="h-4 w-4" />
-            <span className="ml-2 hidden md:inline text-sm">Cards</span>
+            <span className="ml-1 sm:ml-2 hidden sm:inline text-sm">Cards</span>
           </ToggleGroupItem>
           <ToggleGroupItem 
             value="list" 
             aria-label="List view"
-            className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground px-3"
+            className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground px-2 sm:px-3"
           >
             <List className="h-4 w-4" />
-            <span className="ml-2 hidden md:inline text-sm">List</span>
+            <span className="ml-1 sm:ml-2 hidden sm:inline text-sm">List</span>
           </ToggleGroupItem>
           <ToggleGroupItem 
             value="compact" 
             aria-label="Compact view"
-            className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground px-3"
+            className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground px-2 sm:px-3"
           >
             <Rows3 className="h-4 w-4" />
-            <span className="ml-2 hidden md:inline text-sm">Compact</span>
+            <span className="ml-1 sm:ml-2 hidden md:inline text-sm">Compact</span>
           </ToggleGroupItem>
         </ToggleGroup>
+        
+        {/* Count - inline on mobile */}
+        <div className="text-xs sm:text-sm text-muted-foreground sm:hidden">
+          <span className="font-semibold text-foreground">{totalShowing}</span>
+          {totalShowing < totalFiltered && <span>/{totalFiltered}</span>}
+        </div>
       </div>
 
-      {/* Center: Count */}
+      {/* Center: Count - hidden on mobile */}
       <div className="text-sm text-muted-foreground hidden sm:block">
         Showing <span className="font-semibold text-foreground">{totalShowing}</span>
         {totalShowing < totalFiltered && (

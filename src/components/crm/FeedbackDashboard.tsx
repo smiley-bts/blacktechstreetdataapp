@@ -153,18 +153,18 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
   const totalResponses = eventFeedback.ltf.length + eventFeedback.workshop.length + eventFeedback.pre.length + eventFeedback.buildday.length + eventFeedback.sep2025workshop.length + eventFeedback.sep2025pre.length;
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-4 sm:space-y-6 animate-fade-in">
       {/* Event Tabs */}
       <Tabs value={selectedEvent} onValueChange={setSelectedEvent}>
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <TabsList className="bg-secondary/50">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+          <TabsList className="bg-secondary/50 w-full sm:w-auto overflow-x-auto flex-nowrap">
             {EVENTS.map((event) => (
               <TabsTrigger 
                 key={event.id} 
                 value={event.id}
-                className="gap-2"
+                className="gap-1 sm:gap-2 text-xs sm:text-sm whitespace-nowrap"
               >
-                <Calendar className="h-4 w-4" />
+                <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
                 {event.shortName}
               </TabsTrigger>
             ))}
@@ -173,70 +173,72 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
           <div className="flex gap-2">
             <button
               onClick={() => setView("summary")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+              className={`flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
                 view === "summary" 
                   ? "bg-primary text-primary-foreground shadow-md" 
                   : "bg-secondary/50 text-muted-foreground hover:bg-secondary"
               }`}
             >
-              Summary Dashboard
+              <span className="hidden sm:inline">Summary Dashboard</span>
+              <span className="sm:hidden">Summary</span>
             </button>
             <button
               onClick={() => setView("responses")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+              className={`flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
                 view === "responses" 
                   ? "bg-primary text-primary-foreground shadow-md" 
                   : "bg-secondary/50 text-muted-foreground hover:bg-secondary"
               }`}
             >
-              Individual Responses
+              <span className="hidden sm:inline">Individual Responses</span>
+              <span className="sm:hidden">Responses</span>
             </button>
           </div>
         </div>
 
         {EVENTS.map((event) => (
-          <TabsContent key={event.id} value={event.id} className="mt-6">
+          <TabsContent key={event.id} value={event.id} className="mt-4 sm:mt-6">
             {/* Event Header */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-6">
               <div>
-                <h3 className="text-lg font-semibold">{event.name}</h3>
-                <p className="text-sm text-muted-foreground">{event.dates}</p>
+                <h3 className="text-base sm:text-lg font-semibold">{event.name}</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">{event.dates}</p>
               </div>
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-1.5 sm:gap-2 flex-wrap">
                 {eventFeedback.sep2025pre.length > 0 && (
-                  <Badge variant="outline" className="gap-1">
+                  <Badge variant="outline" className="gap-1 text-xs">
                     <ClipboardList className="h-3 w-3" />
-                    Pre-Registration: {eventFeedback.sep2025pre.length}
+                    <span className="hidden sm:inline">Pre-Reg:</span> {eventFeedback.sep2025pre.length}
                   </Badge>
                 )}
                 {eventFeedback.pre.length > 0 && (
-                  <Badge variant="outline" className="gap-1">
+                  <Badge variant="outline" className="gap-1 text-xs">
                     <ClipboardList className="h-3 w-3" />
-                    Pre-Survey: {eventFeedback.pre.length}
+                    <span className="hidden sm:inline">Pre:</span> {eventFeedback.pre.length}
                   </Badge>
                 )}
                 {eventFeedback.sep2025workshop.length > 0 && (
-                  <Badge variant="outline" className="gap-1">
+                  <Badge variant="outline" className="gap-1 text-xs">
                     <Calendar className="h-3 w-3" />
-                    Workshop: {eventFeedback.sep2025workshop.length}
+                    <span className="hidden sm:inline">Workshop:</span> {eventFeedback.sep2025workshop.length}
                   </Badge>
                 )}
                 {eventFeedback.workshop.length > 0 && (
-                  <Badge variant="outline" className="gap-1">
+                  <Badge variant="outline" className="gap-1 text-xs">
                     <Calendar className="h-3 w-3" />
-                    Workshop: {eventFeedback.workshop.length}
+                    <span className="hidden sm:inline">Workshop:</span> {eventFeedback.workshop.length}
                   </Badge>
                 )}
                 {eventFeedback.ltf.length > 0 && (
-                  <Badge variant="outline" className="gap-1">
+                  <Badge variant="outline" className="gap-1 text-xs">
                     <GraduationCap className="h-3 w-3" />
-                    LTF: {eventFeedback.ltf.length}
+                    <span className="hidden sm:inline">LTF:</span> {eventFeedback.ltf.length}
                   </Badge>
                 )}
                 {eventFeedback.buildday.length > 0 && (
-                  <Badge variant="outline" className="gap-1">
+                  <Badge variant="outline" className="gap-1 text-xs">
                     <Folder className="h-3 w-3" />
-                    Build Day: {eventFeedback.buildday.length}
+                    <span className="hidden sm:inline">Build:</span> {eventFeedback.buildday.length}
                   </Badge>
                 )}
               </div>
