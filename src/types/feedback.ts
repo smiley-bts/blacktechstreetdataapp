@@ -72,6 +72,54 @@ export interface FeedbackSummary {
   topThemes: { theme: string; count: number }[];
 }
 
+export interface PreSurveyFeedback {
+  submissionId: string;
+  respondentId: string;
+  submittedAt: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+  zipCode: string;
+  accessibilityNeeds: string;
+  tshirtSize: string;
+  needsLaptop: boolean;
+  ageRange: string;
+  educationLevel: string;
+  industry: string;
+  role: string;
+  aiApplicationPlans: string[];
+  aiExperience: number;
+  confidence: number;
+  confidenceApplying: number;
+  communityConnection: string;
+}
+
+export function parsePreSurveyFeedback(row: string[]): PreSurveyFeedback {
+  return {
+    submissionId: row[0] || "",
+    respondentId: row[1] || "",
+    submittedAt: row[2] || "",
+    firstName: row[3] || "",
+    lastName: row[4] || "",
+    phone: row[5] || "",
+    email: row[6] || "",
+    zipCode: row[7] || "",
+    accessibilityNeeds: row[8] || "",
+    tshirtSize: row[9] || "",
+    needsLaptop: row[10] === "Yes",
+    ageRange: row[11] || "",
+    educationLevel: row[12] || "",
+    industry: row[13] || "",
+    role: row[15] || "",
+    aiApplicationPlans: row[17]?.split(", ") || [],
+    aiExperience: parseInt(row[18]?.match(/\d/)?.[0] || "0"),
+    confidence: parseInt(row[19]?.match(/\d/)?.[0] || "0"),
+    confidenceApplying: parseInt(row[20]?.match(/\d/)?.[0] || "0"),
+    communityConnection: row[21] || "",
+  };
+}
+
 export function parseLTFFeedback(row: string[]): LTFFeedback {
   return {
     submissionId: row[0],
