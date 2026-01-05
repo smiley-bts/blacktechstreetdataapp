@@ -149,27 +149,27 @@ export function ExecutiveSummary({ contacts, onNavigateToContacts }: ExecutiveSu
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
         {kpiCards.map((kpi) => (
           <Card key={kpi.label} className="relative overflow-hidden border-border/50 hover:border-primary/30 transition-all duration-300 group">
             <div className={cn(
               "absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300",
               `bg-gradient-to-br ${kpi.gradient}`
             )} />
-            <CardContent className="p-6 relative z-10">
+            <CardContent className="p-3 sm:p-6 relative z-10">
               <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground font-medium">{kpi.label}</p>
-                  <p className="text-3xl font-bold text-foreground mt-1">{kpi.value}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{kpi.description}</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm text-muted-foreground font-medium truncate">{kpi.label}</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-foreground mt-0.5 sm:mt-1">{kpi.value}</p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1 truncate">{kpi.description}</p>
                 </div>
                 <div className={cn(
-                  "p-3 rounded-xl bg-gradient-to-br",
+                  "p-2 sm:p-3 rounded-xl bg-gradient-to-br shrink-0 ml-2",
                   kpi.gradient
                 )}>
-                  <kpi.icon className="h-5 w-5 text-white" />
+                  <kpi.icon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                 </div>
               </div>
             </CardContent>

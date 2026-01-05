@@ -250,21 +250,21 @@ export function ContactDetailModal({ contact, open, onOpenChange }: ContactDetai
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] glass-card border-primary/20 p-0 overflow-hidden">
+      <DialogContent className="max-w-3xl max-h-[90vh] w-[95vw] sm:w-full glass-card border-primary/20 p-0 overflow-hidden">
         {/* Header with gradient background */}
-        <div className="relative p-6 pb-4 gradient-mesh">
+        <div className="relative p-4 sm:p-6 pb-3 sm:pb-4 gradient-mesh">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-card pointer-events-none" />
           <DialogHeader className="relative z-10">
-            <div className="flex items-start gap-4">
-              <Avatar className="h-20 w-20 ring-2 ring-primary/50 ring-offset-2 ring-offset-card glow-subtle">
-                <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-primary-foreground text-2xl font-bold">
+            <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
+              <Avatar className="h-14 w-14 sm:h-20 sm:w-20 ring-2 ring-primary/50 ring-offset-2 ring-offset-card glow-subtle shrink-0">
+                <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-primary-foreground text-xl sm:text-2xl font-bold">
                   {getInitials()}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex-1 pt-1">
-                <div className="flex items-center gap-2">
+              <div className="flex-1 min-w-0 w-full">
+                <div className="flex items-center gap-2 flex-wrap">
                   {isEditingName ? (
-                    <div className="flex items-center gap-2 flex-1">
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
                       <Input
                         value={nameOverrideValue}
                         onChange={(e) => setNameOverrideValue(e.target.value)}
@@ -306,14 +306,14 @@ export function ContactDetailModal({ contact, open, onOpenChange }: ContactDetai
                     </>
                   )}
                 </div>
-                <p className="text-sm text-muted-foreground font-mono mt-1 flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded bg-secondary/80 text-primary">
+                <p className="text-xs sm:text-sm text-muted-foreground font-mono mt-1 flex items-center gap-2">
+                  <span className="px-1.5 sm:px-2 py-0.5 rounded bg-secondary/80 text-primary text-xs truncate max-w-[150px] sm:max-w-none">
                     {contact.uid || `ID: ${contact.recordId}`}
                   </span>
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    className="h-6 w-6 hover:text-primary"
+                    className="h-6 w-6 hover:text-primary shrink-0"
                     onClick={() => {
                       navigator.clipboard.writeText(contact.uid || contact.recordId);
                       toast({ title: "Copied!", description: "UID copied to clipboard" });
@@ -322,9 +322,9 @@ export function ContactDetailModal({ contact, open, onOpenChange }: ContactDetai
                     <Copy className="h-3 w-3" />
                   </Button>
                 </p>
-                <div className="flex flex-wrap gap-2 mt-3">
+                <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-2 sm:mt-3">
                   {contact.lifecycleStage && (
-                    <Badge className="bg-primary/20 text-primary border-primary/30 hover:bg-primary/30">
+                    <Badge className="bg-primary/20 text-primary border-primary/30 hover:bg-primary/30 text-xs">
                       {contact.lifecycleStage}
                     </Badge>
                   )}
@@ -351,27 +351,27 @@ export function ContactDetailModal({ contact, open, onOpenChange }: ContactDetai
                 </div>
               </div>
               
-              {/* Quick actions */}
-              <div className="flex flex-col gap-2">
+              {/* Quick actions - horizontal on mobile, vertical on desktop */}
+              <div className="flex flex-row sm:flex-col gap-2 w-full sm:w-auto mt-2 sm:mt-0">
                 {contact.linkedinUrl && (
                   <Button 
                     size="sm" 
-                    className="gap-2 bg-[#0077b5] hover:bg-[#006396] text-foreground"
+                    className="gap-2 bg-[#0077b5] hover:bg-[#006396] text-foreground flex-1 sm:flex-none"
                     onClick={() => window.open(contact.linkedinUrl, '_blank')}
                   >
                     <Linkedin className="h-4 w-4" />
-                    LinkedIn
+                    <span className="hidden sm:inline">LinkedIn</span>
                   </Button>
                 )}
                 {contact.email && (
                   <Button 
                     size="sm" 
                     variant="outline"
-                    className="gap-2 border-primary/30 hover:bg-primary/10"
+                    className="gap-2 border-primary/30 hover:bg-primary/10 flex-1 sm:flex-none"
                     onClick={() => window.open(`mailto:${contact.email}`, '_blank')}
                   >
                     <Mail className="h-4 w-4" />
-                    Email
+                    <span className="hidden sm:inline">Email</span>
                   </Button>
                 )}
               </div>
@@ -379,31 +379,35 @@ export function ContactDetailModal({ contact, open, onOpenChange }: ContactDetai
           </DialogHeader>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="px-6 pb-6">
-          <TabsList className="grid grid-cols-6 w-full bg-secondary/50 p-1 mb-4">
-            <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              Overview
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="px-3 sm:px-6 pb-4 sm:pb-6">
+          <TabsList className="grid grid-cols-6 w-full bg-secondary/50 p-1 mb-3 sm:mb-4 h-auto">
+            <TabsTrigger value="overview" className="text-xs sm:text-sm px-1.5 sm:px-3 py-1.5 sm:py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <span className="hidden sm:inline">Overview</span>
+              <span className="sm:hidden">Info</span>
             </TabsTrigger>
-            <TabsTrigger value="tags" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Tag className="h-3 w-3 mr-1" />
-              Tags
+            <TabsTrigger value="tags" className="text-xs sm:text-sm px-1.5 sm:px-3 py-1.5 sm:py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <Tag className="h-3 w-3 sm:mr-1" />
+              <span className="hidden sm:inline">Tags</span>
             </TabsTrigger>
-            <TabsTrigger value="feedback" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              Feedback
+            <TabsTrigger value="feedback" className="text-xs sm:text-sm px-1.5 sm:px-3 py-1.5 sm:py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <span className="hidden sm:inline">Feedback</span>
+              <span className="sm:hidden">FB</span>
             </TabsTrigger>
-            <TabsTrigger value="buildday" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              Build Day
+            <TabsTrigger value="buildday" className="text-xs sm:text-sm px-1.5 sm:px-3 py-1.5 sm:py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <span className="hidden sm:inline">Build Day</span>
+              <span className="sm:hidden">Build</span>
             </TabsTrigger>
-            <TabsTrigger value="edit" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Pencil className="h-3 w-3 mr-1" />
-              Edit
+            <TabsTrigger value="edit" className="text-xs sm:text-sm px-1.5 sm:px-3 py-1.5 sm:py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <Pencil className="h-3 w-3 sm:mr-1" />
+              <span className="hidden sm:inline">Edit</span>
             </TabsTrigger>
-            <TabsTrigger value="notes" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              Notes
+            <TabsTrigger value="notes" className="text-xs sm:text-sm px-1.5 sm:px-3 py-1.5 sm:py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <span className="hidden sm:inline">Notes</span>
+              <span className="sm:hidden">📝</span>
             </TabsTrigger>
           </TabsList>
 
-          <ScrollArea className="h-[380px]">
+          <ScrollArea className="h-[320px] sm:h-[380px]">
             {/* OVERVIEW TAB */}
             <TabsContent value="overview" className="m-0 space-y-6 animate-fade-in">
               {/* Profile Completeness */}

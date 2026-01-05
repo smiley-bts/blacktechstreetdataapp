@@ -226,55 +226,67 @@ export default function CRMDashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto py-6 px-4 space-y-6">
+      <div className="container mx-auto py-4 sm:py-6 px-3 sm:px-4 space-y-4 sm:space-y-6">
         {/* Header */}
-        <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-fade-in">
-          <div className="flex items-center gap-3">
-            <img src={btsLogo} alt="Black Tech Street" className="h-10 w-auto hover-scale" />
-            <div>
-              <h1 className="text-2xl font-display font-bold text-foreground">
-                Contact CRM
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                Manage your community contacts
-              </p>
+        <header className="flex flex-col gap-4 animate-fade-in">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <img src={btsLogo} alt="Black Tech Street" className="h-8 sm:h-10 w-auto hover-scale" />
+              <div>
+                <h1 className="text-xl sm:text-2xl font-display font-bold text-foreground">
+                  Contact CRM
+                </h1>
+                <p className="text-xs sm:text-sm text-muted-foreground hidden sm:block">
+                  Manage your community contacts
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-1 sm:gap-2">
+              <ThemeToggle />
+              <div className="hidden sm:flex items-center gap-2">
+                <ShareReportButton filters={filters} />
+                <Button variant="outline" size="sm" onClick={handlePrint} className="gap-2">
+                  <Printer className="h-4 w-4" />
+                  <span className="hidden md:inline">Print</span>
+                </Button>
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <ShareReportButton filters={filters} />
-            <Button variant="outline" size="sm" onClick={handlePrint} className="gap-2">
-              <Printer className="h-4 w-4" />
-              Print
-            </Button>
-            <ThemeToggle />
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 -mx-1 px-1">
             <DeduplicationModal contacts={contacts} onMerge={handleMergeContacts} />
             <ImportContactsModal onImport={handleImportContacts} />
             <ExportModal contacts={contacts} filteredContacts={filteredContacts} />
+            <div className="sm:hidden flex items-center gap-2 ml-auto">
+              <ShareReportButton filters={filters} />
+              <Button variant="outline" size="sm" onClick={handlePrint}>
+                <Printer className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </header>
 
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full animate-fade-in" style={{ animationDelay: '0.1s' }}>
-          <TabsList className="grid w-full max-w-2xl grid-cols-5 bg-secondary/50">
-            <TabsTrigger value="overview" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+          <TabsList className="grid w-full grid-cols-5 bg-secondary/50 h-auto p-1">
+            <TabsTrigger value="overview" className="gap-1 sm:gap-2 px-2 sm:px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <LayoutDashboard className="h-4 w-4" />
-              Overview
+              <span className="hidden sm:inline">Overview</span>
             </TabsTrigger>
-            <TabsTrigger value="contacts" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            <TabsTrigger value="contacts" className="gap-1 sm:gap-2 px-2 sm:px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Users className="h-4 w-4" />
-              Contacts
+              <span className="hidden sm:inline">Contacts</span>
             </TabsTrigger>
-            <TabsTrigger value="feedback" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            <TabsTrigger value="feedback" className="gap-1 sm:gap-2 px-2 sm:px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <MessageSquare className="h-4 w-4" />
-              Feedback
+              <span className="hidden sm:inline">Feedback</span>
             </TabsTrigger>
-            <TabsTrigger value="projects" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            <TabsTrigger value="projects" className="gap-1 sm:gap-2 px-2 sm:px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Folder className="h-4 w-4" />
-              Projects
+              <span className="hidden sm:inline">Projects</span>
             </TabsTrigger>
-            <TabsTrigger value="reports" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            <TabsTrigger value="reports" className="gap-1 sm:gap-2 px-2 sm:px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <FileText className="h-4 w-4" />
-              Reports
+              <span className="hidden sm:inline">Reports</span>
             </TabsTrigger>
           </TabsList>
 
@@ -290,15 +302,15 @@ export default function CRMDashboard() {
           </TabsContent>
 
           {/* Contacts Tab */}
-          <TabsContent value="contacts" className="mt-6 space-y-6">
+          <TabsContent value="contacts" className="mt-4 sm:mt-6 space-y-4 sm:space-y-6">
             {/* Quick Stats */}
             <QuickStats contacts={contacts} />
 
             {/* Event Filter Toggles + Tag Filter */}
-            <div className="bg-card/50 border border-border/30 rounded-xl p-4">
-              <div className="flex flex-wrap items-center gap-4">
+            <div className="bg-card/50 border border-border/30 rounded-xl p-3 sm:p-4">
+              <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wider font-medium">
+                  <p className="text-xs text-muted-foreground mb-2 sm:mb-3 uppercase tracking-wider font-medium">
                     Filter by Event
                   </p>
                   <EventFilterToggles
@@ -313,8 +325,8 @@ export default function CRMDashboard() {
                     counts={eventCounts}
                   />
                 </div>
-                <div className="border-l border-border pl-4">
-                  <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wider font-medium">
+                <div className="border-t sm:border-t-0 sm:border-l border-border pt-4 sm:pt-0 sm:pl-4">
+                  <p className="text-xs text-muted-foreground mb-2 sm:mb-3 uppercase tracking-wider font-medium">
                     Filter by Tags
                   </p>
                   <TagFilter
