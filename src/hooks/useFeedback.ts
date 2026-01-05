@@ -4,15 +4,18 @@ import {
   LTFFeedback, 
   WorkshopFeedback,
   PreSurveyFeedback,
+  BuildDayFeedback,
   parseLTFFeedback, 
   parseWorkshopFeedback,
-  parsePreSurveyFeedback
+  parsePreSurveyFeedback,
+  parseBuildDayFeedback
 } from "@/types/feedback";
 
 export function useFeedback() {
   const [ltfFeedback, setLtfFeedback] = useState<LTFFeedback[]>([]);
   const [workshopFeedback, setWorkshopFeedback] = useState<WorkshopFeedback[]>([]);
   const [preSurveyFeedback, setPreSurveyFeedback] = useState<PreSurveyFeedback[]>([]);
+  const [buildDayFeedback, setBuildDayFeedback] = useState<BuildDayFeedback[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,15 +23,17 @@ export function useFeedback() {
     const loadFeedback = async () => {
       try {
         // Load all feedback files in parallel
-        const [ltfResponse, workshopResponse, preResponse] = await Promise.all([
+        const [ltfResponse, workshopResponse, preResponse, buildDayResponse] = await Promise.all([
           fetch("/aspire-ltf-feedback.csv"),
           fetch("/aspire-feedback-survey.csv"),
-          fetch("/aspire-pre-survey.csv").catch(() => null) // Optional file
+          fetch("/aspire-pre-survey.csv").catch(() => null),
+          fetch("/aspire-sep2025-build-feedback.csv").catch(() => null)
         ]);
 
         const ltfText = await ltfResponse.text();
         const workshopText = await workshopResponse.text();
         const preText = preResponse ? await preResponse.text() : "";
+        const buildDayText = buildDayResponse ? await buildDayResponse.text() : "";
         
         // Parse LTF feedback
         Papa.parse(ltfText, {
@@ -61,6 +66,19 @@ export function useFeedback() {
                 .filter(row => row[0] && row[0].trim() !== "")
                 .map(parsePreSurveyFeedback);
               setPreSurveyFeedback(parsed);
+            },
+          });
+        }
+
+        // Parse build day feedback if available
+        if (buildDayText) {
+          Papa.parse(buildDayText, {
+            complete: (result) => {
+              const rows = result.data as string[][];
+              const parsed = rows.slice(1)
+                .filter(row => row[0] && row[0].trim() !== "")
+                .map(parseBuildDayFeedback);
+              setBuildDayFeedback(parsed);
             },
           });
         }
@@ -112,13 +130,25 @@ export function useFeedback() {
       : 0,
   };
 
+  const buildDaySummary = {
+    totalResponses: buildDayFeedback.length,
+    averageConfidence: buildDayFeedback.length > 0
+      ? buildDayFeedback.reduce((sum, f) => sum + f.confidenceSolving, 0) / buildDayFeedback.length
+      : 0,
+    wouldAttendFollowupRate: buildDayFeedback.length > 0
+      ? buildDayFeedback.filter(f => f.wouldAttendFollowup).length / buildDayFeedback.length * 100
+      : 0,
+  };
+
   return {
     ltfFeedback,
     workshopFeedback,
     preSurveyFeedback,
+    buildDayFeedback,
     ltfSummary,
     workshopSummary,
     preSurveySummary,
+    buildDaySummary,
     loading,
     error,
   };
