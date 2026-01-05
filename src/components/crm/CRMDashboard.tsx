@@ -18,7 +18,8 @@ import { ContactDetailModal } from "./ContactDetailModal";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, FileText, Printer, MessageSquare, Folder } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Printer, MessageSquare, Folder, Settings } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useContactTags } from "@/hooks/useContactTags";
 import { getFiltersFromUrl, serializeFilters } from "@/lib/urlState";
 import { openPrintView } from "./PrintableReport";
@@ -283,6 +284,12 @@ export default function CRMDashboard() {
                     <Button variant="outline" size="sm" onClick={handlePrint} className="gap-2 bg-background/50 backdrop-blur-sm hover:bg-background/80 transition-all duration-200">
                       <Printer className="h-4 w-4" />
                       <span className="hidden md:inline">Print</span>
+                    </Button>
+                    <Button variant="outline" size="sm" asChild className="gap-2 bg-background/50 backdrop-blur-sm hover:bg-background/80 transition-all duration-200">
+                      <Link to="/auth">
+                        <Settings className="h-4 w-4" />
+                        <span className="hidden md:inline">Admin</span>
+                      </Link>
                     </Button>
                   </div>
                 </div>
