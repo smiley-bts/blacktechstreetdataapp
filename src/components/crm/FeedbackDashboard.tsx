@@ -17,7 +17,7 @@ import {
   Folder,
   Hammer
 } from "lucide-react";
-import { LTFFeedback, WorkshopFeedback, PreSurveyFeedback, BuildDayFeedback } from "@/types/feedback";
+import { LTFFeedback, WorkshopFeedback, PreSurveyFeedback, BuildDayFeedback, Sep2025WorkshopFeedback } from "@/types/feedback";
 import { Contact } from "@/types/contact";
 
 interface FeedbackDashboardProps {
@@ -34,17 +34,18 @@ interface EventConfig {
   surveys: {
     id: string;
     name: string;
-    type: "pre" | "post" | "ltf" | "workshop" | "buildday";
+    type: "pre" | "post" | "ltf" | "workshop" | "buildday" | "sep2025workshop";
   }[];
 }
 
 const EVENTS: EventConfig[] = [
   {
     id: "sep-2025",
-    name: "September 2025 ASPIRE Build Day",
+    name: "September 2025 ASPIRE",
     shortName: "Sep 2025",
-    dates: "Sep 27-28, 2025",
+    dates: "Sep 27, 2025",
     surveys: [
+      { id: "sep2025workshop", name: "Workshop Feedback (Sep 27)", type: "sep2025workshop" },
       { id: "buildday", name: "Build Day Feedback", type: "buildday" },
     ]
   },
@@ -77,10 +78,12 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
     workshopFeedback, 
     preSurveyFeedback,
     buildDayFeedback,
+    sep2025WorkshopFeedback,
     ltfSummary, 
     workshopSummary,
     preSurveySummary,
     buildDaySummary,
+    sep2025WorkshopSummary,
     loading, 
     error 
   } = useFeedback();
@@ -99,6 +102,7 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
         workshop: [],
         pre: [],
         buildday: buildDayFeedback.filter(f => f.submittedAt.startsWith("2025-09")),
+        sep2025workshop: sep2025WorkshopFeedback.filter(f => f.submittedAt.startsWith("2025-09")),
       };
     } else if (selectedEvent === "dec-2025") {
       return {
@@ -106,6 +110,7 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
         workshop: workshopFeedback.filter(f => f.submittedAt.startsWith("2025-12")),
         pre: preSurveyFeedback.filter(f => f.submittedAt.startsWith("2025-12") || f.submittedAt.startsWith("2025-11")),
         buildday: [],
+        sep2025workshop: [],
       };
     } else if (selectedEvent === "jun-2025") {
       return {
@@ -113,10 +118,11 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
         workshop: [],
         pre: preSurveyFeedback.filter(f => f.submittedAt.startsWith("2025-06")),
         buildday: buildDayFeedback.filter(f => f.submittedAt.startsWith("2025-06")),
+        sep2025workshop: [],
       };
     }
-    return { ltf: [], workshop: [], pre: [], buildday: [] };
-  }, [selectedEvent, ltfFeedback, workshopFeedback, preSurveyFeedback, buildDayFeedback]);
+    return { ltf: [], workshop: [], pre: [], buildday: [], sep2025workshop: [] };
+  }, [selectedEvent, ltfFeedback, workshopFeedback, preSurveyFeedback, buildDayFeedback, sep2025WorkshopFeedback]);
 
   if (loading) {
     return (
@@ -138,7 +144,7 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
     return contacts.find(c => c.email?.toLowerCase() === email?.toLowerCase());
   };
 
-  const totalResponses = eventFeedback.ltf.length + eventFeedback.workshop.length + eventFeedback.pre.length + eventFeedback.buildday.length;
+  const totalResponses = eventFeedback.ltf.length + eventFeedback.workshop.length + eventFeedback.pre.length + eventFeedback.buildday.length + eventFeedback.sep2025workshop.length;
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -197,6 +203,12 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
                     Pre-Survey: {eventFeedback.pre.length}
                   </Badge>
                 )}
+                {eventFeedback.sep2025workshop.length > 0 && (
+                  <Badge variant="outline" className="gap-1">
+                    <Calendar className="h-3 w-3" />
+                    Workshop: {eventFeedback.sep2025workshop.length}
+                  </Badge>
+                )}
                 {eventFeedback.workshop.length > 0 && (
                   <Badge variant="outline" className="gap-1">
                     <Calendar className="h-3 w-3" />
@@ -227,6 +239,7 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
                 workshopFeedback={eventFeedback.workshop}
                 preSurveyFeedback={eventFeedback.pre}
                 buildDayFeedback={eventFeedback.buildday}
+                sep2025WorkshopFeedback={eventFeedback.sep2025workshop}
                 eventId={event.id}
               />
             ) : (
@@ -235,6 +248,7 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
                 workshopFeedback={eventFeedback.workshop}
                 preSurveyFeedback={eventFeedback.pre}
                 buildDayFeedback={eventFeedback.buildday}
+                sep2025WorkshopFeedback={eventFeedback.sep2025workshop}
                 surveys={event.surveys}
                 findContactByEmail={findContactByEmail}
                 onContactClick={onContactClick}
@@ -269,6 +283,7 @@ interface FeedbackSummaryViewProps {
   workshopFeedback: WorkshopFeedback[];
   preSurveyFeedback: PreSurveyFeedback[];
   buildDayFeedback: BuildDayFeedback[];
+  sep2025WorkshopFeedback: Sep2025WorkshopFeedback[];
   eventId: string;
 }
 
@@ -280,16 +295,20 @@ function FeedbackSummaryView({
   workshopFeedback,
   preSurveyFeedback,
   buildDayFeedback,
+  sep2025WorkshopFeedback,
   eventId 
 }: FeedbackSummaryViewProps) {
-  // Extract notable quotes (from workshop or build day feedback)
+  // Extract notable quotes (from workshop or build day or sep2025 workshop feedback)
   const notableQuotes = [
     ...workshopFeedback
       .filter(f => f.highlightTakeaway && f.highlightTakeaway.length > 20 && f.sharePermission)
       .map(f => ({ text: f.highlightTakeaway, name: `${f.firstName} ${f.lastName}` })),
     ...buildDayFeedback
       .filter(f => f.quote && f.quote.length > 10 && f.shareQuotePermission)
-      .map(f => ({ text: f.quote, name: f.name }))
+      .map(f => ({ text: f.quote, name: f.name })),
+    ...sep2025WorkshopFeedback
+      .filter(f => f.ahaMoment && f.ahaMoment.length > 20)
+      .map(f => ({ text: f.ahaMoment, name: f.name }))
   ].slice(0, 5);
 
   // Calculate grade distribution for LTF
@@ -299,11 +318,15 @@ function FeedbackSummaryView({
     return acc;
   }, {} as Record<string, number>);
 
-  // Calculate mindset shift
+  // Calculate mindset shift (from both workshop types)
   const mindsetShift = {
-    optimists: workshopFeedback.filter(f => f.mindsetAfter?.includes("Optimist")).length,
-    cultivators: workshopFeedback.filter(f => f.mindsetAfter?.includes("Cultivator")).length,
-    anchors: workshopFeedback.filter(f => f.mindsetAfter?.includes("Anchor")).length,
+    optimists: workshopFeedback.filter(f => f.mindsetAfter?.includes("Optimist")).length +
+               sep2025WorkshopFeedback.filter(f => f.mindsetAfter?.includes("Optimist")).length,
+    cultivators: workshopFeedback.filter(f => f.mindsetAfter?.includes("Cultivator")).length +
+                 sep2025WorkshopFeedback.filter(f => f.mindsetAfter?.includes("Cultivator")).length,
+    anchors: workshopFeedback.filter(f => f.mindsetAfter?.includes("Anchor")).length +
+             sep2025WorkshopFeedback.filter(f => f.mindsetAfter?.includes("Anchor")).length,
+    realists: sep2025WorkshopFeedback.filter(f => f.mindsetAfter?.includes("Realist")).length,
   };
 
   // Calculate build day stats
@@ -314,7 +337,7 @@ function FeedbackSummaryView({
       : 0,
   };
 
-  const totalResponses = ltfFeedback.length + workshopFeedback.length + preSurveyFeedback.length + buildDayFeedback.length;
+  const totalResponses = ltfFeedback.length + workshopFeedback.length + preSurveyFeedback.length + buildDayFeedback.length + sep2025WorkshopFeedback.length;
 
   return (
     <div className="space-y-6">
@@ -533,6 +556,7 @@ interface FeedbackResponsesViewProps {
   workshopFeedback: WorkshopFeedback[];
   preSurveyFeedback: PreSurveyFeedback[];
   buildDayFeedback: BuildDayFeedback[];
+  sep2025WorkshopFeedback: Sep2025WorkshopFeedback[];
   surveys: EventConfig["surveys"];
   findContactByEmail: (email: string) => Contact | undefined;
   onContactClick?: (email: string) => void;
@@ -543,6 +567,7 @@ function FeedbackResponsesView({
   workshopFeedback,
   preSurveyFeedback,
   buildDayFeedback,
+  sep2025WorkshopFeedback,
   surveys,
   findContactByEmail,
   onContactClick
@@ -555,6 +580,7 @@ function FeedbackResponsesView({
     if (s.type === "workshop" || s.type === "post") return workshopFeedback.length > 0;
     if (s.type === "pre") return preSurveyFeedback.length > 0;
     if (s.type === "buildday") return buildDayFeedback.length > 0;
+    if (s.type === "sep2025workshop") return sep2025WorkshopFeedback.length > 0;
     return false;
   });
 
@@ -569,6 +595,7 @@ function FeedbackResponsesView({
                 {survey.type === "ltf" ? ltfFeedback.length : 
                  survey.type === "pre" ? preSurveyFeedback.length :
                  survey.type === "buildday" ? buildDayFeedback.length :
+                 survey.type === "sep2025workshop" ? sep2025WorkshopFeedback.length :
                  workshopFeedback.length}
               </Badge>
             </TabsTrigger>
@@ -605,6 +632,14 @@ function FeedbackResponsesView({
                 ))}
                 {survey.type === "buildday" && buildDayFeedback.map((feedback) => (
                   <BuildDayResponseCard 
+                    key={feedback.submissionId} 
+                    feedback={feedback}
+                    contact={findContactByEmail(feedback.email)}
+                    onContactClick={onContactClick}
+                  />
+                ))}
+                {survey.type === "sep2025workshop" && sep2025WorkshopFeedback.map((feedback) => (
+                  <Sep2025WorkshopResponseCard 
                     key={feedback.submissionId} 
                     feedback={feedback}
                     contact={findContactByEmail(feedback.email)}
@@ -891,6 +926,80 @@ function BuildDayResponseCard({
                   </Badge>
                 )}
               </div>
+            )}
+          </div>
+
+          <div className="text-right text-xs text-muted-foreground">
+            {new Date(feedback.submittedAt).toLocaleDateString()}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function Sep2025WorkshopResponseCard({ 
+  feedback, 
+  contact,
+  onContactClick 
+}: { 
+  feedback: Sep2025WorkshopFeedback; 
+  contact?: Contact;
+  onContactClick?: (email: string) => void;
+}) {
+  return (
+    <Card className="hover:shadow-md transition-all duration-200">
+      <CardContent className="pt-4">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1 space-y-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-medium">{feedback.name}</span>
+              <Badge 
+                variant={feedback.recommendLikelihood >= 4 ? "default" : "secondary"}
+                className="gap-1"
+              >
+                <Star className="h-3 w-3" />
+                {feedback.recommendLikelihood}/5 recommend
+              </Badge>
+              <Badge 
+                variant={feedback.confidenceUnderstanding >= 4 ? "default" : "secondary"}
+                className="gap-1"
+              >
+                <TrendingUp className="h-3 w-3" />
+                Confidence: {feedback.confidenceUnderstanding}/5
+              </Badge>
+              {feedback.wouldVolunteer && (
+                <Badge className="bg-emerald-500 text-white">
+                  Wants to Volunteer
+                </Badge>
+              )}
+              {contact && (
+                <button
+                  onClick={() => onContactClick?.(feedback.email)}
+                  className="text-xs text-primary hover:underline flex items-center gap-1"
+                >
+                  View Contact <ChevronRight className="h-3 w-3" />
+                </button>
+              )}
+            </div>
+
+            {feedback.ahaMoment && (
+              <p className="text-sm italic text-foreground/80">
+                "{feedback.ahaMoment}"
+              </p>
+            )}
+
+            {feedback.mindsetAfter && (
+              <Badge variant="outline" className="text-xs">
+                Mindset: {feedback.mindsetAfter.split("–")[0].trim()}
+              </Badge>
+            )}
+
+            {feedback.industry && (
+              <p className="text-sm">
+                <span className="text-muted-foreground">Industry: </span>
+                {feedback.industry}
+              </p>
             )}
           </div>
 
