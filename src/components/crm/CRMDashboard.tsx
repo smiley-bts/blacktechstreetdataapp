@@ -43,9 +43,29 @@ const defaultFilters: ContactFilter = {
   hasProject: false,
 };
 
+const TAGLINES = [
+  "Manage your community contacts",
+  "When In Doubt Email Smiley! 😉"
+];
+
 export default function CRMDashboard() {
   const { contacts, loading, error, addContacts, mergeContacts } = useContacts();
   const { getAllUniqueTags, getContactsWithTag } = useContactTags();
+  const [taglineIndex, setTaglineIndex] = useState(0);
+  const [taglineFading, setTaglineFading] = useState(false);
+  
+  // Rotate tagline every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTaglineFading(true);
+      setTimeout(() => {
+        setTaglineIndex((prev) => (prev + 1) % TAGLINES.length);
+        setTaglineFading(false);
+      }, 300);
+    }, 30000);
+    return () => clearInterval(interval);
+  }, []);
+  
   const [filters, setFilters] = useState<ContactFilter>(() => {
     // Check URL for shared filters
     const urlFilters = getFiltersFromUrl();
@@ -248,9 +268,9 @@ export default function CRMDashboard() {
                     <h1 className="text-xl sm:text-2xl lg:text-3xl font-display font-bold bg-gradient-to-r from-foreground via-foreground to-foreground/70 bg-clip-text">
                       Contact CRM
                     </h1>
-                    <p className="text-xs sm:text-sm text-muted-foreground hidden sm:flex items-center gap-1.5 mt-0.5">
+                    <p className={`text-xs sm:text-sm text-muted-foreground hidden sm:flex items-center gap-1.5 mt-0.5 transition-opacity duration-300 ${taglineFading ? 'opacity-0' : 'opacity-100'}`}>
                       <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      Manage your community contacts
+                      {TAGLINES[taglineIndex]}
                     </p>
                   </div>
                 </div>
