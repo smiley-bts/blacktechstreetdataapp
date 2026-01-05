@@ -5,13 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Folder, 
   Link2, 
@@ -149,28 +143,32 @@ export function ProjectsDashboard({ contacts, onContactClick }: ProjectsDashboar
         </Card>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search projects, teams, or members..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        <Select value={eventFilter} onValueChange={setEventFilter}>
-          <SelectTrigger className="w-full sm:w-[200px]">
-            <SelectValue placeholder="Filter by event" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Events</SelectItem>
-            {uniqueEvents.map(event => (
-              <SelectItem key={event} value={event}>{event}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      {/* Event Tabs */}
+      <Tabs value={eventFilter} onValueChange={setEventFilter} className="w-full">
+        <TabsList className="w-full h-auto flex-wrap justify-start gap-1 bg-muted/50 p-1">
+          <TabsTrigger value="all" className="text-sm">
+            All Events ({projects.length})
+          </TabsTrigger>
+          {uniqueEvents.map(event => {
+            const count = projects.filter(p => p.eventName === event).length;
+            return (
+              <TabsTrigger key={event} value={event} className="text-sm">
+                {event} ({count})
+              </TabsTrigger>
+            );
+          })}
+        </TabsList>
+      </Tabs>
+
+      {/* Search */}
+      <div className="relative max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search projects, teams, or members..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-10"
+        />
       </div>
 
       {/* Projects Grid */}
