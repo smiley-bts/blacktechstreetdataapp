@@ -190,6 +190,29 @@ export function parseSep2025WorkshopFeedback(row: string[]): Sep2025WorkshopFeed
   };
 }
 
+export interface Sep2025PreSurveyFeedback {
+  submissionId: string;
+  respondentId: string;
+  submittedAt: string;
+  fullName: string;
+  phone: string;
+  zipCode: string;
+  email: string;
+  accessibilityNeeds: string;
+  tshirtSize: string;
+  needsLaptop: boolean;
+  ageRange: string;
+  educationLevel: string;
+  currentRole: string;
+  roleOther: string;
+  aiConfidence: string;
+  communityConnection: string;
+  hasDeviceAccess: boolean;
+  languages: string[];
+  racialIdentity: string[];
+  householdIncome: string;
+}
+
 export interface FeedbackSummary {
   totalResponses: number;
   averageRating: number;
@@ -243,6 +266,58 @@ export function parsePreSurveyFeedback(row: string[]): PreSurveyFeedback {
     confidence: parseInt(row[19]?.match(/\d/)?.[0] || "0"),
     confidenceApplying: parseInt(row[20]?.match(/\d/)?.[0] || "0"),
     communityConnection: row[21] || "",
+  };
+}
+
+// Parser for Sep 2025 Pre-Survey Form 2 (the more complete form)
+export function parseSep2025PreSurveyForm2(row: string[]): Sep2025PreSurveyFeedback {
+  return {
+    submissionId: row[0] || "",
+    respondentId: row[1] || "",
+    submittedAt: row[2] || "",
+    fullName: row[3] || "",
+    phone: row[4] || "",
+    zipCode: row[5] || "",
+    email: row[6] || "",
+    accessibilityNeeds: row[7] || "",
+    tshirtSize: row[8] || "",
+    needsLaptop: row[9] === "Yes",
+    ageRange: row[10] || "",
+    educationLevel: row[11] || "",
+    currentRole: row[12] || "",
+    roleOther: row[13] || "",
+    aiConfidence: row[14] || "",
+    communityConnection: row[15] || "",
+    hasDeviceAccess: row[16] === "Yes",
+    languages: [row[18], row[19], row[20], row[21], row[22], row[23], row[24]].filter(Boolean),
+    racialIdentity: [row[26], row[27], row[28], row[29], row[30], row[31], row[32], row[33], row[34]].filter(Boolean),
+    householdIncome: row[35] || "",
+  };
+}
+
+// Parser for Sep 2025 Pre-Survey Form 1 (the simpler registration form)
+export function parseSep2025PreSurveyForm1(row: string[]): Sep2025PreSurveyFeedback {
+  return {
+    submissionId: row[0] || "",
+    respondentId: row[1] || "",
+    submittedAt: row[2] || "",
+    fullName: `${row[3] || ""} ${row[4] || ""}`.trim(),
+    phone: row[5] || "",
+    zipCode: row[7] || "",
+    email: row[6] || "",
+    accessibilityNeeds: row[8] || "",
+    tshirtSize: row[9] || "",
+    needsLaptop: row[10] === "Yes",
+    ageRange: row[11] || "",
+    educationLevel: row[12] || "",
+    currentRole: row[13] || "",
+    roleOther: row[15] || "",
+    aiConfidence: row[16] || "",
+    communityConnection: row[19] || "",
+    hasDeviceAccess: row[20] === "Yes",
+    languages: [],
+    racialIdentity: [],
+    householdIncome: row[31] || "",
   };
 }
 
