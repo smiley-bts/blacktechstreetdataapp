@@ -2,28 +2,38 @@ import { useState, useEffect } from "react";
 import Papa from "papaparse";
 import { 
   LTFFeedback, 
-  WorkshopFeedback, 
+  WorkshopFeedback,
+  PreSurveyFeedback,
   parseLTFFeedback, 
-  parseWorkshopFeedback 
+  parseWorkshopFeedback,
+  parsePreSurveyFeedback
 } from "@/types/feedback";
 
 export function useFeedback() {
   const [ltfFeedback, setLtfFeedback] = useState<LTFFeedback[]>([]);
   const [workshopFeedback, setWorkshopFeedback] = useState<WorkshopFeedback[]>([]);
+  const [preSurveyFeedback, setPreSurveyFeedback] = useState<PreSurveyFeedback[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadFeedback = async () => {
       try {
-        // Load LTF feedback
-        const ltfResponse = await fetch("/aspire-ltf-feedback.csv");
+        // Load all feedback files in parallel
+        const [ltfResponse, workshopResponse, preResponse] = await Promise.all([
+          fetch("/aspire-ltf-feedback.csv"),
+          fetch("/aspire-feedback-survey.csv"),
+          fetch("/aspire-pre-survey.csv").catch(() => null) // Optional file
+        ]);
+
         const ltfText = await ltfResponse.text();
+        const workshopText = await workshopResponse.text();
+        const preText = preResponse ? await preResponse.text() : "";
         
+        // Parse LTF feedback
         Papa.parse(ltfText, {
           complete: (result) => {
             const rows = result.data as string[][];
-            // Skip header row
             const parsed = rows.slice(1)
               .filter(row => row[0] && row[0].trim() !== "")
               .map(parseLTFFeedback);
@@ -31,20 +41,29 @@ export function useFeedback() {
           },
         });
 
-        // Load workshop feedback
-        const workshopResponse = await fetch("/aspire-feedback-survey.csv");
-        const workshopText = await workshopResponse.text();
-        
+        // Parse workshop feedback
         Papa.parse(workshopText, {
           complete: (result) => {
             const rows = result.data as string[][];
-            // Skip header row
             const parsed = rows.slice(1)
               .filter(row => row[0] && row[0].trim() !== "")
               .map(parseWorkshopFeedback);
             setWorkshopFeedback(parsed);
           },
         });
+
+        // Parse pre-survey feedback if available
+        if (preText) {
+          Papa.parse(preText, {
+            complete: (result) => {
+              const rows = result.data as string[][];
+              const parsed = rows.slice(1)
+                .filter(row => row[0] && row[0].trim() !== "")
+                .map(parsePreSurveyFeedback);
+              setPreSurveyFeedback(parsed);
+            },
+          });
+        }
 
         setLoading(false);
       } catch (err) {
@@ -83,11 +102,23 @@ export function useFeedback() {
       : 0,
   };
 
+  const preSurveySummary = {
+    totalResponses: preSurveyFeedback.length,
+    averageConfidence: preSurveyFeedback.length > 0
+      ? preSurveyFeedback.reduce((sum, f) => sum + f.confidence, 0) / preSurveyFeedback.length
+      : 0,
+    averageAiExperience: preSurveyFeedback.length > 0
+      ? preSurveyFeedback.reduce((sum, f) => sum + f.aiExperience, 0) / preSurveyFeedback.length
+      : 0,
+  };
+
   return {
     ltfFeedback,
     workshopFeedback,
+    preSurveyFeedback,
     ltfSummary,
     workshopSummary,
+    preSurveySummary,
     loading,
     error,
   };
