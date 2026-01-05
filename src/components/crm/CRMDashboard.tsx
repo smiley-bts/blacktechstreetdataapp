@@ -228,39 +228,58 @@ export default function CRMDashboard() {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto py-4 sm:py-6 px-3 sm:px-4 space-y-4 sm:space-y-6">
         {/* Header */}
-        <header className="flex flex-col gap-4 animate-fade-in">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 sm:gap-3">
-              <img src={btsLogo} alt="Black Tech Street" className="h-8 sm:h-10 w-auto hover-scale" />
-              <div>
-                <h1 className="text-xl sm:text-2xl font-display font-bold text-foreground">
-                  Contact CRM
-                </h1>
-                <p className="text-xs sm:text-sm text-muted-foreground hidden sm:block">
-                  Manage your community contacts
-                </p>
+        <header className="animate-fade-in">
+          <div className="relative overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary/10 via-secondary/50 to-accent/10 border border-border/50 p-4 sm:p-6">
+            {/* Background decorative elements */}
+            <div className="absolute top-0 right-0 w-32 h-32 sm:w-48 sm:h-48 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-24 h-24 sm:w-32 sm:h-32 bg-accent/5 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
+            
+            <div className="relative z-10 flex flex-col gap-4 sm:gap-5">
+              {/* Top row */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="relative group">
+                    <div className="absolute inset-0 bg-primary/20 rounded-xl blur-md group-hover:blur-lg transition-all duration-300" />
+                    <div className="relative bg-background/80 backdrop-blur-sm rounded-xl p-2 sm:p-2.5 border border-border/50 shadow-sm">
+                      <img src={btsLogo} alt="Black Tech Street" className="h-7 sm:h-9 w-auto transition-transform duration-300 group-hover:scale-105" />
+                    </div>
+                  </div>
+                  <div>
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-display font-bold bg-gradient-to-r from-foreground via-foreground to-foreground/70 bg-clip-text">
+                      Contact CRM
+                    </h1>
+                    <p className="text-xs sm:text-sm text-muted-foreground hidden sm:flex items-center gap-1.5 mt-0.5">
+                      <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      Manage your community contacts
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <ThemeToggle />
+                  <div className="hidden sm:flex items-center gap-2">
+                    <ShareReportButton filters={filters} />
+                    <Button variant="outline" size="sm" onClick={handlePrint} className="gap-2 bg-background/50 backdrop-blur-sm hover:bg-background/80 transition-all duration-200">
+                      <Printer className="h-4 w-4" />
+                      <span className="hidden md:inline">Print</span>
+                    </Button>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="flex items-center gap-1 sm:gap-2">
-              <ThemeToggle />
-              <div className="hidden sm:flex items-center gap-2">
-                <ShareReportButton filters={filters} />
-                <Button variant="outline" size="sm" onClick={handlePrint} className="gap-2">
-                  <Printer className="h-4 w-4" />
-                  <span className="hidden md:inline">Print</span>
-                </Button>
+              
+              {/* Action buttons row */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-thin">
+                <div className="flex items-center gap-2 bg-background/40 backdrop-blur-sm rounded-lg p-1.5 border border-border/30">
+                  <DeduplicationModal contacts={contacts} onMerge={handleMergeContacts} />
+                  <ImportContactsModal onImport={handleImportContacts} />
+                  <ExportModal contacts={contacts} filteredContacts={filteredContacts} />
+                </div>
+                <div className="sm:hidden flex items-center gap-2 ml-auto">
+                  <ShareReportButton filters={filters} />
+                  <Button variant="outline" size="sm" onClick={handlePrint} className="bg-background/50">
+                    <Printer className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 -mx-1 px-1">
-            <DeduplicationModal contacts={contacts} onMerge={handleMergeContacts} />
-            <ImportContactsModal onImport={handleImportContacts} />
-            <ExportModal contacts={contacts} filteredContacts={filteredContacts} />
-            <div className="sm:hidden flex items-center gap-2 ml-auto">
-              <ShareReportButton filters={filters} />
-              <Button variant="outline" size="sm" onClick={handlePrint}>
-                <Printer className="h-4 w-4" />
-              </Button>
             </div>
           </div>
         </header>
