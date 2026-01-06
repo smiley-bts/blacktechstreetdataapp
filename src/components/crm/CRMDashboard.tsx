@@ -48,6 +48,7 @@ const defaultFilters: ContactFilter = {
   dec6Workshop: false,
   dec13LTF: false,
   sept27BuildDay: false,
+  june2025Event: false,
   hasFeedback: false,
   hasProject: false,
 };

@@ -104,6 +104,7 @@ export interface ContactFilter {
   dec6Workshop: boolean;
   dec13LTF: boolean;
   sept27BuildDay: boolean;
+  june2025Event: boolean; // New: June 27-28, 2025 event
   hasFeedback: boolean;
   hasProject: boolean;
 }
@@ -313,6 +314,14 @@ export function isSept27BuildDay(contact: Contact): boolean {
     contact.sept27thReg ||
     contact.teamBuildDescription ||
     (contact.eventsAttended && contact.eventsAttended.includes("Sept"))
+  );
+}
+
+// Helper to check June 27-28, 2025 event participation
+export function isJune2025Event(contact: Contact): boolean {
+  return !!(
+    (contact.eventsAttended && (contact.eventsAttended.includes("June") || contact.eventsAttended.includes("Jun"))) ||
+    contact.rawData?.["june2025_attended"]
   );
 }
 

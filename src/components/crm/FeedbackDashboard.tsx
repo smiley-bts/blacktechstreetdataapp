@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { useFeedback } from "@/hooks/useFeedback";
+import { useJune2025Event } from "@/hooks/useJune2025Event";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -16,7 +17,8 @@ import {
   ClipboardList,
   Folder,
   Hammer,
-  GitBranch
+  GitBranch,
+  CalendarCheck
 } from "lucide-react";
 import { LTFFeedback, WorkshopFeedback, PreSurveyFeedback, BuildDayFeedback, Sep2025WorkshopFeedback, Sep2025PreSurveyFeedback } from "@/types/feedback";
 import { Contact } from "@/types/contact";
@@ -36,7 +38,7 @@ interface EventConfig {
   surveys: {
     id: string;
     name: string;
-    type: "pre" | "post" | "ltf" | "workshop" | "buildday" | "sep2025workshop" | "sep2025pre";
+    type: "pre" | "post" | "ltf" | "workshop" | "buildday" | "sep2025workshop" | "sep2025pre" | "june2025signup" | "june2025attendance";
   }[];
 }
 
@@ -65,12 +67,12 @@ const EVENTS: EventConfig[] = [
   },
   {
     id: "jun-2025",
-    name: "June 2025 ASPIRE Build Day",
+    name: "June 2025 ASPIRE Workshop & Build Day",
     shortName: "Jun 2025",
     dates: "Jun 27-28, 2025",
     surveys: [
-      { id: "pre", name: "Pre-Survey", type: "pre" },
-      { id: "buildday", name: "Build Day Feedback", type: "buildday" },
+      { id: "june2025signup", name: "Registration/Signup", type: "june2025signup" },
+      { id: "june2025attendance", name: "Attendance Tracking", type: "june2025attendance" },
     ]
   }
 ];
@@ -89,12 +91,23 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
     buildDaySummary,
     sep2025WorkshopSummary,
     sep2025PreSurveySummary,
-    loading, 
-    error 
+    loading: feedbackLoading, 
+    error: feedbackError 
   } = useFeedback();
+
+  const {
+    signups: june2025Signups,
+    attendance: june2025Attendance,
+    summary: june2025Summary,
+    loading: june2025Loading,
+    error: june2025Error,
+  } = useJune2025Event();
   
-  const [selectedEvent, setSelectedEvent] = useState("sep-2025");
+  const [selectedEvent, setSelectedEvent] = useState("jun-2025");
   const [view, setView] = useState<"summary" | "responses" | "journeys">("summary");
+
+  const loading = feedbackLoading || june2025Loading;
+  const error = feedbackError || june2025Error;
 
   // Get the current event config
   const currentEvent = EVENTS.find(e => e.id === selectedEvent) || EVENTS[0];
@@ -109,6 +122,8 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
         buildday: buildDayFeedback.filter(f => f.submittedAt.startsWith("2025-09")),
         sep2025workshop: sep2025WorkshopFeedback.filter(f => f.submittedAt.startsWith("2025-09")),
         sep2025pre: sep2025PreSurveyFeedback,
+        june2025signups: [],
+        june2025attendance: [],
       };
     } else if (selectedEvent === "dec-2025") {
       return {
@@ -118,19 +133,23 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
         buildday: [],
         sep2025workshop: [],
         sep2025pre: [],
+        june2025signups: [],
+        june2025attendance: [],
       };
     } else if (selectedEvent === "jun-2025") {
       return {
         ltf: [],
         workshop: [],
-        pre: preSurveyFeedback.filter(f => f.submittedAt.startsWith("2025-06")),
-        buildday: buildDayFeedback.filter(f => f.submittedAt.startsWith("2025-06")),
+        pre: [],
+        buildday: [],
         sep2025workshop: [],
         sep2025pre: [],
+        june2025signups: june2025Signups,
+        june2025attendance: june2025Attendance,
       };
     }
-    return { ltf: [], workshop: [], pre: [], buildday: [], sep2025workshop: [], sep2025pre: [] };
-  }, [selectedEvent, ltfFeedback, workshopFeedback, preSurveyFeedback, buildDayFeedback, sep2025WorkshopFeedback, sep2025PreSurveyFeedback]);
+    return { ltf: [], workshop: [], pre: [], buildday: [], sep2025workshop: [], sep2025pre: [], june2025signups: [], june2025attendance: [] };
+  }, [selectedEvent, ltfFeedback, workshopFeedback, preSurveyFeedback, buildDayFeedback, sep2025WorkshopFeedback, sep2025PreSurveyFeedback, june2025Signups, june2025Attendance]);
 
   if (loading) {
     return (
@@ -152,7 +171,7 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
     return contacts.find(c => c.email?.toLowerCase() === email?.toLowerCase());
   };
 
-  const totalResponses = eventFeedback.ltf.length + eventFeedback.workshop.length + eventFeedback.pre.length + eventFeedback.buildday.length + eventFeedback.sep2025workshop.length + eventFeedback.sep2025pre.length;
+  const totalResponses = eventFeedback.ltf.length + eventFeedback.workshop.length + eventFeedback.pre.length + eventFeedback.buildday.length + eventFeedback.sep2025workshop.length + eventFeedback.sep2025pre.length + eventFeedback.june2025signups.length;
 
   return (
     <div className="space-y-4 sm:space-y-6 animate-fade-in">
@@ -254,6 +273,18 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
                     <span className="hidden sm:inline">Build:</span> {eventFeedback.buildday.length}
                   </Badge>
                 )}
+                {eventFeedback.june2025signups.length > 0 && (
+                  <Badge variant="outline" className="gap-1 text-xs bg-emerald-500/10 border-emerald-500/20 text-emerald-600">
+                    <Users className="h-3 w-3" />
+                    <span className="hidden sm:inline">Signups:</span> {eventFeedback.june2025signups.length}
+                  </Badge>
+                )}
+                {eventFeedback.june2025attendance.length > 0 && (
+                  <Badge variant="outline" className="gap-1 text-xs bg-primary/10 border-primary/20 text-primary">
+                    <CalendarCheck className="h-3 w-3" />
+                    <span className="hidden sm:inline">Attended:</span> {eventFeedback.june2025attendance.filter(a => a.day1Attendance || a.day2Attendance).length}
+                  </Badge>
+                )}
               </div>
             </div>
 
@@ -268,6 +299,9 @@ export function FeedbackDashboard({ contacts, onContactClick }: FeedbackDashboar
                 buildDayFeedback={eventFeedback.buildday}
                 sep2025WorkshopFeedback={eventFeedback.sep2025workshop}
                 sep2025PreSurveyFeedback={eventFeedback.sep2025pre}
+                june2025Signups={eventFeedback.june2025signups}
+                june2025Attendance={eventFeedback.june2025attendance}
+                june2025Summary={june2025Summary}
                 eventId={event.id}
               />
             )}
@@ -326,6 +360,21 @@ interface FeedbackSummaryViewProps {
   buildDayFeedback: BuildDayFeedback[];
   sep2025WorkshopFeedback: Sep2025WorkshopFeedback[];
   sep2025PreSurveyFeedback: Sep2025PreSurveyFeedback[];
+  june2025Signups: any[];
+  june2025Attendance: any[];
+  june2025Summary: {
+    totalSignups: number;
+    totalAttendees: number;
+    day1Attendees: number;
+    day2Attendees: number;
+    bothDaysAttendees: number;
+    completedPostSurvey: number;
+    signedRelease: number;
+    attendanceRate: number;
+    aiConfidenceLevels: Record<number, number>;
+    roleBreakdown: Record<string, number>;
+    ageBreakdown: Record<string, number>;
+  };
   eventId: string;
 }
 
@@ -339,6 +388,9 @@ function FeedbackSummaryView({
   buildDayFeedback,
   sep2025WorkshopFeedback,
   sep2025PreSurveyFeedback,
+  june2025Signups,
+  june2025Attendance,
+  june2025Summary,
   eventId 
 }: FeedbackSummaryViewProps) {
   // Extract notable quotes (from workshop or build day or sep2025 workshop feedback)
@@ -380,7 +432,7 @@ function FeedbackSummaryView({
       : 0,
   };
 
-  const totalResponses = ltfFeedback.length + workshopFeedback.length + preSurveyFeedback.length + buildDayFeedback.length + sep2025WorkshopFeedback.length + sep2025PreSurveyFeedback.length;
+  const totalResponses = ltfFeedback.length + workshopFeedback.length + preSurveyFeedback.length + buildDayFeedback.length + sep2025WorkshopFeedback.length + sep2025PreSurveyFeedback.length + june2025Signups.length;
 
   return (
     <div className="space-y-6">
@@ -556,6 +608,85 @@ function FeedbackSummaryView({
                       ? (preSurveyFeedback.reduce((sum, f) => sum + f.aiExperience, 0) / preSurveyFeedback.length).toFixed(1)
                       : "—"}/5
                   </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* June 2025 Event Summary */}
+        {june2025Signups.length > 0 && (
+          <Card className="hover:shadow-lg transition-shadow md:col-span-2">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <CalendarCheck className="h-4 w-4" />
+                June 27-28, 2025 Event Summary
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div className="p-4 bg-primary/10 rounded-lg">
+                  <p className="text-2xl font-bold">{june2025Summary.totalSignups}</p>
+                  <p className="text-xs text-muted-foreground">Total Signups</p>
+                </div>
+                <div className="p-4 bg-emerald-500/10 rounded-lg">
+                  <p className="text-2xl font-bold">{june2025Summary.totalAttendees}</p>
+                  <p className="text-xs text-muted-foreground">Attended (Either Day)</p>
+                </div>
+                <div className="p-4 bg-amber-500/10 rounded-lg">
+                  <p className="text-2xl font-bold">{june2025Summary.attendanceRate}%</p>
+                  <p className="text-xs text-muted-foreground">Attendance Rate</p>
+                </div>
+                <div className="p-4 bg-blue-500/10 rounded-lg">
+                  <p className="text-2xl font-bold">{june2025Summary.bothDaysAttendees}</p>
+                  <p className="text-xs text-muted-foreground">Both Days</p>
+                </div>
+              </div>
+              
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Day-by-day breakdown */}
+                <div>
+                  <h4 className="text-sm font-medium mb-3">Attendance by Day</h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between p-3 bg-secondary/50 rounded-lg">
+                      <span>Friday, June 27 (Day 1)</span>
+                      <span className="font-bold">{june2025Summary.day1Attendees}</span>
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-secondary/50 rounded-lg">
+                      <span>Saturday, June 28 (Day 2)</span>
+                      <span className="font-bold">{june2025Summary.day2Attendees}</span>
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-primary/10 rounded-lg">
+                      <span>Completed Post Survey</span>
+                      <span className="font-bold">{june2025Summary.completedPostSurvey}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Role breakdown */}
+                <div>
+                  <h4 className="text-sm font-medium mb-3">Participants by Role</h4>
+                  <div className="space-y-2 max-h-[200px] overflow-y-auto">
+                    {Object.entries(june2025Summary.roleBreakdown)
+                      .sort((a, b) => b[1] - a[1])
+                      .slice(0, 6)
+                      .map(([role, count]) => (
+                        <div key={role} className="flex items-center gap-2">
+                          <div className="flex-1">
+                            <div className="flex justify-between text-sm mb-1">
+                              <span className="truncate">{role}</span>
+                              <span className="text-muted-foreground shrink-0 ml-2">{count}</span>
+                            </div>
+                            <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
+                              <div 
+                                className="h-full bg-primary rounded-full transition-all duration-500"
+                                style={{ width: `${(count / june2025Summary.totalSignups) * 100}%` }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
                 </div>
               </div>
             </CardContent>
