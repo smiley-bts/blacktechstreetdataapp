@@ -34,17 +34,19 @@ export function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) {
     setIsLoading(true);
 
     try {
-      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+      // Always attempt the reset - we show success regardless to prevent user enumeration
+      await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/auth?mode=reset`,
       });
 
-      if (resetError) {
-        setError(resetError.message);
-      } else {
-        setSuccess(true);
-      }
+      // Always show success to prevent user enumeration attacks
+      // If the email doesn't exist, no email is sent, but we don't reveal that
+      setSuccess(true);
     } catch (err) {
-      setError('An unexpected error occurred');
+      // Even on unexpected errors, show success to prevent information leakage
+      // Log for debugging but don't expose to user
+      console.error('Password reset request failed');
+      setSuccess(true);
     } finally {
       setIsLoading(false);
     }
@@ -59,12 +61,12 @@ export function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) {
           </div>
           <CardTitle>Check Your Email</CardTitle>
           <CardDescription>
-            We've sent a password reset link to <strong>{email}</strong>
+            If an account exists with <strong>{email}</strong>, you will receive a password reset link.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground text-center mb-4">
-            Click the link in the email to reset your password. If you don't see it, check your spam folder.
+            If you don't see the email, check your spam folder. The link will expire in 24 hours.
           </p>
           <Button variant="outline" className="w-full" onClick={onBack}>
             <ArrowLeft className="h-4 w-4 mr-2" />
