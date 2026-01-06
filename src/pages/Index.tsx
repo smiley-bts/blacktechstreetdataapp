@@ -1,11 +1,11 @@
 import CRMDashboard from "@/components/crm/CRMDashboard";
-import { PasswordGate } from "@/components/PasswordGate";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 const Index = () => {
   return (
-    <PasswordGate storageKey="crm-unlocked">
+    <ProtectedRoute requireAdmin>
       <CRMDashboard />
-    </PasswordGate>
+    </ProtectedRoute>
   );
 };
 

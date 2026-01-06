@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { PasswordGate } from "@/components/PasswordGate";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, Users, ClipboardList, BarChart3, Rocket, Contact } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -101,8 +101,8 @@ function AdminPortalContent() {
 
 export default function AdminPortal() {
   return (
-    <PasswordGate>
+    <ProtectedRoute requireAdmin>
       <AdminPortalContent />
-    </PasswordGate>
+    </ProtectedRoute>
   );
 }
