@@ -144,88 +144,71 @@ function contactToDbRow(contact: Contact) {
   };
 }
 
+// Parse CSV contacts for import
+async function parseCsvContacts(): Promise<any[]> {
+  const csvResponse = await fetch("/contacts.csv");
+  const csvText = await csvResponse.text();
+  
+  return new Promise((resolve) => {
+    const contacts: any[] = [];
+    Papa.parse(csvText, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        results.data.forEach((row: any) => {
+          const contact = parseContact(row);
+          contacts.push(contactToDbRow(contact));
+        });
+        resolve(contacts);
+      },
+    });
+  });
+}
+
 export function useContacts() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [importing, setImporting] = useState(false);
+  const [needsImport, setNeedsImport] = useState(false);
 
-  // Load contacts from database and/or CSV
-  useEffect(() => {
-    const loadContacts = async () => {
-      try {
-        // First, try to load from database
-        const { data: dbContacts, error: dbError } = await supabase
-          .from('contacts')
-          .select('*');
+  // Load contacts from database ONLY
+  const loadContacts = useCallback(async () => {
+    try {
+      setLoading(true);
+      
+      // Load from database - no limit to get all contacts
+      const { data: dbContacts, error: dbError, count } = await supabase
+        .from('contacts')
+        .select('*', { count: 'exact' });
 
-        if (dbError) {
-          console.warn('Database contacts load error:', dbError);
-        }
-
-        // Also load from CSV as fallback/initial data source
-        const csvResponse = await fetch("/contacts.csv");
-        const csvText = await csvResponse.text();
-        
-        const csvContacts: Contact[] = [];
-        Papa.parse(csvText, {
-          header: true,
-          skipEmptyLines: true,
-          complete: (results) => {
-            results.data.forEach((row: any) => {
-              csvContacts.push(parseContact(row));
-            });
-          },
-        });
-
-        // Merge database and CSV contacts, preferring database records
-        const dbContactMap = new Map<string, Contact>();
-        if (dbContacts && dbContacts.length > 0) {
-          dbContacts.forEach(row => {
-            const contact = dbRowToContact(row);
-            if (contact.recordId) {
-              dbContactMap.set(contact.recordId, contact);
-            }
-            if (contact.email) {
-              dbContactMap.set(contact.email.toLowerCase(), contact);
-            }
-          });
-        }
-
-        // Add CSV contacts that aren't in database
-        const mergedContacts: Contact[] = [];
-        const seenIds = new Set<string>();
-        
-        // Add all database contacts first
-        dbContactMap.forEach((contact, key) => {
-          if (contact.recordId && !seenIds.has(contact.recordId)) {
-            mergedContacts.push(contact);
-            seenIds.add(contact.recordId);
-          }
-        });
-
-        // Add CSV contacts that aren't duplicates
-        csvContacts.forEach(contact => {
-          const isDuplicate = 
-            (contact.recordId && seenIds.has(contact.recordId)) ||
-            (contact.email && dbContactMap.has(contact.email.toLowerCase()));
-          
-          if (!isDuplicate) {
-            mergedContacts.push(contact);
-            if (contact.recordId) seenIds.add(contact.recordId);
-          }
-        });
-
-        setContacts(mergedContacts);
+      if (dbError) {
+        console.error('Database contacts load error:', dbError);
+        setError(dbError.message);
         setLoading(false);
-      } catch (err) {
-        console.error('Error loading contacts:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load contacts');
-        setLoading(false);
+        return;
       }
-    };
 
-    loadContacts();
+      const loadedContacts = (dbContacts || []).map(dbRowToContact);
+      setContacts(loadedContacts);
+      
+      // Check if we need to import CSV data
+      if (loadedContacts.length < 100) {
+        // Database seems empty, might need CSV import
+        setNeedsImport(true);
+      }
+      
+      setLoading(false);
+    } catch (err) {
+      console.error('Error loading contacts:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load contacts');
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    loadContacts();
+  }, [loadContacts]);
 
   // Set up real-time subscription
   useEffect(() => {
@@ -259,7 +242,6 @@ export function useContacts() {
               }
               return [...prev, newContact];
             });
-            toast.success('New contact added', { description: newContact.fullName || newContact.email });
           } else if (payload.eventType === 'UPDATE') {
             const updatedContact = dbRowToContact(payload.new);
             setContacts(prev => prev.map(c => 
@@ -278,7 +260,68 @@ export function useContacts() {
     };
   }, []);
 
-  // Add contacts to database (real-time will update state)
+  // Import CSV contacts to database
+  const importCsvToDatabase = useCallback(async () => {
+    try {
+      setImporting(true);
+      
+      // Get current session
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error('Please log in to import contacts');
+        setImporting(false);
+        return;
+      }
+
+      // Parse CSV contacts
+      const csvContacts = await parseCsvContacts();
+      
+      if (csvContacts.length === 0) {
+        toast.info('No contacts found in CSV');
+        setImporting(false);
+        return;
+      }
+
+      toast.loading(`Importing ${csvContacts.length} contacts...`, { id: 'import-progress' });
+
+      // Call edge function to import
+      const response = await supabase.functions.invoke('import-csv-contacts', {
+        body: { contacts: csvContacts }
+      });
+
+      if (response.error) {
+        throw new Error(response.error.message);
+      }
+
+      const result = response.data;
+      
+      toast.dismiss('import-progress');
+      
+      if (result.inserted > 0) {
+        toast.success(`Imported ${result.inserted} contacts`, {
+          description: result.skipped > 0 ? `${result.skipped} duplicates skipped` : undefined
+        });
+      } else {
+        toast.info('All contacts already in database');
+      }
+
+      setNeedsImport(false);
+      
+      // Reload contacts from database
+      await loadContacts();
+      
+    } catch (err) {
+      console.error('Error importing contacts:', err);
+      toast.dismiss('import-progress');
+      toast.error('Import failed', { 
+        description: err instanceof Error ? err.message : 'Unknown error' 
+      });
+    } finally {
+      setImporting(false);
+    }
+  }, [loadContacts]);
+
+  // Add contacts to database
   const addContacts = useCallback(async (newContacts: Contact[]) => {
     try {
       // Filter out duplicates
@@ -304,16 +347,14 @@ export function useContacts() {
 
       if (insertError) {
         console.error('Error inserting contacts:', insertError);
-        // Fall back to local state update
-        setContacts(prev => [...prev, ...uniqueNew]);
-        toast.warning('Contacts added locally', { description: 'Database sync may be delayed' });
+        toast.error('Failed to add contacts', { description: insertError.message });
       } else {
-        toast.success(`${uniqueNew.length} contacts added`, { description: 'Data synced across all views' });
+        toast.success(`${uniqueNew.length} contacts added`);
+        // Real-time subscription will update the state
       }
     } catch (err) {
       console.error('Error adding contacts:', err);
-      // Fall back to local state
-      setContacts(prev => [...prev, ...newContacts]);
+      toast.error('Failed to add contacts');
     }
   }, [contacts]);
 
@@ -327,6 +368,8 @@ export function useContacts() {
 
       if (updateError) {
         console.error('Error updating merged contact:', updateError);
+        toast.error('Failed to merge contacts');
+        return;
       }
 
       // Delete the removed contacts
@@ -341,7 +384,7 @@ export function useContacts() {
         }
       }
 
-      // Update local state immediately
+      // Update local state immediately for responsiveness
       setContacts(prev => {
         const filtered = prev.filter(c => !removedIds.includes(c.recordId));
         return filtered.map(c => 
@@ -349,16 +392,10 @@ export function useContacts() {
         );
       });
 
-      toast.success('Contacts merged', { description: 'Changes synced everywhere' });
+      toast.success('Contacts merged');
     } catch (err) {
       console.error('Error merging contacts:', err);
-      // Fall back to local state update
-      setContacts(prev => {
-        const filtered = prev.filter(c => !removedIds.includes(c.recordId));
-        return filtered.map(c => 
-          c.recordId === mergedContact.recordId ? mergedContact : c
-        );
-      });
+      toast.error('Failed to merge contacts');
     }
   }, []);
 
@@ -371,50 +408,31 @@ export function useContacts() {
 
       if (updateError) {
         console.error('Error updating contact:', updateError);
-        // Update local state
-        setContacts(prev => prev.map(c => 
-          c.recordId === contact.recordId ? contact : c
-        ));
+        toast.error('Failed to update contact');
       }
+      // Real-time subscription will update the state
     } catch (err) {
       console.error('Error updating contact:', err);
-      setContacts(prev => prev.map(c => 
-        c.recordId === contact.recordId ? contact : c
-      ));
+      toast.error('Failed to update contact');
     }
   }, []);
 
-  // Sync CSV contacts to database (one-time import)
-  const syncCsvToDatabase = useCallback(async () => {
-    try {
-      const csvContacts = contacts.filter(c => c.recordId);
-      const dbRows = csvContacts.map(contactToDbRow);
-      
-      // Upsert all contacts
-      const { error } = await supabase
-        .from('contacts')
-        .upsert(dbRows, { onConflict: 'record_id', ignoreDuplicates: false });
-
-      if (error) {
-        console.error('Error syncing to database:', error);
-        toast.error('Sync failed', { description: error.message });
-      } else {
-        toast.success(`${csvContacts.length} contacts synced to database`);
-      }
-    } catch (err) {
-      console.error('Error syncing contacts:', err);
-      toast.error('Sync failed');
-    }
-  }, [contacts]);
+  // Refresh contacts from database
+  const refreshContacts = useCallback(async () => {
+    await loadContacts();
+  }, [loadContacts]);
 
   return { 
     contacts, 
     loading, 
     error, 
+    importing,
+    needsImport,
     addContacts, 
     mergeContacts, 
     updateContact,
-    syncCsvToDatabase 
+    importCsvToDatabase,
+    refreshContacts
   };
 }
 
@@ -460,20 +478,21 @@ export function useFilteredContacts(contacts: Contact[], filters: ContactFilter)
       }
 
       // Event-specific filters
+      if (filters.hasFeedback && !hasEventFeedback(contact)) return false;
+      if (filters.buildDayOnly && !hasBuildDayData(contact)) return false;
       if (filters.dec6Workshop && !isDec6Workshop(contact)) return false;
       if (filters.dec13LTF && !isDec13LTF(contact)) return false;
       if (filters.sept27BuildDay && !isSept27BuildDay(contact)) return false;
-      if (filters.hasFeedback && !hasEventFeedback(contact)) return false;
-      if (filters.hasProject && !hasBuildDayData(contact)) return false;
 
       return true;
     });
   }, [contacts, filters]);
 }
 
+// Helper to get unique values for filters
 export function getUniqueValues(contacts: Contact[], field: keyof Contact): string[] {
   const values = new Set<string>();
-  contacts.forEach((contact) => {
+  contacts.forEach(contact => {
     const value = contact[field];
     if (value && typeof value === 'string' && value.trim()) {
       values.add(value.trim());

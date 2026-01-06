@@ -23,7 +23,7 @@ import { openExecutiveReport } from "./ExecutiveReportGenerator";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, FileText, Printer, MessageSquare, Folder, Settings, Presentation, LogOut, FileBarChart, RefreshCw, FileCheck, CalendarDays } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Printer, MessageSquare, Folder, Settings, Presentation, LogOut, FileBarChart, RefreshCw, FileCheck, CalendarDays, Database, Upload } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useContactTags } from "@/hooks/useContactTags";
 import { getFiltersFromUrl, serializeFilters } from "@/lib/urlState";
@@ -65,7 +65,7 @@ const TAGLINES = [
 ];
 
 export default function CRMDashboard() {
-  const { contacts, loading, error, addContacts, mergeContacts } = useContacts();
+  const { contacts, loading, error, addContacts, mergeContacts, importing, needsImport, importCsvToDatabase } = useContacts();
   const { syncing, forceSyncAll } = useEventAutoSync(contacts, loading);
   const { syncReleaseFormsToContacts, totalForms } = useReleaseForms();
   const { getAllUniqueTags, getContactsWithTag } = useContactTags();
@@ -450,6 +450,29 @@ export default function CRMDashboard() {
             </div>
           </div>
         </header>
+
+        {/* Import Banner - shows when database needs CSV import */}
+        {needsImport && user && (
+          <div className="mb-4 p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <Database className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+              <div>
+                <p className="font-medium text-amber-700 dark:text-amber-300">Database Import Required</p>
+                <p className="text-sm text-amber-600/80 dark:text-amber-400/80">
+                  Import your CSV contacts to the database for centralized data management.
+                </p>
+              </div>
+            </div>
+            <Button 
+              onClick={importCsvToDatabase}
+              disabled={importing}
+              className="gap-2 bg-amber-600 hover:bg-amber-700 text-white"
+            >
+              <Upload className={`h-4 w-4 ${importing ? 'animate-bounce' : ''}`} />
+              {importing ? 'Importing...' : 'Import Now'}
+            </Button>
+          </div>
+        )}
 
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full animate-fade-in" style={{ animationDelay: '0.1s' }}>
