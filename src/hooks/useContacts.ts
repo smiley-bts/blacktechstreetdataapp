@@ -177,10 +177,11 @@ export function useContacts() {
     try {
       setLoading(true);
       
-      // Load from database - no limit to get all contacts
+      // Load from database - fetch up to 10,000 contacts (override default 1000 limit)
       const { data: dbContacts, error: dbError, count } = await supabase
         .from('contacts')
-        .select('*', { count: 'exact' });
+        .select('*', { count: 'exact' })
+        .range(0, 9999);
 
       if (dbError) {
         console.error('Database contacts load error:', dbError);
