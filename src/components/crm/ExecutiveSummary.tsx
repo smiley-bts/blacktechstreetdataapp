@@ -215,7 +215,8 @@ export function ExecutiveSummary({ contacts, onNavigateToContacts }: ExecutiveSu
                         padding: '8px 12px',
                         boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
                       }}
-                      labelStyle={{ fontWeight: 600, marginBottom: '4px' }}
+                      labelStyle={{ fontWeight: 600, marginBottom: '4px', color: 'hsl(var(--foreground))' }}
+                      itemStyle={{ color: 'hsl(var(--foreground))' }}
                     />
                     <Legend 
                       wrapperStyle={{ paddingTop: '8px' }}
@@ -252,6 +253,8 @@ export function ExecutiveSummary({ contacts, onNavigateToContacts }: ExecutiveSu
                       border: '1px solid hsl(var(--border))',
                       borderRadius: '8px'
                     }}
+                    labelStyle={{ color: 'hsl(var(--foreground))' }}
+                    itemStyle={{ color: 'hsl(var(--foreground))' }}
                   />
                   <Bar dataKey="value" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
                 </BarChart>
@@ -287,6 +290,8 @@ export function ExecutiveSummary({ contacts, onNavigateToContacts }: ExecutiveSu
                       border: '1px solid hsl(var(--border))',
                       borderRadius: '8px'
                     }}
+                    labelStyle={{ color: 'hsl(var(--foreground))' }}
+                    itemStyle={{ color: 'hsl(var(--foreground))' }}
                   />
                   <Bar dataKey="value" fill="hsl(var(--chart-blue))" radius={[4, 4, 0, 0]} />
                 </BarChart>

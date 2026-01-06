@@ -27,6 +27,7 @@ import { getFiltersFromUrl, serializeFilters } from "@/lib/urlState";
 import { openPrintView } from "./PrintableReport";
 import { fuzzySearchFields } from "@/lib/fuzzySearch";
 import { useAuth } from "@/hooks/useAuth";
+import { useSessionTimeout } from "@/hooks/useSessionTimeout";
 import btsLogo from "@/assets/black-tech-street-logo.png";
 
 // CRM Dashboard v2 - Event Attendee Focus
@@ -68,6 +69,14 @@ export default function CRMDashboard() {
     await signOut();
     navigate('/');
   }, [signOut, navigate]);
+
+  // Session timeout - auto logout after 30 min inactivity
+  useSessionTimeout({
+    timeoutMinutes: 30,
+    warningMinutes: 2,
+    onTimeout: handleLogout,
+    enabled: !!user,
+  });
   
   // Rotate tagline every 30 seconds
   useEffect(() => {
@@ -293,6 +302,13 @@ export default function CRMDashboard() {
                 <div className="flex items-center gap-1.5 sm:gap-2">
                   <ThemeToggle />
                 <div className="hidden sm:flex items-center gap-2">
+                    {profile && (
+                      <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/5 rounded-lg border border-primary/20">
+                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="text-sm font-medium text-foreground">{profile.display_name}</span>
+                        <span className="text-xs text-muted-foreground capitalize">({profile.role})</span>
+                      </div>
+                    )}
                     <Button 
                       variant="outline" 
                       size="sm" 
