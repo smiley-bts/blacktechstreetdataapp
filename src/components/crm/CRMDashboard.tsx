@@ -312,18 +312,37 @@ export default function CRMDashboard() {
       <div className="container mx-auto py-4 sm:py-6 px-3 sm:px-4 space-y-4 sm:space-y-6">
         {/* Header */}
         <header className="animate-fade-in">
-          <div className="relative overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary/10 via-secondary/50 to-accent/10 border border-border/50 p-4 sm:p-6">
+          <div className="relative overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary/10 via-secondary/50 to-accent/10 border border-border p-4 sm:p-6">
             {/* Background decorative elements */}
             <div className="absolute top-0 right-0 w-32 h-32 sm:w-48 sm:h-48 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
             <div className="absolute bottom-0 left-0 w-24 h-24 sm:w-32 sm:h-32 bg-accent/5 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
             
             <div className="relative z-10 flex flex-col gap-4 sm:gap-5">
+              {/* Greeting banner for logged in user */}
+              {profile && (
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-primary/5 border border-primary/20">
+                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                    <span className="text-lg font-bold text-primary">
+                      {profile.display_name.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-foreground">
+                      Welcome back, <span className="text-primary">{profile.display_name}</span>!
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      You're logged in as {profile.role === 'owner' ? 'Owner' : 'Admin'} • Last login tracked
+                    </p>
+                  </div>
+                </div>
+              )}
+
               {/* Top row */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 sm:gap-4">
                   <div className="relative group">
                     <div className="absolute inset-0 bg-primary/20 rounded-xl blur-md group-hover:blur-lg transition-all duration-300" />
-                    <div className="relative bg-background/80 backdrop-blur-sm rounded-xl p-2 sm:p-2.5 border border-border/50 shadow-sm">
+                    <div className="relative bg-background/80 backdrop-blur-sm rounded-xl p-2 sm:p-2.5 border border-border shadow-sm">
                       <img src={btsLogo} alt="Black Tech Street" className="h-7 sm:h-9 w-auto transition-transform duration-300 group-hover:scale-105" />
                     </div>
                   </div>
