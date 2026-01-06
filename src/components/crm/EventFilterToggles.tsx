@@ -1,4 +1,4 @@
-import { Calendar, Hammer, GraduationCap, Users, Sparkles } from "lucide-react";
+import { Calendar, Hammer, GraduationCap, Users, Sparkles, Wine } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -6,6 +6,7 @@ export interface EventFilters {
   dec6Workshop: boolean;
   dec13LTF: boolean;
   sept27BuildDay: boolean;
+  happyHourAug2025: boolean;
   hasFeedback: boolean;
   hasProject: boolean;
 }
@@ -17,6 +18,7 @@ interface EventFilterTogglesProps {
     dec6Workshop: number;
     dec13LTF: number;
     sept27BuildDay: number;
+    happyHourAug2025: number;
     hasFeedback: number;
     hasProject: number;
   };
@@ -46,6 +48,14 @@ const eventToggleConfig = [
     icon: Hammer,
     color: "from-amber-500 to-orange-600",
     activeColor: "bg-amber-500/20 border-amber-500/50 text-amber-300",
+  },
+  {
+    key: "happyHourAug2025" as keyof EventFilters,
+    label: "Happy Hour Aug 27",
+    shortLabel: "Happy Hr",
+    icon: Wine,
+    color: "from-rose-500 to-pink-600",
+    activeColor: "bg-rose-500/20 border-rose-500/50 text-rose-300",
   },
   {
     key: "hasFeedback" as keyof EventFilters,
@@ -112,6 +122,7 @@ export function EventFilterToggles({ filters, onFiltersChange, counts }: EventFi
             dec6Workshop: false,
             dec13LTF: false,
             sept27BuildDay: false,
+            happyHourAug2025: false,
             hasFeedback: false,
             hasProject: false,
           })}

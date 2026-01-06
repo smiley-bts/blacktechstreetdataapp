@@ -82,6 +82,7 @@ export function ContactSearchBar({
       dec13LTF: false,
       sept27BuildDay: false,
       june2025Event: false,
+      happyHourAug2025: false,
       hasFeedback: false,
       hasProject: false,
     });

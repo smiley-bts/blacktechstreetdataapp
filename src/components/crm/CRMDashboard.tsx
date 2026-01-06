@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useContacts, useFilteredContacts, getUniqueValues } from "@/hooks/useContacts";
 import { useEventAutoSync } from "@/hooks/useEventAutoSync";
-import { ContactFilter, SavedSearch, hasEventFeedback, hasBuildDayData, isDec6Workshop, isDec13LTF, isSept27BuildDay, Contact } from "@/types/contact";
+import { ContactFilter, SavedSearch, hasEventFeedback, hasBuildDayData, isDec6Workshop, isDec13LTF, isSept27BuildDay, isHappyHourAug2025, Contact } from "@/types/contact";
 import { ContactSearchBar } from "./ContactSearchBar";
 import { ContactList } from "./ContactList";
 import { QuickStats } from "./QuickStats";
@@ -51,6 +51,7 @@ const defaultFilters: ContactFilter = {
   dec13LTF: false,
   sept27BuildDay: false,
   june2025Event: false,
+  happyHourAug2025: false,
   hasFeedback: false,
   hasProject: false,
 };
@@ -209,6 +210,7 @@ export default function CRMDashboard() {
       if (filters.dec6Workshop && !isDec6Workshop(contact)) return false;
       if (filters.dec13LTF && !isDec13LTF(contact)) return false;
       if (filters.sept27BuildDay && !isSept27BuildDay(contact)) return false;
+      if (filters.happyHourAug2025 && !isHappyHourAug2025(contact)) return false;
       if (filters.hasFeedback && !hasEventFeedback(contact)) return false;
       if (filters.hasProject && !hasBuildDayData(contact)) return false;
 
@@ -239,6 +241,7 @@ export default function CRMDashboard() {
     dec6Workshop: contacts.filter(c => isDec6Workshop(c)).length,
     dec13LTF: contacts.filter(c => isDec13LTF(c)).length,
     sept27BuildDay: contacts.filter(c => isSept27BuildDay(c)).length,
+    happyHourAug2025: contacts.filter(c => isHappyHourAug2025(c)).length,
     hasFeedback: contacts.filter(c => hasEventFeedback(c)).length,
     hasProject: contacts.filter(c => hasBuildDayData(c)).length,
   }), [contacts]);
@@ -482,6 +485,7 @@ export default function CRMDashboard() {
                       dec6Workshop: filters.dec6Workshop,
                       dec13LTF: filters.dec13LTF,
                       sept27BuildDay: filters.sept27BuildDay,
+                      happyHourAug2025: filters.happyHourAug2025,
                       hasFeedback: filters.hasFeedback,
                       hasProject: filters.hasProject,
                     }}
