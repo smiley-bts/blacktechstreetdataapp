@@ -14,6 +14,7 @@ import { SavedReports } from "./SavedReports";
 import { ShareReportButton } from "./ShareReportButton";
 import { TagFilter } from "./TagFilter";
 import { FeedbackDashboard } from "./FeedbackDashboard";
+import { EventsDashboard } from "./EventsDashboard";
 import { ProjectsDashboard } from "./ProjectsDashboard";
 import { ContactDetailModal } from "./ContactDetailModal";
 import { AIInsightsPanel } from "./AIInsightsPanel";
@@ -22,7 +23,7 @@ import { openExecutiveReport } from "./ExecutiveReportGenerator";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, FileText, Printer, MessageSquare, Folder, Settings, Presentation, LogOut, FileBarChart, RefreshCw, FileCheck } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Printer, MessageSquare, Folder, Settings, Presentation, LogOut, FileBarChart, RefreshCw, FileCheck, CalendarDays } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useContactTags } from "@/hooks/useContactTags";
 import { getFiltersFromUrl, serializeFilters } from "@/lib/urlState";
@@ -433,7 +434,7 @@ export default function CRMDashboard() {
 
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full animate-fade-in" style={{ animationDelay: '0.1s' }}>
-          <TabsList className="grid w-full grid-cols-5 bg-secondary/50 h-auto p-1">
+          <TabsList className="grid w-full grid-cols-6 bg-secondary/50 h-auto p-1">
             <TabsTrigger value="overview" className="gap-1 sm:gap-2 px-2 sm:px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <LayoutDashboard className="h-4 w-4" />
               <span className="hidden sm:inline">Overview</span>
@@ -441,6 +442,10 @@ export default function CRMDashboard() {
             <TabsTrigger value="contacts" className="gap-1 sm:gap-2 px-2 sm:px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Users className="h-4 w-4" />
               <span className="hidden sm:inline">Contacts</span>
+            </TabsTrigger>
+            <TabsTrigger value="events" className="gap-1 sm:gap-2 px-2 sm:px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <CalendarDays className="h-4 w-4" />
+              <span className="hidden sm:inline">Events</span>
             </TabsTrigger>
             <TabsTrigger value="feedback" className="gap-1 sm:gap-2 px-2 sm:px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <MessageSquare className="h-4 w-4" />
@@ -466,6 +471,17 @@ export default function CRMDashboard() {
               }}
             />
             <AIInsightsPanel contacts={contacts} />
+          </TabsContent>
+
+          {/* Events Tab */}
+          <TabsContent value="events" className="mt-4 sm:mt-6">
+            <EventsDashboard 
+              contacts={contacts} 
+              onEventClick={(filterKey) => {
+                setFilters(prev => ({ ...prev, [filterKey]: true }));
+                setActiveTab("contacts");
+              }}
+            />
           </TabsContent>
 
           {/* Contacts Tab */}
