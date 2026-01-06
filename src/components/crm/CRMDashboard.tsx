@@ -451,8 +451,8 @@ export default function CRMDashboard() {
           </div>
         </header>
 
-        {/* Import Banner - shows when database needs CSV import */}
-        {needsImport && user && (
+        {/* Import Banner - temporarily hidden for demo */}
+        {false && needsImport && user && (
           <div className="mb-4 p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <Database className="h-5 w-5 text-amber-600 dark:text-amber-400" />
