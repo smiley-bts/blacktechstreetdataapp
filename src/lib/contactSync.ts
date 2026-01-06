@@ -1,6 +1,7 @@
 import { Contact } from "@/types/contact";
 import { June2025Signup } from "@/hooks/useJune2025Event";
 import { HappyHourRSVP } from "@/hooks/useHappyHourEvent";
+import { Sep2025Signup } from "@/hooks/useSep2025Event";
 
 export interface EventParticipant {
   email: string;
@@ -56,6 +57,31 @@ export function happyHourRsvpToContact(rsvp: HappyHourRSVP): Partial<Contact> {
     postalCode: rsvp.zipCode,
     eventsAttended: 'Happy Hour Aug 2025',
     recordSource: 'Happy Hour RSVP',
+  };
+}
+
+// Convert Sep 2025 signup to contact format
+export function sep2025SignupToContact(signup: Sep2025Signup): Partial<Contact> {
+  return {
+    email: signup.email?.toLowerCase().trim(),
+    firstName: signup.firstName,
+    lastName: signup.lastName,
+    fullName: `${signup.firstName} ${signup.lastName}`.trim(),
+    phone: signup.phone,
+    ageRange: signup.ageRange,
+    currentRole: signup.currentRole || signup.roleOther,
+    aiConfidence: signup.aiConfidenceApplying,
+    aiExperienceLevel: signup.aiExperienceLevel,
+    postalCode: signup.zipCode,
+    incomeRange: signup.incomeRange,
+    communityInvolvement: signup.communityInvolvement,
+    eventsAttended: 'ASPIRE Sep 27 2025',
+    sept27thReg: 'Yes',
+    recordSource: 'ASPIRE Sep 2025 Signup',
+    imageReleaseAgreed: signup.imageReleaseAgreed,
+    confidentialityAgreed: signup.confidentialityAgreed,
+    releaseSignatureUrl: signup.signatureUrl,
+    releaseSigned: !!signup.signatureUrl,
   };
 }
 

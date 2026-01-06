@@ -4,12 +4,14 @@ import { Contact } from "@/types/contact";
 import { 
   june2025SignupToContact, 
   happyHourRsvpToContact,
+  sep2025SignupToContact,
   prepareContactsForSync, 
   hasEventBeenSynced, 
   markEventSynced 
 } from "@/lib/contactSync";
 import { useJune2025Event } from "./useJune2025Event";
 import { useHappyHourEvent } from "./useHappyHourEvent";
+import { useSep2025Event } from "./useSep2025Event";
 import { supabase } from "@/integrations/supabase/client";
 
 interface SyncStatus {
@@ -93,6 +95,7 @@ export function useEventAutoSync(existingContacts: Contact[], contactsLoading: b
   });
   const { mergedContacts: june2025Merged, loading: june2025Loading } = useJune2025Event();
   const { rsvps: happyHourRsvps, loading: happyHourLoading } = useHappyHourEvent();
+  const { signups: sep2025Signups, loading: sep2025Loading } = useSep2025Event();
   
   const syncJune2025Event = useCallback(async () => {
     const eventName = "ASPIRE June 2025";
@@ -202,11 +205,64 @@ export function useEventAutoSync(existingContacts: Contact[], contactsLoading: b
     return { added, updated };
   }, [happyHourRsvps, existingContacts]);
   
+  const syncSep2025Event = useCallback(async () => {
+    const eventName = "ASPIRE Sep 27 2025";
+    
+    // Skip if already synced or no data
+    if (hasEventBeenSynced(eventName) || sep2025Signups.length === 0) {
+      return { added: 0, updated: 0 };
+    }
+    
+    // Convert to contact format
+    const participants = sep2025Signups.map(signup => sep2025SignupToContact(signup));
+    
+    // Prepare for sync
+    const { toInsert, toUpdate } = prepareContactsForSync(participants, existingContacts);
+    
+    let added = 0;
+    let updated = 0;
+    
+    // Insert new contacts
+    if (toInsert.length > 0) {
+      const dbRows = toInsert.map(contactToDbRow);
+      const { error } = await supabase
+        .from('contacts')
+        .insert(dbRows);
+      
+      if (error) {
+        console.error('Error inserting Sep 2025 contacts:', error);
+      } else {
+        added = toInsert.length;
+      }
+    }
+    
+    // Update existing contacts
+    if (toUpdate.length > 0) {
+      for (const contact of toUpdate) {
+        const { error } = await supabase
+          .from('contacts')
+          .update(contactToDbRow(contact))
+          .eq('email', contact.email?.toLowerCase());
+        
+        if (!error) {
+          updated++;
+        }
+      }
+    }
+    
+    // Mark as synced
+    if (added > 0 || updated > 0) {
+      markEventSynced(eventName, added + updated);
+    }
+    
+    return { added, updated };
+  }, [sep2025Signups, existingContacts]);
+  
   // Run sync when data is ready
   useEffect(() => {
     const runSync = async () => {
       // Wait for all data to load
-      if (contactsLoading || june2025Loading || happyHourLoading) return;
+      if (contactsLoading || june2025Loading || happyHourLoading || sep2025Loading) return;
       if (status.syncing) return;
       
       setStatus(prev => ({ ...prev, syncing: true }));
@@ -215,9 +271,10 @@ export function useEventAutoSync(existingContacts: Contact[], contactsLoading: b
         // Sync all events
         const june2025Result = await syncJune2025Event();
         const happyHourResult = await syncHappyHourEvent();
+        const sep2025Result = await syncSep2025Event();
         
-        const totalAdded = june2025Result.added + happyHourResult.added;
-        const totalUpdated = june2025Result.updated + happyHourResult.updated;
+        const totalAdded = june2025Result.added + happyHourResult.added + sep2025Result.added;
+        const totalUpdated = june2025Result.updated + happyHourResult.updated + sep2025Result.updated;
         
         if (totalAdded > 0 || totalUpdated > 0) {
           toast.success("Event data synced", {
@@ -238,21 +295,23 @@ export function useEventAutoSync(existingContacts: Contact[], contactsLoading: b
     };
     
     runSync();
-  }, [contactsLoading, june2025Loading, happyHourLoading, syncJune2025Event, syncHappyHourEvent, status.syncing]);
+  }, [contactsLoading, june2025Loading, happyHourLoading, sep2025Loading, syncJune2025Event, syncHappyHourEvent, syncSep2025Event, status.syncing]);
   
   // Manual sync function (resets the sync flag)
   const forceSyncAll = useCallback(async () => {
     // Clear sync flags
     localStorage.removeItem('contact-sync-aspire-june-2025');
     localStorage.removeItem('contact-sync-happy-hour-aug-2025');
+    localStorage.removeItem('contact-sync-aspire-sep-27-2025');
     
     setStatus(prev => ({ ...prev, syncing: true }));
     
     const june2025Result = await syncJune2025Event();
     const happyHourResult = await syncHappyHourEvent();
+    const sep2025Result = await syncSep2025Event();
     
-    const totalAdded = june2025Result.added + happyHourResult.added;
-    const totalUpdated = june2025Result.updated + happyHourResult.updated;
+    const totalAdded = june2025Result.added + happyHourResult.added + sep2025Result.added;
+    const totalUpdated = june2025Result.updated + happyHourResult.updated + sep2025Result.updated;
     
     toast.success("Full sync complete", {
       description: `${totalAdded} added, ${totalUpdated} updated`,
@@ -264,7 +323,7 @@ export function useEventAutoSync(existingContacts: Contact[], contactsLoading: b
       added: totalAdded,
       updated: totalUpdated,
     });
-  }, [syncJune2025Event, syncHappyHourEvent]);
+  }, [syncJune2025Event, syncHappyHourEvent, syncSep2025Event]);
   
   return {
     ...status,
