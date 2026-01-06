@@ -12,6 +12,81 @@ export interface UserProfile {
   role: AppRole | null;
 }
 
+// Rate limiting constants
+const RATE_LIMIT_KEY = 'login_attempts';
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes
+
+interface RateLimitData {
+  attempts: number;
+  timestamp: number;
+}
+
+const checkRateLimit = (): { allowed: boolean; remainingMinutes?: number } => {
+  try {
+    const attemptsData = localStorage.getItem(RATE_LIMIT_KEY);
+    if (!attemptsData) return { allowed: true };
+    
+    const { attempts, timestamp }: RateLimitData = JSON.parse(attemptsData);
+    const now = Date.now();
+    const elapsed = now - timestamp;
+    
+    if (elapsed > LOCKOUT_DURATION) {
+      localStorage.removeItem(RATE_LIMIT_KEY);
+      return { allowed: true };
+    }
+    
+    if (attempts >= MAX_ATTEMPTS) {
+      const remainingMs = LOCKOUT_DURATION - elapsed;
+      const remainingMinutes = Math.ceil(remainingMs / 60000);
+      return { allowed: false, remainingMinutes };
+    }
+    
+    return { allowed: true };
+  } catch {
+    return { allowed: true };
+  }
+};
+
+const recordLoginAttempt = (): void => {
+  try {
+    const attemptsData = localStorage.getItem(RATE_LIMIT_KEY);
+    const now = Date.now();
+    
+    if (!attemptsData) {
+      localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify({
+        attempts: 1,
+        timestamp: now
+      }));
+      return;
+    }
+    
+    const { attempts, timestamp }: RateLimitData = JSON.parse(attemptsData);
+    
+    if (now - timestamp > LOCKOUT_DURATION) {
+      localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify({
+        attempts: 1,
+        timestamp: now
+      }));
+    } else {
+      localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify({
+        attempts: attempts + 1,
+        timestamp
+      }));
+    }
+  } catch {
+    // Ignore storage errors
+  }
+};
+
+const clearRateLimit = (): void => {
+  try {
+    localStorage.removeItem(RATE_LIMIT_KEY);
+  } catch {
+    // Ignore storage errors
+  }
+};
+
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -87,12 +162,23 @@ export function useAuth() {
   };
 
   const signIn = async (username: string, password: string) => {
+    // Check rate limit before attempting login
+    const rateLimitCheck = checkRateLimit();
+    if (!rateLimitCheck.allowed) {
+      return { 
+        error: { 
+          message: `Too many login attempts. Please try again in ${rateLimitCheck.remainingMinutes} minute${rateLimitCheck.remainingMinutes === 1 ? '' : 's'}.` 
+        } 
+      };
+    }
+
     try {
       // Use security definer function to look up email by username
       const { data: email, error: lookupError } = await supabase
         .rpc('lookup_email_by_username', { lookup_username: username.toLowerCase() });
 
       if (lookupError || !email) {
+        recordLoginAttempt();
         return { error: { message: 'Invalid username or password' } };
       }
 
@@ -103,11 +189,15 @@ export function useAuth() {
       });
 
       if (error) {
+        recordLoginAttempt();
         return { error: { message: 'Invalid username or password' } };
       }
 
+      // Success - clear rate limit
+      clearRateLimit();
       return { error: null };
     } catch (error) {
+      recordLoginAttempt();
       return { error: { message: 'An error occurred during sign in' } };
     }
   };

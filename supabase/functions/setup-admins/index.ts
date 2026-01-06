@@ -6,32 +6,32 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Admin accounts to create
+// Admin accounts to create - passwords are stored securely in environment secrets
 const ADMIN_ACCOUNTS = [
   {
     email: "tyrance@blacktechstreet.com",
-    password: "Lining0-Apache5",
+    passwordEnvKey: "ADMIN_PASSWORD_TYRANCE",
     username: "tyrance",
     display_name: "Tyrance Billingsley II",
     role: "admin" as const,
   },
   {
     email: "josephine@blacktechstreet.com",
-    password: "Countless7-Connected7",
+    passwordEnvKey: "ADMIN_PASSWORD_JOSEPHINE",
     username: "josephine",
     display_name: "Josephine Nelms",
     role: "admin" as const,
   },
   {
     email: "allen@blacktechstreet.com",
-    password: "Village8-Unplanned2",
+    passwordEnvKey: "ADMIN_PASSWORD_ALLEN",
     username: "allen",
     display_name: "Allen Collins",
     role: "admin" as const,
   },
   {
     email: "smiley@blacktechstreet.com",
-    password: "aspire",
+    passwordEnvKey: "ADMIN_PASSWORD_OWNER",
     username: "smiley",
     display_name: "Smiley",
     role: "owner" as const,
@@ -45,9 +45,6 @@ serve(async (req) => {
   }
 
   try {
-    // Get the authorization header
-    const authHeader = req.headers.get("Authorization");
-    
     // Create admin client with service role key
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -64,6 +61,18 @@ serve(async (req) => {
 
     for (const account of ADMIN_ACCOUNTS) {
       try {
+        // Get password from environment variable
+        const password = Deno.env.get(account.passwordEnvKey);
+        
+        if (!password) {
+          results.push({
+            username: account.username,
+            status: "error",
+            error: `Password secret ${account.passwordEnvKey} not configured`,
+          });
+          continue;
+        }
+
         // Check if user already exists by looking up profile
         const { data: existingProfile } = await supabaseAdmin
           .from("profiles")
@@ -82,7 +91,7 @@ serve(async (req) => {
         // Create auth user
         const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
           email: account.email,
-          password: account.password,
+          password: password,
           email_confirm: true,
         });
 
@@ -186,6 +195,7 @@ serve(async (req) => {
       }
     );
   } catch (error) {
+    console.error("Setup admins error:", error);
     return new Response(
       JSON.stringify({ 
         success: false, 
