@@ -83,7 +83,7 @@ export function ActivityLogsSection() {
   };
 
   return (
-    <Card>
+    <Card className="border-border">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
@@ -95,7 +95,7 @@ export function ActivityLogsSection() {
               Track all admin actions and changes
             </CardDescription>
           </div>
-          <Button variant="outline" size="sm" onClick={fetchLogs} disabled={loading}>
+          <Button variant="outline" size="sm" onClick={fetchLogs} disabled={loading} className="border-border">
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
@@ -120,7 +120,7 @@ export function ActivityLogsSection() {
                 return (
                   <div
                     key={log.id}
-                    className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
+                    className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 border border-border/60 hover:bg-muted/50 transition-colors"
                   >
                     <div className={`p-2 rounded-full ${getActionColor(log.action)}`}>
                       <Icon className="h-4 w-4" />
