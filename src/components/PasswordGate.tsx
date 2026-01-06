@@ -1,8 +1,9 @@
 import { useState, ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Lock } from "lucide-react";
+import { Lock, LogIn } from "lucide-react";
 import btsLogo from "@/assets/black-tech-street-logo.png";
 
 interface PasswordGateProps {
@@ -13,6 +14,7 @@ interface PasswordGateProps {
 const CORRECT_PASSWORD = "aspire";
 
 export function PasswordGate({ children, storageKey = "admin-unlocked" }: PasswordGateProps) {
+  const navigate = useNavigate();
   const [isUnlocked, setIsUnlocked] = useState(() => {
     return sessionStorage.getItem(storageKey) === "true";
   });
@@ -48,7 +50,7 @@ export function PasswordGate({ children, storageKey = "admin-unlocked" }: Passwo
             Admin Access
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Input
@@ -66,6 +68,24 @@ export function PasswordGate({ children, storageKey = "admin-unlocked" }: Passwo
               Unlock
             </Button>
           </form>
+          
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-border" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">Or</span>
+            </div>
+          </div>
+          
+          <Button 
+            variant="outline" 
+            className="w-full gap-2"
+            onClick={() => navigate("/auth")}
+          >
+            <LogIn className="h-4 w-4" />
+            Admin Login
+          </Button>
         </CardContent>
       </Card>
     </div>
