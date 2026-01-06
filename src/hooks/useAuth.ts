@@ -88,20 +88,17 @@ export function useAuth() {
 
   const signIn = async (username: string, password: string) => {
     try {
-      // First, look up the email by username
-      const { data: profileData, error: lookupError } = await supabase
-        .from('profiles')
-        .select('email')
-        .eq('username', username.toLowerCase())
-        .single();
+      // Use security definer function to look up email by username
+      const { data: email, error: lookupError } = await supabase
+        .rpc('lookup_email_by_username', { lookup_username: username.toLowerCase() });
 
-      if (lookupError || !profileData) {
+      if (lookupError || !email) {
         return { error: { message: 'Invalid username or password' } };
       }
 
       // Now sign in with email
       const { error } = await supabase.auth.signInWithPassword({
-        email: profileData.email,
+        email,
         password,
       });
 

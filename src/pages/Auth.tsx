@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Lock, User } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import btsLogo from '@/assets/black-tech-street-logo.png';
@@ -17,8 +18,13 @@ const loginSchema = z.object({
 });
 
 export default function Auth() {
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState(() => {
+    return localStorage.getItem('remembered-username') || '';
+  });
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(() => {
+    return localStorage.getItem('remember-me') === 'true';
+  });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
@@ -53,6 +59,15 @@ export default function Auth() {
     if (signInError) {
       setError(signInError.message);
       setIsLoading(false);
+    } else {
+      // Handle remember me
+      if (rememberMe) {
+        localStorage.setItem('remembered-username', username);
+        localStorage.setItem('remember-me', 'true');
+      } else {
+        localStorage.removeItem('remembered-username');
+        localStorage.removeItem('remember-me');
+      }
     }
   };
 
@@ -141,6 +156,19 @@ export default function Auth() {
                   autoComplete="current-password"
                 />
               </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="remember-me" 
+                checked={rememberMe}
+                onCheckedChange={(checked) => setRememberMe(checked === true)}
+              />
+              <Label 
+                htmlFor="remember-me" 
+                className="text-sm font-normal cursor-pointer"
+              >
+                Remember my username
+              </Label>
             </div>
             {error && (
               <p className="text-destructive text-sm text-center">{error}</p>

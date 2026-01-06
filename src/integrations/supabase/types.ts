@@ -182,6 +182,10 @@ export type Database = {
         Args: { _action: string; _details?: Json }
         Returns: string
       }
+      lookup_email_by_username: {
+        Args: { lookup_username: string }
+        Returns: string
+      }
     }
     Enums: {
       app_role: "admin" | "owner"

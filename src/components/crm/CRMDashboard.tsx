@@ -20,12 +20,13 @@ import { PresentationMode } from "@/components/presentation/PresentationMode";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, FileText, Printer, MessageSquare, Folder, Settings, Presentation } from "lucide-react";
-import { Link } from "react-router-dom";
+import { LayoutDashboard, Users, FileText, Printer, MessageSquare, Folder, Settings, Presentation, LogOut } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { useContactTags } from "@/hooks/useContactTags";
 import { getFiltersFromUrl, serializeFilters } from "@/lib/urlState";
 import { openPrintView } from "./PrintableReport";
 import { fuzzySearchFields } from "@/lib/fuzzySearch";
+import { useAuth } from "@/hooks/useAuth";
 import btsLogo from "@/assets/black-tech-street-logo.png";
 
 // CRM Dashboard v2 - Event Attendee Focus
@@ -57,9 +58,16 @@ const TAGLINES = [
 export default function CRMDashboard() {
   const { contacts, loading, error, addContacts, mergeContacts } = useContacts();
   const { getAllUniqueTags, getContactsWithTag } = useContactTags();
+  const { user, signOut, profile } = useAuth();
+  const navigate = useNavigate();
   const [taglineIndex, setTaglineIndex] = useState(0);
   const [taglineFading, setTaglineFading] = useState(false);
   const [showPresentationMode, setShowPresentationMode] = useState(false);
+
+  const handleLogout = useCallback(async () => {
+    await signOut();
+    navigate('/');
+  }, [signOut, navigate]);
   
   // Rotate tagline every 30 seconds
   useEffect(() => {
@@ -305,6 +313,17 @@ export default function CRMDashboard() {
                         <span className="hidden md:inline">Admin</span>
                       </Link>
                     </Button>
+                    {user && (
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={handleLogout}
+                        className="gap-2 bg-destructive/10 backdrop-blur-sm hover:bg-destructive/20 border-destructive/30 text-destructive transition-all duration-200"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        <span className="hidden md:inline">Logout</span>
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>
