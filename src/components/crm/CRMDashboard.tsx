@@ -21,7 +21,7 @@ import { openExecutiveReport } from "./ExecutiveReportGenerator";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, FileText, Printer, MessageSquare, Folder, Settings, Presentation, LogOut, FileBarChart } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Printer, MessageSquare, Folder, Settings, Presentation, LogOut, FileBarChart, Database } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useContactTags } from "@/hooks/useContactTags";
 import { getFiltersFromUrl, serializeFilters } from "@/lib/urlState";
@@ -60,7 +60,7 @@ const TAGLINES = [
 ];
 
 export default function CRMDashboard() {
-  const { contacts, loading, error, addContacts, mergeContacts } = useContacts();
+  const { contacts, loading, error, addContacts, mergeContacts, syncCsvToDatabase } = useContacts();
   const { getAllUniqueTags, getContactsWithTag } = useContactTags();
   const { user, signOut, profile } = useAuth();
   const { workshopFeedback, buildDayFeedback } = useFeedback();
@@ -388,6 +388,16 @@ export default function CRMDashboard() {
                   <DeduplicationModal contacts={contacts} onMerge={handleMergeContacts} />
                   <ImportContactsModal onImport={handleImportContacts} />
                   <ExportModal contacts={contacts} filteredContacts={filteredContacts} />
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={syncCsvToDatabase}
+                    className="gap-2 bg-primary/5 hover:bg-primary/10 border-primary/20 text-primary"
+                    title="Sync all contacts to database for real-time updates"
+                  >
+                    <Database className="h-4 w-4" />
+                    <span className="hidden md:inline">Sync DB</span>
+                  </Button>
                 </div>
                 <div className="sm:hidden flex items-center gap-2 ml-auto">
                   <ShareReportButton filters={filters} />
