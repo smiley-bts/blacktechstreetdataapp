@@ -86,6 +86,13 @@ export interface Contact {
   biasResponsibility: string; // "If an AI tool gives biased or harmful results..."
   teamCommunityDesign: string; // "How did your team ensure your AI idea was designed to serve..."
   
+  // Release Form
+  releaseSigned: boolean;
+  releaseDate: string;
+  releaseSignatureUrl: string;
+  imageReleaseAgreed: boolean;
+  confidentialityAgreed: boolean;
+  
   // Raw data for additional fields
   rawData: Record<string, string>;
 }
@@ -253,6 +260,12 @@ export function parseContact(row: Record<string, string>): Contact {
     spaceFeltWelcoming: contact.spaceFeltWelcoming || '',
     biasResponsibility: contact.biasResponsibility || '',
     teamCommunityDesign: contact.teamCommunityDesign || '',
+    // Release form fields
+    releaseSigned: contact.releaseSigned || false,
+    releaseDate: contact.releaseDate || '',
+    releaseSignatureUrl: contact.releaseSignatureUrl || '',
+    imageReleaseAgreed: contact.imageReleaseAgreed || false,
+    confidentialityAgreed: contact.confidentialityAgreed || false,
     rawData: contact.rawData || {},
   };
 }
