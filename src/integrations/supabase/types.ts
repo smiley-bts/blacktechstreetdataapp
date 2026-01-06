@@ -38,6 +38,81 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_notes: {
+        Row: {
+          contact_id: string
+          id: string
+          note: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          contact_id: string
+          id?: string
+          note: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          contact_id?: string
+          id?: string
+          note?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      contact_overrides: {
+        Row: {
+          contact_id: string
+          field_name: string
+          field_value: string
+          id: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          contact_id: string
+          field_name: string
+          field_value: string
+          id?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          contact_id?: string
+          field_name?: string
+          field_value?: string
+          id?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      contact_tags: {
+        Row: {
+          contact_id: string
+          created_at: string
+          created_by: string | null
+          id: string
+          tag: string
+        }
+        Insert: {
+          contact_id: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          tag: string
+        }
+        Update: {
+          contact_id?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          tag?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string

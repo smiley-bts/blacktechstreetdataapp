@@ -11,13 +11,15 @@ import {
   FileText, 
   Activity, 
   Shield,
-  Home
+  Home,
+  Users
 } from 'lucide-react';
 import btsLogo from '@/assets/black-tech-street-logo.png';
 import { PasswordChangeCard } from '@/components/admin/PasswordChangeCard';
 import { ReportsSection } from '@/components/admin/ReportsSection';
 import { ActivityLogsSection } from '@/components/admin/ActivityLogsSection';
 import { ContactManagementSection } from '@/components/admin/ContactManagementSection';
+import { UserManagementSection } from '@/components/admin/UserManagementSection';
 
 export default function AdminDashboard() {
   const { user, profile, loading, signOut, isOwner, isAdmin } = useAuth();
@@ -87,10 +89,14 @@ export default function AdminDashboard() {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 max-w-2xl">
+          <TabsList className="grid w-full grid-cols-5 max-w-3xl">
             <TabsTrigger value="profile" className="flex items-center gap-2">
               <User className="h-4 w-4" />
               Profile
+            </TabsTrigger>
+            <TabsTrigger value="users" className="flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              Users
             </TabsTrigger>
             <TabsTrigger value="reports" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
@@ -142,6 +148,10 @@ export default function AdminDashboard() {
 
             {/* Password Change Card */}
             <PasswordChangeCard />
+          </TabsContent>
+
+          <TabsContent value="users">
+            <UserManagementSection isOwner={isOwner} currentUserId={user.id} />
           </TabsContent>
 
           <TabsContent value="reports">

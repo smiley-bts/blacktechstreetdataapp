@@ -15,14 +15,17 @@ import { TagFilter } from "./TagFilter";
 import { FeedbackDashboard } from "./FeedbackDashboard";
 import { ProjectsDashboard } from "./ProjectsDashboard";
 import { ContactDetailModal } from "./ContactDetailModal";
+import { AIInsightsPanel } from "./AIInsightsPanel";
+import { PresentationMode } from "@/components/presentation/PresentationMode";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, FileText, Printer, MessageSquare, Folder, Settings } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Printer, MessageSquare, Folder, Settings, Presentation } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useContactTags } from "@/hooks/useContactTags";
 import { getFiltersFromUrl, serializeFilters } from "@/lib/urlState";
 import { openPrintView } from "./PrintableReport";
+import { fuzzySearchFields } from "@/lib/fuzzySearch";
 import btsLogo from "@/assets/black-tech-street-logo.png";
 
 // CRM Dashboard v2 - Event Attendee Focus
@@ -56,6 +59,7 @@ export default function CRMDashboard() {
   const { getAllUniqueTags, getContactsWithTag } = useContactTags();
   const [taglineIndex, setTaglineIndex] = useState(0);
   const [taglineFading, setTaglineFading] = useState(false);
+  const [showPresentationMode, setShowPresentationMode] = useState(false);
   
   // Rotate tagline every 30 seconds
   useEffect(() => {
@@ -106,24 +110,25 @@ export default function CRMDashboard() {
     window.history.replaceState({}, "", url.toString());
   }, [filters]);
 
-  // Filter contacts including tag-based filtering
+  // Filter contacts including tag-based filtering with fuzzy search
   const filteredContacts = useMemo(() => {
     let result = contacts;
     
     // Apply standard filters via hook
     result = result.filter((contact) => {
-      // Search filter
+      // Search filter with fuzzy matching
       if (filters.search) {
-        const searchLower = filters.search.toLowerCase();
-        const searchMatch = 
-          contact.uid?.toLowerCase().includes(searchLower) ||
-          contact.firstName?.toLowerCase().includes(searchLower) ||
-          contact.lastName?.toLowerCase().includes(searchLower) ||
-          contact.fullName?.toLowerCase().includes(searchLower) ||
-          contact.email?.toLowerCase().includes(searchLower) ||
-          contact.phone?.includes(filters.search) ||
-          contact.recordId?.includes(filters.search);
-        if (!searchMatch) return false;
+        const { matches } = fuzzySearchFields(filters.search, [
+          contact.uid,
+          contact.firstName,
+          contact.lastName,
+          contact.fullName,
+          contact.email,
+          contact.phone,
+          contact.recordId,
+          contact.companyName,
+        ], 0.3);
+        if (!matches) return false;
       }
 
       // Lifecycle stage filter
@@ -279,7 +284,16 @@ export default function CRMDashboard() {
                 </div>
                 <div className="flex items-center gap-1.5 sm:gap-2">
                   <ThemeToggle />
-                  <div className="hidden sm:flex items-center gap-2">
+                <div className="hidden sm:flex items-center gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => setShowPresentationMode(true)}
+                      className="gap-2 bg-primary/10 backdrop-blur-sm hover:bg-primary/20 border-primary/30 text-primary transition-all duration-200"
+                    >
+                      <Presentation className="h-4 w-4" />
+                      <span className="hidden md:inline">Present</span>
+                    </Button>
                     <ShareReportButton filters={filters} />
                     <Button variant="outline" size="sm" onClick={handlePrint} className="gap-2 bg-background/50 backdrop-blur-sm hover:bg-background/80 transition-all duration-200">
                       <Printer className="h-4 w-4" />
@@ -339,7 +353,7 @@ export default function CRMDashboard() {
           </TabsList>
 
           {/* Overview Tab */}
-          <TabsContent value="overview" className="mt-6">
+          <TabsContent value="overview" className="mt-6 space-y-6">
             <ExecutiveSummary 
               contacts={contacts} 
               onNavigateToContacts={(partialFilters) => {
@@ -347,6 +361,7 @@ export default function CRMDashboard() {
                 setActiveTab("contacts");
               }}
             />
+            <AIInsightsPanel contacts={contacts} />
           </TabsContent>
 
           {/* Contacts Tab */}
@@ -443,6 +458,14 @@ export default function CRMDashboard() {
           onOpenChange={(open) => !open && setSelectedContactEmail(null)}
         />
       </div>
+
+      {/* Presentation Mode Overlay */}
+      {showPresentationMode && (
+        <PresentationMode 
+          contacts={contacts} 
+          onExit={() => setShowPresentationMode(false)} 
+        />
+      )}
     </div>
   );
 }
