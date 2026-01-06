@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useContacts, useFilteredContacts, getUniqueValues } from "@/hooks/useContacts";
+import { useEventAutoSync } from "@/hooks/useEventAutoSync";
 import { ContactFilter, SavedSearch, hasEventFeedback, hasBuildDayData, isDec6Workshop, isDec13LTF, isSept27BuildDay, Contact } from "@/types/contact";
 import { ContactSearchBar } from "./ContactSearchBar";
 import { ContactList } from "./ContactList";
@@ -21,7 +22,7 @@ import { openExecutiveReport } from "./ExecutiveReportGenerator";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, FileText, Printer, MessageSquare, Folder, Settings, Presentation, LogOut, FileBarChart, Database } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Printer, MessageSquare, Folder, Settings, Presentation, LogOut, FileBarChart, RefreshCw } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useContactTags } from "@/hooks/useContactTags";
 import { getFiltersFromUrl, serializeFilters } from "@/lib/urlState";
@@ -61,7 +62,8 @@ const TAGLINES = [
 ];
 
 export default function CRMDashboard() {
-  const { contacts, loading, error, addContacts, mergeContacts, syncCsvToDatabase } = useContacts();
+  const { contacts, loading, error, addContacts, mergeContacts } = useContacts();
+  const { syncing, forceSyncAll } = useEventAutoSync(contacts, loading);
   const { getAllUniqueTags, getContactsWithTag } = useContactTags();
   const { user, signOut, profile } = useAuth();
   const { workshopFeedback, buildDayFeedback } = useFeedback();
@@ -392,12 +394,13 @@ export default function CRMDashboard() {
                   <Button 
                     variant="outline" 
                     size="sm"
-                    onClick={syncCsvToDatabase}
+                    onClick={forceSyncAll}
+                    disabled={syncing}
                     className="gap-2 bg-primary/5 hover:bg-primary/10 border-primary/20 text-primary"
-                    title="Sync all contacts to database for real-time updates"
+                    title="Force sync all event data to contacts"
                   >
-                    <Database className="h-4 w-4" />
-                    <span className="hidden md:inline">Sync DB</span>
+                    <RefreshCw className={`h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />
+                    <span className="hidden md:inline">{syncing ? 'Syncing...' : 'Sync All'}</span>
                   </Button>
                 </div>
                 <div className="sm:hidden flex items-center gap-2 ml-auto">
