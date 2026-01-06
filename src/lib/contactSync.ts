@@ -1,5 +1,6 @@
 import { Contact } from "@/types/contact";
 import { June2025Signup } from "@/hooks/useJune2025Event";
+import { HappyHourRSVP } from "@/hooks/useHappyHourEvent";
 
 export interface EventParticipant {
   email: string;
@@ -37,6 +38,24 @@ export function june2025SignupToContact(signup: June2025Signup, attended: boolea
     incomeRange: signup.householdIncome,
     eventsAttended: attended ? 'ASPIRE June 2025' : '',
     recordSource: 'ASPIRE Signup',
+  };
+}
+
+// Convert Happy Hour RSVP to contact format
+export function happyHourRsvpToContact(rsvp: HappyHourRSVP): Partial<Contact> {
+  const nameParts = rsvp.fullName.split(' ');
+  const firstName = nameParts[0] || '';
+  const lastName = nameParts.slice(1).join(' ') || '';
+  
+  return {
+    email: rsvp.email?.toLowerCase().trim(),
+    firstName,
+    lastName,
+    fullName: rsvp.fullName,
+    phone: rsvp.phone,
+    postalCode: rsvp.zipCode,
+    eventsAttended: 'Happy Hour Aug 2025',
+    recordSource: 'Happy Hour RSVP',
   };
 }
 

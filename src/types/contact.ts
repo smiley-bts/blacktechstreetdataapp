@@ -111,7 +111,8 @@ export interface ContactFilter {
   dec6Workshop: boolean;
   dec13LTF: boolean;
   sept27BuildDay: boolean;
-  june2025Event: boolean; // New: June 27-28, 2025 event
+  june2025Event: boolean; // June 27-28, 2025 ASPIRE event
+  happyHourAug2025: boolean; // August 27, 2025 Happy Hour
   hasFeedback: boolean;
   hasProject: boolean;
 }
@@ -335,6 +336,13 @@ export function isJune2025Event(contact: Contact): boolean {
   return !!(
     (contact.eventsAttended && (contact.eventsAttended.includes("June") || contact.eventsAttended.includes("Jun"))) ||
     contact.rawData?.["june2025_attended"]
+  );
+}
+
+// Check if contact attended Happy Hour Aug 2025
+export function isHappyHourAug2025(contact: Contact): boolean {
+  return !!(
+    contact.eventsAttended && contact.eventsAttended.includes("Happy Hour Aug 2025")
   );
 }
 
