@@ -1,7 +1,7 @@
 import { Contact, hasEventFeedback, hasBuildDayData, getDisplayName, getContactInitials, hasValidDisplayName } from "@/types/contact";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Mail, Phone, MapPin, Building2, Star, Hammer, StickyNote, ChevronRight } from "lucide-react";
+import { Mail, Phone, MapPin, Building2, Star, Hammer, StickyNote, ChevronRight, FileCheck } from "lucide-react";
 import { useContactNotes } from "@/hooks/useContactNotes";
 import { useNameOverrides } from "@/hooks/useNameOverrides";
 import { NameQualityBadge } from "./NameQualityBadge";
@@ -84,6 +84,7 @@ export function ContactListRow({ contact, onClick, variant }: ContactListRowProp
           )}
           {hasFeedback && <Star className="h-3.5 w-3.5 text-gold" />}
           {hasBuildDay && <Hammer className="h-3.5 w-3.5 text-chart-purple" />}
+          {contact.releaseSigned && <FileCheck className="h-3.5 w-3.5 text-emerald-500" />}
           {contactHasNote && <StickyNote className="h-3.5 w-3.5 text-gold" />}
           <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
         </div>
@@ -177,6 +178,11 @@ export function ContactListRow({ contact, onClick, variant }: ContactListRowProp
         {hasBuildDay && (
           <Badge className="text-xs bg-chart-purple/20 text-chart-purple border-chart-purple/30 hidden md:flex">
             <Hammer className="h-3 w-3" />
+          </Badge>
+        )}
+        {contact.releaseSigned && (
+          <Badge className="text-xs bg-emerald-500/20 text-emerald-500 border-emerald-500/30 hidden md:flex">
+            <FileCheck className="h-3 w-3" />
           </Badge>
         )}
         {contactHasNote && (

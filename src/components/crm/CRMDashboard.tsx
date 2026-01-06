@@ -22,7 +22,7 @@ import { openExecutiveReport } from "./ExecutiveReportGenerator";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, FileText, Printer, MessageSquare, Folder, Settings, Presentation, LogOut, FileBarChart, RefreshCw } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Printer, MessageSquare, Folder, Settings, Presentation, LogOut, FileBarChart, RefreshCw, FileCheck } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useContactTags } from "@/hooks/useContactTags";
 import { getFiltersFromUrl, serializeFilters } from "@/lib/urlState";
@@ -32,6 +32,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSessionTimeout } from "@/hooks/useSessionTimeout";
 import { useFeedback } from "@/hooks/useFeedback";
 import { useProjects } from "@/hooks/useProjects";
+import { useReleaseForms } from "@/hooks/useReleaseForms";
 import btsLogo from "@/assets/black-tech-street-logo.png";
 
 // CRM Dashboard v2 - Event Attendee Focus
@@ -64,6 +65,7 @@ const TAGLINES = [
 export default function CRMDashboard() {
   const { contacts, loading, error, addContacts, mergeContacts } = useContacts();
   const { syncing, forceSyncAll } = useEventAutoSync(contacts, loading);
+  const { syncReleaseFormsToContacts, totalForms } = useReleaseForms();
   const { getAllUniqueTags, getContactsWithTag } = useContactTags();
   const { user, signOut, profile } = useAuth();
   const { workshopFeedback, buildDayFeedback } = useFeedback();
@@ -402,6 +404,18 @@ export default function CRMDashboard() {
                     <RefreshCw className={`h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />
                     <span className="hidden md:inline">{syncing ? 'Syncing...' : 'Sync All'}</span>
                   </Button>
+                  {totalForms > 0 && (
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={syncReleaseFormsToContacts}
+                      className="gap-2 bg-emerald-500/5 hover:bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+                      title={`Sync ${totalForms} release forms to contacts`}
+                    >
+                      <FileCheck className="h-4 w-4" />
+                      <span className="hidden md:inline">Sync Releases ({totalForms})</span>
+                    </Button>
+                  )}
                 </div>
                 <div className="sm:hidden flex items-center gap-2 ml-auto">
                   <ShareReportButton filters={filters} />

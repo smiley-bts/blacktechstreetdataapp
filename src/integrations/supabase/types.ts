@@ -129,6 +129,7 @@ export type Database = {
           cohort1_industry: string | null
           community_involvement: string | null
           company_name: string | null
+          confidentiality_agreed: boolean | null
           contact_owner: string | null
           country: string | null
           create_date: string | null
@@ -141,6 +142,7 @@ export type Database = {
           first_name: string | null
           full_name: string | null
           id: string
+          image_release_agreed: boolean | null
           income_range: string | null
           industry: string | null
           job_title: string | null
@@ -164,6 +166,9 @@ export type Database = {
           raw_data: Json | null
           record_id: string | null
           record_source: string | null
+          release_date: string | null
+          release_signature_url: string | null
+          release_signed: boolean | null
           responsible_ai_preparedness: string | null
           role_description: string | null
           roles_on_team: string | null
@@ -195,6 +200,7 @@ export type Database = {
           cohort1_industry?: string | null
           community_involvement?: string | null
           company_name?: string | null
+          confidentiality_agreed?: boolean | null
           contact_owner?: string | null
           country?: string | null
           create_date?: string | null
@@ -207,6 +213,7 @@ export type Database = {
           first_name?: string | null
           full_name?: string | null
           id?: string
+          image_release_agreed?: boolean | null
           income_range?: string | null
           industry?: string | null
           job_title?: string | null
@@ -230,6 +237,9 @@ export type Database = {
           raw_data?: Json | null
           record_id?: string | null
           record_source?: string | null
+          release_date?: string | null
+          release_signature_url?: string | null
+          release_signed?: boolean | null
           responsible_ai_preparedness?: string | null
           role_description?: string | null
           roles_on_team?: string | null
@@ -261,6 +271,7 @@ export type Database = {
           cohort1_industry?: string | null
           community_involvement?: string | null
           company_name?: string | null
+          confidentiality_agreed?: boolean | null
           contact_owner?: string | null
           country?: string | null
           create_date?: string | null
@@ -273,6 +284,7 @@ export type Database = {
           first_name?: string | null
           full_name?: string | null
           id?: string
+          image_release_agreed?: boolean | null
           income_range?: string | null
           industry?: string | null
           job_title?: string | null
@@ -296,6 +308,9 @@ export type Database = {
           raw_data?: Json | null
           record_id?: string | null
           record_source?: string | null
+          release_date?: string | null
+          release_signature_url?: string | null
+          release_signed?: boolean | null
           responsible_ai_preparedness?: string | null
           role_description?: string | null
           roles_on_team?: string | null

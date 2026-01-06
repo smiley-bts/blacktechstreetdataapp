@@ -171,6 +171,11 @@ export function prepareContactsForSync(
         spaceFeltWelcoming: '',
         biasResponsibility: '',
         teamCommunityDesign: '',
+        releaseSigned: false,
+        releaseDate: '',
+        releaseSignatureUrl: '',
+        imageReleaseAgreed: false,
+        confidentialityAgreed: false,
         rawData: {},
       };
       toInsert.push(newContact);

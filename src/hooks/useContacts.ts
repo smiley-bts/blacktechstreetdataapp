@@ -65,6 +65,11 @@ function dbRowToContact(row: any): Contact {
     spaceFeltWelcoming: row.space_felt_welcoming || '',
     biasResponsibility: row.bias_responsibility || '',
     teamCommunityDesign: row.team_community_design || '',
+    releaseSigned: row.release_signed || false,
+    releaseDate: row.release_date || '',
+    releaseSignatureUrl: row.release_signature_url || '',
+    imageReleaseAgreed: row.image_release_agreed || false,
+    confidentialityAgreed: row.confidentiality_agreed || false,
     rawData: row.raw_data || {},
   };
 }
@@ -130,6 +135,11 @@ function contactToDbRow(contact: Contact) {
     space_felt_welcoming: contact.spaceFeltWelcoming || null,
     bias_responsibility: contact.biasResponsibility || null,
     team_community_design: contact.teamCommunityDesign || null,
+    release_signed: contact.releaseSigned || false,
+    release_date: contact.releaseDate || null,
+    release_signature_url: contact.releaseSignatureUrl || null,
+    image_release_agreed: contact.imageReleaseAgreed || false,
+    confidentiality_agreed: contact.confidentialityAgreed || false,
     raw_data: contact.rawData || {},
   };
 }

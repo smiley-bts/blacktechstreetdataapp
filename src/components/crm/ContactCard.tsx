@@ -2,7 +2,7 @@ import { Contact, hasEventFeedback, hasBuildDayData, getDisplayName, getContactI
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Mail, Phone, MapPin, Building2, ChevronRight, Star, Hammer, StickyNote } from "lucide-react";
+import { Mail, Phone, MapPin, Building2, ChevronRight, Star, Hammer, StickyNote, FileCheck } from "lucide-react";
 import { useContactNotes } from "@/hooks/useContactNotes";
 import { useNameOverrides } from "@/hooks/useNameOverrides";
 import { NameQualityBadge } from "./NameQualityBadge";
@@ -139,6 +139,12 @@ export function ContactCard({ contact, onClick }: ContactCardProps) {
             <Badge className="text-xs bg-chart-purple/20 text-chart-purple border-chart-purple/30">
               <Hammer className="h-3 w-3 mr-1" />
               Build Day
+            </Badge>
+          )}
+          {contact.releaseSigned && (
+            <Badge className="text-xs bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/30">
+              <FileCheck className="h-3 w-3 mr-1" />
+              Release
             </Badge>
           )}
           {contactHasNote && (
