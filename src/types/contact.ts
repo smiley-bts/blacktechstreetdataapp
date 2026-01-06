@@ -346,6 +346,14 @@ export function isHappyHourAug2025(contact: Contact): boolean {
   );
 }
 
+// Check if contact registered for ASPIRE Sep 27 2025
+export function isSep2025Event(contact: Contact): boolean {
+  return !!(
+    contact.sept27thReg === 'Yes' ||
+    (contact.eventsAttended && contact.eventsAttended.includes("ASPIRE Sep 27 2025"))
+  );
+}
+
 // Blocklist of corporate/non-name terms
 const NON_NAME_TERMS = new Set([
   'info', 'admin', 'contact', 'support', 'hello', 'team', 'sales', 'hr',

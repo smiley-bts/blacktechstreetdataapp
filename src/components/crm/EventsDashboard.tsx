@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import { Contact, isDec6Workshop, isDec13LTF, isSept27BuildDay, isHappyHourAug2025 } from "@/types/contact";
+import { Contact, isDec6Workshop, isDec13LTF, isSept27BuildDay, isHappyHourAug2025, isJune2025Event, isSep2025Event } from "@/types/contact";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Users, PartyPopper, Briefcase, GraduationCap, Sparkles } from "lucide-react";
+import { Calendar, Users, PartyPopper, Briefcase, GraduationCap, Sparkles, Rocket } from "lucide-react";
 
 interface EventsDashboardProps {
   contacts: Contact[];
@@ -22,6 +22,16 @@ interface EventInfo {
 
 const EVENTS: EventInfo[] = [
   {
+    id: "june-2025-aspire",
+    name: "ASPIRE Workshop",
+    date: "June 27-28, 2025",
+    type: "workshop",
+    icon: <Rocket className="h-5 w-5" />,
+    filter: isJune2025Event,
+    filterKey: "june2025Event",
+    color: "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/30",
+  },
+  {
     id: "happy-hour-aug-2025",
     name: "Happy Hour",
     date: "August 27, 2025",
@@ -30,6 +40,16 @@ const EVENTS: EventInfo[] = [
     filter: isHappyHourAug2025,
     filterKey: "happyHourAug2025",
     color: "bg-pink-500/10 text-pink-600 dark:text-pink-400 border-pink-500/30",
+  },
+  {
+    id: "sep-2025-aspire",
+    name: "ASPIRE AI Fluency",
+    date: "September 27, 2025",
+    type: "workshop",
+    icon: <GraduationCap className="h-5 w-5" />,
+    filter: isSep2025Event,
+    filterKey: "sept27BuildDay",
+    color: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
   },
   {
     id: "sept-27-build-day",
