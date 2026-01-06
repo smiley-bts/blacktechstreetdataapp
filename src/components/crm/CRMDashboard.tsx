@@ -17,10 +17,11 @@ import { ProjectsDashboard } from "./ProjectsDashboard";
 import { ContactDetailModal } from "./ContactDetailModal";
 import { AIInsightsPanel } from "./AIInsightsPanel";
 import { PresentationMode } from "@/components/presentation/PresentationMode";
+import { openExecutiveReport } from "./ExecutiveReportGenerator";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, FileText, Printer, MessageSquare, Folder, Settings, Presentation, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Printer, MessageSquare, Folder, Settings, Presentation, LogOut, FileBarChart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useContactTags } from "@/hooks/useContactTags";
 import { getFiltersFromUrl, serializeFilters } from "@/lib/urlState";
@@ -28,6 +29,8 @@ import { openPrintView } from "./PrintableReport";
 import { fuzzySearchFields } from "@/lib/fuzzySearch";
 import { useAuth } from "@/hooks/useAuth";
 import { useSessionTimeout } from "@/hooks/useSessionTimeout";
+import { useFeedback } from "@/hooks/useFeedback";
+import { useProjects } from "@/hooks/useProjects";
 import btsLogo from "@/assets/black-tech-street-logo.png";
 
 // CRM Dashboard v2 - Event Attendee Focus
@@ -60,10 +63,36 @@ export default function CRMDashboard() {
   const { contacts, loading, error, addContacts, mergeContacts } = useContacts();
   const { getAllUniqueTags, getContactsWithTag } = useContactTags();
   const { user, signOut, profile } = useAuth();
+  const { workshopFeedback, buildDayFeedback } = useFeedback();
+  const { projects } = useProjects();
   const navigate = useNavigate();
   const [taglineIndex, setTaglineIndex] = useState(0);
   const [taglineFading, setTaglineFading] = useState(false);
   const [showPresentationMode, setShowPresentationMode] = useState(false);
+
+  // Collect quotes and project names for executive report
+  const feedbackQuotes = useMemo(() => {
+    const quotes: string[] = [];
+    workshopFeedback.forEach(f => {
+      if (f.highlightTakeaway && f.sharePermission) {
+        quotes.push(f.highlightTakeaway);
+      }
+    });
+    buildDayFeedback.forEach(f => {
+      if (f.quote && f.shareQuotePermission) {
+        quotes.push(f.quote);
+      }
+    });
+    return quotes.filter(q => q.length > 20 && q.length < 300);
+  }, [workshopFeedback, buildDayFeedback]);
+
+  const projectNames = useMemo(() => {
+    return projects.map(p => p.projectName).filter(Boolean);
+  }, [projects]);
+
+  const handleGenerateExecutiveReport = useCallback(() => {
+    openExecutiveReport(contacts, feedbackQuotes, projectNames);
+  }, [contacts, feedbackQuotes, projectNames]);
 
   const handleLogout = useCallback(async () => {
     await signOut();
@@ -319,6 +348,15 @@ export default function CRMDashboard() {
                       <span className="hidden md:inline">Present</span>
                     </Button>
                     <ShareReportButton filters={filters} />
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={handleGenerateExecutiveReport}
+                      className="gap-2 bg-emerald-500/10 backdrop-blur-sm hover:bg-emerald-500/20 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 transition-all duration-200"
+                    >
+                      <FileBarChart className="h-4 w-4" />
+                      <span className="hidden md:inline">Executive Report</span>
+                    </Button>
                     <Button variant="outline" size="sm" onClick={handlePrint} className="gap-2 bg-background/50 backdrop-blur-sm hover:bg-background/80 transition-all duration-200">
                       <Printer className="h-4 w-4" />
                       <span className="hidden md:inline">Print</span>
