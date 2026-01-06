@@ -113,6 +113,207 @@ export type Database = {
         }
         Relationships: []
       }
+      contacts: {
+        Row: {
+          after_event_opportunities: string | null
+          age_range: string | null
+          aha_moment: string | null
+          ai_confidence: string | null
+          ai_experience_level: string | null
+          ai_task_understanding: string | null
+          ai_tools_used: string | null
+          attend_follow_up: string | null
+          bias_responsibility: string | null
+          city: string | null
+          cohort1_ai_level: string | null
+          cohort1_industry: string | null
+          community_involvement: string | null
+          company_name: string | null
+          contact_owner: string | null
+          country: string | null
+          create_date: string | null
+          created_at: string
+          created_by: string | null
+          email: string | null
+          email_domain: string | null
+          events_attended: string | null
+          favorite_part: string | null
+          first_name: string | null
+          full_name: string | null
+          id: string
+          income_range: string | null
+          industry: string | null
+          job_title: string | null
+          knew_team_before: string | null
+          last_activity_date: string | null
+          last_modified_date: string | null
+          last_name: string | null
+          lead_status: string | null
+          lifecycle_stage: string | null
+          linkedin_url: string | null
+          marketing_contact_status: string | null
+          new_concept_learned: string | null
+          nps_score: string | null
+          one_way_to_use_ai: string | null
+          optional_quote: string | null
+          phone: string | null
+          post_event_ai_confidence: string | null
+          post_workshop_mindset: string | null
+          postal_code: string | null
+          pre_workshop_mindset: string | null
+          raw_data: Json | null
+          record_id: string | null
+          record_source: string | null
+          responsible_ai_preparedness: string | null
+          role_description: string | null
+          roles_on_team: string | null
+          sept27th_reg: string | null
+          space_felt_welcoming: string | null
+          state: string | null
+          strongest_skill_after_today: string | null
+          team_build_description: string | null
+          team_community_design: string | null
+          team_impact: string | null
+          uid: string | null
+          updated_at: string
+          updated_by: string | null
+          volunteer_interest: string | null
+          wish_covered_more: string | null
+        }
+        Insert: {
+          after_event_opportunities?: string | null
+          age_range?: string | null
+          aha_moment?: string | null
+          ai_confidence?: string | null
+          ai_experience_level?: string | null
+          ai_task_understanding?: string | null
+          ai_tools_used?: string | null
+          attend_follow_up?: string | null
+          bias_responsibility?: string | null
+          city?: string | null
+          cohort1_ai_level?: string | null
+          cohort1_industry?: string | null
+          community_involvement?: string | null
+          company_name?: string | null
+          contact_owner?: string | null
+          country?: string | null
+          create_date?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          email_domain?: string | null
+          events_attended?: string | null
+          favorite_part?: string | null
+          first_name?: string | null
+          full_name?: string | null
+          id?: string
+          income_range?: string | null
+          industry?: string | null
+          job_title?: string | null
+          knew_team_before?: string | null
+          last_activity_date?: string | null
+          last_modified_date?: string | null
+          last_name?: string | null
+          lead_status?: string | null
+          lifecycle_stage?: string | null
+          linkedin_url?: string | null
+          marketing_contact_status?: string | null
+          new_concept_learned?: string | null
+          nps_score?: string | null
+          one_way_to_use_ai?: string | null
+          optional_quote?: string | null
+          phone?: string | null
+          post_event_ai_confidence?: string | null
+          post_workshop_mindset?: string | null
+          postal_code?: string | null
+          pre_workshop_mindset?: string | null
+          raw_data?: Json | null
+          record_id?: string | null
+          record_source?: string | null
+          responsible_ai_preparedness?: string | null
+          role_description?: string | null
+          roles_on_team?: string | null
+          sept27th_reg?: string | null
+          space_felt_welcoming?: string | null
+          state?: string | null
+          strongest_skill_after_today?: string | null
+          team_build_description?: string | null
+          team_community_design?: string | null
+          team_impact?: string | null
+          uid?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          volunteer_interest?: string | null
+          wish_covered_more?: string | null
+        }
+        Update: {
+          after_event_opportunities?: string | null
+          age_range?: string | null
+          aha_moment?: string | null
+          ai_confidence?: string | null
+          ai_experience_level?: string | null
+          ai_task_understanding?: string | null
+          ai_tools_used?: string | null
+          attend_follow_up?: string | null
+          bias_responsibility?: string | null
+          city?: string | null
+          cohort1_ai_level?: string | null
+          cohort1_industry?: string | null
+          community_involvement?: string | null
+          company_name?: string | null
+          contact_owner?: string | null
+          country?: string | null
+          create_date?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          email_domain?: string | null
+          events_attended?: string | null
+          favorite_part?: string | null
+          first_name?: string | null
+          full_name?: string | null
+          id?: string
+          income_range?: string | null
+          industry?: string | null
+          job_title?: string | null
+          knew_team_before?: string | null
+          last_activity_date?: string | null
+          last_modified_date?: string | null
+          last_name?: string | null
+          lead_status?: string | null
+          lifecycle_stage?: string | null
+          linkedin_url?: string | null
+          marketing_contact_status?: string | null
+          new_concept_learned?: string | null
+          nps_score?: string | null
+          one_way_to_use_ai?: string | null
+          optional_quote?: string | null
+          phone?: string | null
+          post_event_ai_confidence?: string | null
+          post_workshop_mindset?: string | null
+          postal_code?: string | null
+          pre_workshop_mindset?: string | null
+          raw_data?: Json | null
+          record_id?: string | null
+          record_source?: string | null
+          responsible_ai_preparedness?: string | null
+          role_description?: string | null
+          roles_on_team?: string | null
+          sept27th_reg?: string | null
+          space_felt_welcoming?: string | null
+          state?: string | null
+          strongest_skill_after_today?: string | null
+          team_build_description?: string | null
+          team_community_design?: string | null
+          team_impact?: string | null
+          uid?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          volunteer_interest?: string | null
+          wish_covered_more?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
