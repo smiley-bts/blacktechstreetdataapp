@@ -105,12 +105,12 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
     }));
   }, [contacts]);
 
-  // Sort events by date (most recent first)
+  // Sort events by date (chronological order - oldest first)
   const sortedEvents = useMemo(() => {
     return [...eventStats].sort((a, b) => {
       const dateA = new Date(a.date);
       const dateB = new Date(b.date);
-      return dateB.getTime() - dateA.getTime();
+      return dateA.getTime() - dateB.getTime();
     });
   }, [eventStats]);
 

@@ -231,6 +231,31 @@ export function useReleaseForms() {
     }
   }, [releaseForms, hasSignedRelease, uploadSignatureToStorage]);
 
+  // Calculate unsynced forms count - forms that haven't been matched to contacts yet
+  const getUnsyncedCount = useCallback((contacts: { firstName: string; lastName: string; fullName?: string; releaseSigned: boolean }[]) => {
+    if (releaseForms.length === 0) return 0;
+    
+    // Count forms that could potentially match unsigned contacts
+    let unsyncedCount = 0;
+    for (const form of releaseForms) {
+      // Check if any unsigned contact matches this form
+      const hasMatch = contacts.some(contact => {
+        if (contact.releaseSigned) return false;
+        
+        // Try matching by name
+        const formNormalized = normalizeName(form.printedName);
+        const contactFullNormalized = contact.fullName ? normalizeName(contact.fullName) : '';
+        const contactCombinedNormalized = normalizeName(`${contact.firstName} ${contact.lastName}`);
+        
+        return formNormalized === contactFullNormalized || formNormalized === contactCombinedNormalized;
+      });
+      
+      if (hasMatch) unsyncedCount++;
+    }
+    
+    return unsyncedCount;
+  }, [releaseForms]);
+
   return {
     releaseForms,
     loading,
@@ -238,5 +263,6 @@ export function useReleaseForms() {
     hasSignedRelease,
     syncReleaseFormsToContacts,
     totalForms: releaseForms.length,
+    getUnsyncedCount,
   };
 }
