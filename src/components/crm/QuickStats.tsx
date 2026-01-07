@@ -26,7 +26,7 @@ export function QuickStats({ contacts }: QuickStatsProps) {
       glow: "shadow-amber-500/20",
     },
     {
-      label: "Actually Attended",
+      label: "Attendees",
       value: metrics.eventActuallyAttended.toLocaleString(),
       icon: UserCheck,
       gradient: "from-emerald-500 to-teal-600",

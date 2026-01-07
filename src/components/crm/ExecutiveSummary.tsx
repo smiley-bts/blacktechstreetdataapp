@@ -70,7 +70,7 @@ export function ExecutiveSummary({ contacts, onNavigateToContacts }: ExecutiveSu
       gradient: "from-amber-500 to-orange-600",
     },
     {
-      label: "Actually Attended",
+      label: "Attendees",
       value: metrics.eventActuallyAttended.toLocaleString(),
       icon: UserCheck,
       description: metrics.eventRegistered > 0 

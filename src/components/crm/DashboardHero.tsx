@@ -29,7 +29,7 @@ export function DashboardHero({ contacts, onViewContacts, onViewEvents }: Dashbo
       bgColor: "bg-amber-500/10",
     },
     {
-      label: "Actually Attended",
+      label: "Attendees",
       value: metrics.eventActuallyAttended.toLocaleString(),
       icon: UserCheck,
       color: "text-emerald-500",
