@@ -19,6 +19,7 @@ import { ProjectsDashboard } from "./ProjectsDashboard";
 import { ContactDetailModal } from "./ContactDetailModal";
 import { AIInsightsPanel } from "./AIInsightsPanel";
 import { PresentationMode } from "@/components/presentation/PresentationMode";
+import { DashboardHero } from "./DashboardHero";
 import { openExecutiveReport } from "./ExecutiveReportGenerator";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -505,6 +506,11 @@ export default function CRMDashboard() {
 
           {/* Overview Tab */}
           <TabsContent value="overview" className="mt-6 space-y-6">
+            <DashboardHero 
+              contacts={contacts}
+              onViewContacts={() => setActiveTab("contacts")}
+              onViewEvents={() => setActiveTab("events")}
+            />
             <ExecutiveSummary 
               contacts={contacts} 
               onNavigateToContacts={(partialFilters) => {
