@@ -177,20 +177,32 @@ export function useContacts() {
     try {
       setLoading(true);
       
-      // Load from database - fetch up to 10,000 contacts (override default 1000 limit)
-      const { data: dbContacts, error: dbError, count } = await supabase
-        .from('contacts')
-        .select('*', { count: 'exact' })
-        .range(0, 9999);
+      // Load from database - paginate because PostgREST may cap responses (often 1000 rows)
+      const pageSize = 1000;
+      const allRows: any[] = [];
 
-      if (dbError) {
-        console.error('Database contacts load error:', dbError);
-        setError(dbError.message);
-        setLoading(false);
-        return;
+      for (let from = 0; ; from += pageSize) {
+        const to = from + pageSize - 1;
+        const { data, error: pageError } = await supabase
+          .from('contacts')
+          .select('*')
+          .range(from, to);
+
+        if (pageError) {
+          console.error('Database contacts load error:', pageError);
+          setError(pageError.message);
+          setLoading(false);
+          return;
+        }
+
+        const page = data ?? [];
+        allRows.push(...page);
+
+        // last page
+        if (page.length < pageSize) break;
       }
 
-      const loadedContacts = (dbContacts || []).map(dbRowToContact);
+      const loadedContacts = allRows.map(dbRowToContact);
       setContacts(loadedContacts);
       
       // Check if we need to import CSV data
