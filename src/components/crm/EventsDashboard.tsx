@@ -154,7 +154,7 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
               </div>
               <div>
                 <p className="text-2xl sm:text-3xl font-bold text-foreground">{metrics.eventActuallyAttended}</p>
-                <p className="text-sm text-muted-foreground">Actually Attended</p>
+                <p className="text-sm text-muted-foreground">Attendees</p>
               </div>
             </div>
           </CardContent>
