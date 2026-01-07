@@ -107,9 +107,29 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
 
   // Sort events by date (chronological order - oldest first)
   const sortedEvents = useMemo(() => {
+    // Parse date strings to get sortable dates
+    const parseEventDate = (dateStr: string): Date => {
+      // Extract year and month from strings like "June 27-28, 2025" or "December 6, 2025"
+      const months: Record<string, number> = {
+        'January': 0, 'February': 1, 'March': 2, 'April': 3, 'May': 4, 'June': 5,
+        'July': 6, 'August': 7, 'September': 8, 'October': 9, 'November': 10, 'December': 11
+      };
+      
+      for (const [monthName, monthIndex] of Object.entries(months)) {
+        if (dateStr.includes(monthName)) {
+          const yearMatch = dateStr.match(/(\d{4})/);
+          const dayMatch = dateStr.match(/(\d{1,2})/);
+          const year = yearMatch ? parseInt(yearMatch[1]) : 2025;
+          const day = dayMatch ? parseInt(dayMatch[1]) : 1;
+          return new Date(year, monthIndex, day);
+        }
+      }
+      return new Date(dateStr);
+    };
+    
     return [...eventStats].sort((a, b) => {
-      const dateA = new Date(a.date);
-      const dateB = new Date(b.date);
+      const dateA = parseEventDate(a.date);
+      const dateB = parseEventDate(b.date);
       return dateA.getTime() - dateB.getTime();
     });
   }, [eventStats]);
