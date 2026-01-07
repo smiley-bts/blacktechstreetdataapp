@@ -68,7 +68,7 @@ const TAGLINES = [
 export default function CRMDashboard() {
   const { contacts, loading, error, addContacts, mergeContacts, importing, needsImport, importCsvToDatabase } = useContacts();
   const { syncing, forceSyncAll } = useEventAutoSync(contacts, loading);
-  const { syncReleaseFormsToContacts, totalForms } = useReleaseForms();
+  const { syncReleaseFormsToContacts, totalForms, getUnsyncedCount } = useReleaseForms();
   const { getAllUniqueTags, getContactsWithTag } = useContactTags();
   const { user, signOut, profile } = useAuth();
   const { workshopFeedback, buildDayFeedback } = useFeedback();
@@ -97,6 +97,16 @@ export default function CRMDashboard() {
   const projectNames = useMemo(() => {
     return projects.map(p => p.projectName).filter(Boolean);
   }, [projects]);
+
+  // Calculate unsynced release forms count based on current contacts
+  const unsyncedFormsCount = useMemo(() => {
+    return getUnsyncedCount(contacts.map(c => ({
+      firstName: c.firstName,
+      lastName: c.lastName,
+      fullName: c.fullName,
+      releaseSigned: c.releaseSigned,
+    })));
+  }, [contacts, getUnsyncedCount]);
 
   const handleGenerateExecutiveReport = useCallback(() => {
     openExecutiveReport(contacts, feedbackQuotes, projectNames);
@@ -428,16 +438,16 @@ export default function CRMDashboard() {
                     <RefreshCw className={`h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />
                     <span className="hidden md:inline">{syncing ? 'Syncing...' : 'Sync All'}</span>
                   </Button>
-                  {totalForms > 0 && (
+                  {unsyncedFormsCount > 0 && (
                     <Button 
                       variant="outline" 
                       size="sm"
                       onClick={syncReleaseFormsToContacts}
                       className="gap-2 bg-emerald-500/5 hover:bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
-                      title={`Sync ${totalForms} release forms to contacts`}
+                      title={`Sync ${unsyncedFormsCount} release forms to contacts`}
                     >
                       <FileCheck className="h-4 w-4" />
-                      <span className="hidden md:inline">Sync Releases ({totalForms})</span>
+                      <span className="hidden md:inline">Sync Releases ({unsyncedFormsCount})</span>
                     </Button>
                   )}
                 </div>
