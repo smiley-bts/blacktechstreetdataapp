@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import Papa from "papaparse";
-import { Contact, ContactFilter, parseContact, hasEventFeedback, hasBuildDayData, isDec6Workshop, isDec13LTF, isSept27BuildDay } from "@/types/contact";
+import { Contact, ContactFilter, parseContact, hasEventFeedback, hasBuildDayData, isDec6Workshop, isDec13LTF, isSept27BuildDay, isHappyHourAug2025 } from "@/types/contact";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -497,6 +497,8 @@ export function useFilteredContacts(contacts: Contact[], filters: ContactFilter)
       if (filters.dec6Workshop && !isDec6Workshop(contact)) return false;
       if (filters.dec13LTF && !isDec13LTF(contact)) return false;
       if (filters.sept27BuildDay && !isSept27BuildDay(contact)) return false;
+      if (filters.happyHourAug2025 && !isHappyHourAug2025(contact)) return false;
+      if (filters.hasProject && !hasBuildDayData(contact)) return false;
 
       return true;
     });
