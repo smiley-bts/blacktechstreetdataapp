@@ -159,19 +159,36 @@ export function useReleaseForms() {
     const toastId = toast.loading("Syncing release forms...");
 
     try {
-      // Get all contacts from database
-      const { data: contacts, error: fetchError } = await supabase
-        .from('contacts')
-        .select('id, first_name, last_name, full_name, email, release_signed');
+      // Get all contacts from database that haven't signed yet
+      // Use pagination to get all contacts (Supabase has 1000 row limit)
+      let allContacts: any[] = [];
+      let page = 0;
+      const pageSize = 1000;
       
-      if (fetchError) {
-        throw fetchError;
+      while (true) {
+        const { data: contacts, error: fetchError } = await supabase
+          .from('contacts')
+          .select('id, first_name, last_name, full_name, email, release_signed')
+          .eq('release_signed', false)
+          .range(page * pageSize, (page + 1) * pageSize - 1);
+        
+        if (fetchError) {
+          throw fetchError;
+        }
+        
+        if (!contacts || contacts.length === 0) break;
+        
+        allContacts = [...allContacts, ...contacts];
+        
+        if (contacts.length < pageSize) break;
+        page++;
       }
+      
+      const contacts = allContacts;
 
       // Match and update contacts
       for (const contact of contacts || []) {
-        // Skip if already marked as signed
-        if (contact.release_signed) continue;
+        // Already filtered for release_signed = false in query
         
         const form = hasSignedRelease(
           contact.first_name || '',
