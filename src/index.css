@@ -200,6 +200,19 @@
                 0 2px 8px hsla(0 0% 0% / 0.3);
   }
 
+  /* Light mode specific shadows */
+  .light-shadow {
+    @apply shadow-md shadow-black/10 dark:shadow-none;
+  }
+
+  .light-shadow-lg {
+    @apply shadow-lg shadow-black/10 dark:shadow-none;
+  }
+
+  .light-shadow-sm {
+    @apply shadow-sm shadow-black/5 dark:shadow-none;
+  }
+
   /* Card shine effect on hover */
   .card-shine {
     position: relative;
