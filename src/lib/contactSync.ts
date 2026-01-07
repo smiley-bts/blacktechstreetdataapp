@@ -188,6 +188,7 @@ export function prepareContactsForSync(
         cohort1AiLevel: '',
         cohort1Industry: '',
         eventsAttended: participant.eventsAttended || '',
+        eventsActuallyAttended: '',
         sept27thReg: '',
         marketingContactStatus: '',
         emailDomain: participant.email?.split('@')[1] || '',

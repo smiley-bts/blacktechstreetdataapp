@@ -12,7 +12,8 @@ interface DashboardHeroProps {
 export function DashboardHero({ contacts, onViewContacts, onViewEvents }: DashboardHeroProps) {
   // Calculate key metrics
   const totalContacts = contacts.length;
-  const eventAttendees = contacts.filter(c => c.eventsAttended || c.sept27thReg).length;
+  const eventRegistered = contacts.filter(c => c.eventsAttended || c.sept27thReg).length;
+  const eventAttended = contacts.filter(c => c.eventsActuallyAttended).length;
   const feedbackCount = contacts.filter(c => hasEventFeedback(c)).length;
   
   // Calculate NPS
@@ -32,11 +33,18 @@ export function DashboardHero({ contacts, onViewContacts, onViewEvents }: Dashbo
       bgColor: "bg-blue-500/10",
     },
     {
-      label: "Event Attendees",
-      value: eventAttendees.toLocaleString(),
+      label: "Event Registered",
+      value: eventRegistered.toLocaleString(),
       icon: CalendarDays,
       color: "text-amber-500",
       bgColor: "bg-amber-500/10",
+    },
+    {
+      label: "Actually Attended",
+      value: eventAttended.toLocaleString(),
+      icon: Users,
+      color: "text-emerald-500",
+      bgColor: "bg-emerald-500/10",
     },
     {
       label: "Feedback Collected",

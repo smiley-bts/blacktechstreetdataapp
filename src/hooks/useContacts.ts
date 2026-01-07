@@ -37,6 +37,7 @@ function dbRowToContact(row: any): Contact {
     cohort1AiLevel: row.cohort1_ai_level || '',
     cohort1Industry: row.cohort1_industry || '',
     eventsAttended: row.events_attended || '',
+    eventsActuallyAttended: row.events_actually_attended || '',
     sept27thReg: row.sept27th_reg || '',
     marketingContactStatus: row.marketing_contact_status || '',
     emailDomain: row.email_domain || '',

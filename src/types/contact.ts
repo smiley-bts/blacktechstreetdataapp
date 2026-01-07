@@ -41,6 +41,7 @@ export interface Contact {
   cohort1AiLevel: string;
   cohort1Industry: string;
   eventsAttended: string;
+  eventsActuallyAttended: string; // Tracks who actually showed up vs just registered
   sept27thReg: string;
   
   // Marketing
@@ -232,6 +233,7 @@ export function parseContact(row: Record<string, string>): Contact {
     cohort1AiLevel: contact.cohort1AiLevel || '',
     cohort1Industry: contact.cohort1Industry || '',
     eventsAttended: contact.eventsAttended || '',
+    eventsActuallyAttended: contact.eventsActuallyAttended || '',
     sept27thReg: contact.sept27thReg || '',
     marketingContactStatus: contact.marketingContactStatus || '',
     emailDomain: contact.emailDomain || '',
