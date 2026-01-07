@@ -1,5 +1,6 @@
-import { Users, CalendarDays, TrendingUp, Sparkles, ArrowRight } from "lucide-react";
-import { Contact, hasEventFeedback } from "@/types/contact";
+import { Users, CalendarDays, TrendingUp, Sparkles, ArrowRight, UserCheck } from "lucide-react";
+import { Contact } from "@/types/contact";
+import { useContactMetrics } from "@/hooks/useContactMetrics";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -10,55 +11,43 @@ interface DashboardHeroProps {
 }
 
 export function DashboardHero({ contacts, onViewContacts, onViewEvents }: DashboardHeroProps) {
-  // Calculate key metrics
-  const totalContacts = contacts.length;
-  const eventRegistered = contacts.filter(c => c.eventsAttended || c.sept27thReg).length;
-  const eventAttended = contacts.filter(c => c.eventsActuallyAttended).length;
-  const feedbackCount = contacts.filter(c => hasEventFeedback(c)).length;
-  
-  // Calculate NPS
-  const npsResponses = contacts.filter(c => c.npsScore);
-  const promoterCount = npsResponses.filter(c => parseInt(c.npsScore) >= 4).length;
-  const detractorCount = npsResponses.filter(c => parseInt(c.npsScore) <= 2).length;
-  const npsScore = npsResponses.length > 0 
-    ? Math.round(((promoterCount - detractorCount) / npsResponses.length) * 100)
-    : null;
+  const metrics = useContactMetrics(contacts);
 
   const heroStats = [
     {
       label: "Total Contacts",
-      value: totalContacts.toLocaleString(),
+      value: metrics.total.toLocaleString(),
       icon: Users,
       color: "text-blue-500",
       bgColor: "bg-blue-500/10",
     },
     {
       label: "Event Registered",
-      value: eventRegistered.toLocaleString(),
+      value: metrics.eventRegistered.toLocaleString(),
       icon: CalendarDays,
       color: "text-amber-500",
       bgColor: "bg-amber-500/10",
     },
     {
       label: "Actually Attended",
-      value: eventAttended.toLocaleString(),
-      icon: Users,
+      value: metrics.eventActuallyAttended.toLocaleString(),
+      icon: UserCheck,
       color: "text-emerald-500",
       bgColor: "bg-emerald-500/10",
     },
     {
       label: "Feedback Collected",
-      value: feedbackCount.toLocaleString(),
+      value: metrics.withFeedback.toLocaleString(),
       icon: Sparkles,
       color: "text-pink-500",
       bgColor: "bg-pink-500/10",
     },
     {
       label: "NPS Score",
-      value: npsScore !== null ? `${npsScore > 0 ? '+' : ''}${npsScore}` : "N/A",
+      value: metrics.npsScore !== null ? `${metrics.npsScore > 0 ? '+' : ''}${metrics.npsScore}` : "N/A",
       icon: TrendingUp,
-      color: npsScore && npsScore >= 50 ? "text-emerald-500" : "text-muted-foreground",
-      bgColor: npsScore && npsScore >= 50 ? "bg-emerald-500/10" : "bg-muted/50",
+      color: metrics.npsScore && metrics.npsScore >= 50 ? "text-emerald-500" : "text-muted-foreground",
+      bgColor: metrics.npsScore && metrics.npsScore >= 50 ? "bg-emerald-500/10" : "bg-muted/50",
     },
   ];
 
@@ -80,7 +69,7 @@ export function DashboardHero({ contacts, onViewContacts, onViewEvents }: Dashbo
         </div>
 
         {/* Stats grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
           {heroStats.map((stat, index) => (
             <div
               key={stat.label}

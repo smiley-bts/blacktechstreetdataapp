@@ -1,8 +1,9 @@
 import { useMemo } from "react";
 import { Contact, isDec6Workshop, isDec13LTF, isSept27BuildDay, isHappyHourAug2025, isJune2025Event, isSep2025Event } from "@/types/contact";
+import { useContactMetrics } from "@/hooks/useContactMetrics";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Users, PartyPopper, Briefcase, GraduationCap, Sparkles, Rocket } from "lucide-react";
+import { Calendar, Users, PartyPopper, Briefcase, GraduationCap, Sparkles, Rocket, UserCheck } from "lucide-react";
 
 interface EventsDashboardProps {
   contacts: Contact[];
@@ -91,35 +92,14 @@ const EVENT_TYPE_LABELS: Record<string, string> = {
 };
 
 export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps) {
+  const metrics = useContactMetrics(contacts);
+
   const eventStats = useMemo(() => {
     return EVENTS.map(event => ({
       ...event,
       attendeeCount: contacts.filter(event.filter).length,
       attendees: contacts.filter(event.filter),
     }));
-  }, [contacts]);
-
-  const totalUniqueAttendees = useMemo(() => {
-    const attendeeEmails = new Set<string>();
-    EVENTS.forEach(event => {
-      contacts.filter(event.filter).forEach(c => {
-        if (c.email) attendeeEmails.add(c.email.toLowerCase());
-      });
-    });
-    return attendeeEmails.size;
-  }, [contacts]);
-
-  const multiEventAttendees = useMemo(() => {
-    const attendeeCounts = new Map<string, number>();
-    EVENTS.forEach(event => {
-      contacts.filter(event.filter).forEach(c => {
-        if (c.email) {
-          const email = c.email.toLowerCase();
-          attendeeCounts.set(email, (attendeeCounts.get(email) || 0) + 1);
-        }
-      });
-    });
-    return Array.from(attendeeCounts.values()).filter(count => count > 1).length;
   }, [contacts]);
 
   // Sort events by date (most recent first)
@@ -134,7 +114,7 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
   return (
     <div className="space-y-6">
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center gap-3">
@@ -149,29 +129,43 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-emerald-500/5 to-emerald-500/10 border-emerald-500/20">
+        <Card className="bg-gradient-to-br from-amber-500/5 to-amber-500/10 border-amber-500/20">
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-emerald-500/10">
-                <Users className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+              <div className="p-2.5 rounded-xl bg-amber-500/10">
+                <Users className="h-5 w-5 text-amber-600 dark:text-amber-400" />
               </div>
               <div>
-                <p className="text-2xl sm:text-3xl font-bold text-foreground">{totalUniqueAttendees}</p>
-                <p className="text-sm text-muted-foreground">Unique Attendees</p>
+                <p className="text-2xl sm:text-3xl font-bold text-foreground">{metrics.eventRegistered}</p>
+                <p className="text-sm text-muted-foreground">Registered</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-amber-500/5 to-amber-500/10 border-amber-500/20">
+        <Card className="bg-gradient-to-br from-emerald-500/5 to-emerald-500/10 border-emerald-500/20">
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-amber-500/10">
-                <Sparkles className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+              <div className="p-2.5 rounded-xl bg-emerald-500/10">
+                <UserCheck className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
               </div>
               <div>
-                <p className="text-2xl sm:text-3xl font-bold text-foreground">{multiEventAttendees}</p>
-                <p className="text-sm text-muted-foreground">Multi-Event Attendees</p>
+                <p className="text-2xl sm:text-3xl font-bold text-foreground">{metrics.eventActuallyAttended}</p>
+                <p className="text-sm text-muted-foreground">Actually Attended</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-purple-500/5 to-purple-500/10 border-purple-500/20">
+          <CardContent className="p-4 sm:p-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-purple-500/10">
+                <Sparkles className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              </div>
+              <div>
+                <p className="text-2xl sm:text-3xl font-bold text-foreground">{metrics.multiEventAttendees}</p>
+                <p className="text-sm text-muted-foreground">Multi-Event</p>
               </div>
             </div>
           </CardContent>
@@ -216,7 +210,7 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
                 
                 <div className="text-right">
                   <p className="text-2xl font-bold text-foreground">{event.attendeeCount}</p>
-                  <p className="text-xs text-muted-foreground">attendees</p>
+                  <p className="text-xs text-muted-foreground">registered</p>
                 </div>
               </div>
             ))}
@@ -235,7 +229,7 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
               <CardContent className="p-4 text-center">
                 <p className="text-lg font-bold text-foreground">{eventsOfType.length}</p>
                 <p className="text-sm text-muted-foreground">{label}s</p>
-                <p className="text-xs text-muted-foreground mt-1">{totalAttendees} total attendees</p>
+                <p className="text-xs text-muted-foreground mt-1">{totalAttendees} registered</p>
               </CardContent>
             </Card>
           );
