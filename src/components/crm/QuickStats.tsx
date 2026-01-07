@@ -1,104 +1,82 @@
-import { TrendingUp, Users, Star, Hammer, Brain, Award, Target, Sparkles, AlertCircle } from "lucide-react";
-import { Contact, hasEventFeedback, hasBuildDayData } from "@/types/contact";
+import { TrendingUp, Users, Star, Hammer, Brain, Award, Target, Sparkles, AlertCircle, UserCheck } from "lucide-react";
+import { Contact } from "@/types/contact";
+import { useContactMetrics } from "@/hooks/useContactMetrics";
 import { cn } from "@/lib/utils";
-import { getCompletenessScore } from "@/lib/contactCompleteness";
 
 interface QuickStatsProps {
   contacts: Contact[];
 }
 
 export function QuickStats({ contacts }: QuickStatsProps) {
-  // Calculate all stats
-  const incompleteCount = contacts.filter(c => getCompletenessScore(c) < 50).length;
-  
-  const stats = {
-    total: contacts.length,
-    withEmail: contacts.filter(c => c.email).length,
-    leads: contacts.filter(c => c.lifecycleStage?.toLowerCase() === "lead").length,
-    eventAttendees: contacts.filter(c => c.eventsAttended || c.sept27thReg).length,
-    hasFeedback: contacts.filter(c => hasEventFeedback(c)).length,
-    buildDayParticipants: contacts.filter(c => hasBuildDayData(c)).length,
-    emerging: contacts.filter(c => c.aiExperienceLevel?.toLowerCase().includes("emerging")).length,
-    intermediate: contacts.filter(c => 
-      c.aiExperienceLevel?.toLowerCase().includes("intermediate") ||
-      c.aiExperienceLevel?.toLowerCase().includes("advanced")
-    ).length,
-    volunteersInterested: contacts.filter(c => c.volunteerInterest?.toLowerCase() === "yes").length,
-    promoters: contacts.filter(c => {
-      const nps = parseInt(c.npsScore);
-      return !isNaN(nps) && nps >= 4;
-    }).length,
-    incomplete: incompleteCount,
-  };
-
-  // Calculate NPS
-  const npsResponses = contacts.filter(c => c.npsScore);
-  const promoterCount = npsResponses.filter(c => parseInt(c.npsScore) >= 4).length;
-  const detractorCount = npsResponses.filter(c => parseInt(c.npsScore) <= 2).length;
-  const npsScore = npsResponses.length > 0 
-    ? Math.round(((promoterCount - detractorCount) / npsResponses.length) * 100)
-    : null;
+  const metrics = useContactMetrics(contacts);
 
   const statCards = [
     {
       label: "Total Contacts",
-      value: stats.total.toLocaleString(),
+      value: metrics.total.toLocaleString(),
       icon: Users,
       gradient: "from-blue-500 to-indigo-600",
       glow: "shadow-blue-500/20",
     },
     {
-      label: "Event Attendees",
-      value: stats.eventAttendees.toLocaleString(),
+      label: "Event Registered",
+      value: metrics.eventRegistered.toLocaleString(),
       icon: Star,
       gradient: "from-amber-500 to-orange-600",
       glow: "shadow-amber-500/20",
     },
     {
-      label: "Build Day Projects",
-      value: stats.buildDayParticipants.toLocaleString(),
-      icon: Hammer,
+      label: "Actually Attended",
+      value: metrics.eventActuallyAttended.toLocaleString(),
+      icon: UserCheck,
       gradient: "from-emerald-500 to-teal-600",
       glow: "shadow-emerald-500/20",
     },
     {
+      label: "Build Day Projects",
+      value: metrics.buildDayParticipants.toLocaleString(),
+      icon: Hammer,
+      gradient: "from-cyan-500 to-blue-600",
+      glow: "shadow-cyan-500/20",
+    },
+    {
       label: "Has Feedback",
-      value: stats.hasFeedback.toLocaleString(),
+      value: metrics.withFeedback.toLocaleString(),
       icon: Sparkles,
       gradient: "from-pink-500 to-rose-600",
       glow: "shadow-pink-500/20",
     },
     {
       label: "Emerging AI Users",
-      value: stats.emerging.toLocaleString(),
+      value: metrics.emerging.toLocaleString(),
       icon: Brain,
       gradient: "from-purple-500 to-violet-600",
       glow: "shadow-purple-500/20",
     },
     {
       label: "Intermediate+",
-      value: stats.intermediate.toLocaleString(),
+      value: metrics.intermediate.toLocaleString(),
       icon: Award,
-      gradient: "from-cyan-500 to-blue-600",
-      glow: "shadow-cyan-500/20",
+      gradient: "from-indigo-500 to-purple-600",
+      glow: "shadow-indigo-500/20",
     },
     {
       label: "Volunteers",
-      value: stats.volunteersInterested.toLocaleString(),
+      value: metrics.volunteersInterested.toLocaleString(),
       icon: Target,
       gradient: "from-fuchsia-500 to-purple-600",
       glow: "shadow-fuchsia-500/20",
     },
     {
       label: "NPS Score",
-      value: npsScore !== null ? `${npsScore > 0 ? '+' : ''}${npsScore}` : "N/A",
+      value: metrics.npsScore !== null ? `${metrics.npsScore > 0 ? '+' : ''}${metrics.npsScore}` : "N/A",
       icon: TrendingUp,
-      gradient: npsScore && npsScore >= 50 ? "from-emerald-500 to-green-600" : "from-slate-500 to-gray-600",
-      glow: npsScore && npsScore >= 50 ? "shadow-emerald-500/20" : "shadow-slate-500/20",
+      gradient: metrics.npsScore && metrics.npsScore >= 50 ? "from-emerald-500 to-green-600" : "from-slate-500 to-gray-600",
+      glow: metrics.npsScore && metrics.npsScore >= 50 ? "shadow-emerald-500/20" : "shadow-slate-500/20",
     },
     {
       label: "Needs Attention",
-      value: stats.incomplete.toLocaleString(),
+      value: metrics.incomplete.toLocaleString(),
       icon: AlertCircle,
       gradient: "from-red-500 to-rose-600",
       glow: "shadow-red-500/20",
@@ -106,7 +84,7 @@ export function QuickStats({ contacts }: QuickStatsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-9 gap-2 sm:gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-2 sm:gap-3">
       {statCards.map((stat, index) => (
         <div
           key={stat.label}

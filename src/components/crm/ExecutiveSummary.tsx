@@ -1,6 +1,5 @@
-import { useMemo } from "react";
-import { Contact, hasEventFeedback, hasBuildDayData, isDec6Workshop, isDec13LTF, isSept27BuildDay, ContactFilter } from "@/types/contact";
-import { getCompletenessScore } from "@/lib/contactCompleteness";
+import { Contact, ContactFilter } from "@/types/contact";
+import { useContactMetrics } from "@/hooks/useContactMetrics";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   Users, 
@@ -14,6 +13,7 @@ import {
   BarChart3,
   PieChart as PieChartIcon,
   ChevronRight,
+  UserCheck,
 } from "lucide-react";
 import {
   PieChart,
@@ -37,121 +37,67 @@ interface ExecutiveSummaryProps {
 const COLORS = ["hsl(var(--primary))", "hsl(var(--chart-blue))", "hsl(var(--chart-purple))", "hsl(var(--gold))", "hsl(var(--chart-teal))"];
 
 export function ExecutiveSummary({ contacts, onNavigateToContacts }: ExecutiveSummaryProps) {
-  const stats = useMemo(() => {
-    const total = contacts.length;
-    const withEmail = contacts.filter(c => c.email).length;
-    const eventAttendees = contacts.filter(c => c.eventsAttended || c.sept27thReg).length;
-    const withFeedback = contacts.filter(c => hasEventFeedback(c)).length;
-    const buildDayParticipants = contacts.filter(c => hasBuildDayData(c)).length;
-    
-    // Data quality
-    const complete = contacts.filter(c => getCompletenessScore(c) >= 80).length;
-    const incomplete = contacts.filter(c => getCompletenessScore(c) < 50).length;
-    const avgCompleteness = total > 0 
-      ? Math.round(contacts.reduce((sum, c) => sum + getCompletenessScore(c), 0) / total) 
-      : 0;
-
-    // NPS calculation
-    const npsResponses = contacts.filter(c => c.npsScore);
-    const promoters = npsResponses.filter(c => parseInt(c.npsScore) >= 4).length;
-    const detractors = npsResponses.filter(c => parseInt(c.npsScore) <= 2).length;
-    const npsScore = npsResponses.length > 0 
-      ? Math.round(((promoters - detractors) / npsResponses.length) * 100)
-      : null;
-
-    // Event breakdowns
-    const dec6Count = contacts.filter(c => isDec6Workshop(c)).length;
-    const dec13Count = contacts.filter(c => isDec13LTF(c)).length;
-    const sept27Count = contacts.filter(c => isSept27BuildDay(c)).length;
-
-    // AI Experience levels
-    const aiLevels: Record<string, number> = {};
-    contacts.forEach(c => {
-      if (c.aiExperienceLevel) {
-        const level = c.aiExperienceLevel.split(":")[0].trim();
-        aiLevels[level] = (aiLevels[level] || 0) + 1;
-      }
-    });
-
-    // Lifecycle stages
-    const lifecycleStages: Record<string, number> = {};
-    contacts.forEach(c => {
-      if (c.lifecycleStage) {
-        lifecycleStages[c.lifecycleStage] = (lifecycleStages[c.lifecycleStage] || 0) + 1;
-      }
-    });
-
-    return {
-      total,
-      withEmail,
-      eventAttendees,
-      withFeedback,
-      buildDayParticipants,
-      complete,
-      incomplete,
-      avgCompleteness,
-      npsScore,
-      npsResponses: npsResponses.length,
-      promoters,
-      detractors,
-      dec6Count,
-      dec13Count,
-      sept27Count,
-      aiLevels,
-      lifecycleStages,
-    };
-  }, [contacts]);
+  const metrics = useContactMetrics(contacts);
 
   const eventData = [
-    { name: "Sept 27 Build Day", value: stats.sept27Count },
-    { name: "Dec 6 Workshop", value: stats.dec6Count },
-    { name: "Dec 13 LTF", value: stats.dec13Count },
+    { name: "Sept 27 Build Day", value: metrics.sept27BuildDay },
+    { name: "Dec 6 Workshop", value: metrics.dec6Workshop },
+    { name: "Dec 13 LTF", value: metrics.dec13LTF },
   ].filter(d => d.value > 0);
 
-  const aiLevelData = Object.entries(stats.aiLevels)
+  const aiLevelData = Object.entries(metrics.aiLevels)
     .map(([name, value]) => ({ name: name.length > 15 ? name.substring(0, 15) + "..." : name, value }))
     .sort((a, b) => b.value - a.value)
     .slice(0, 5);
 
-  const lifecycleData = Object.entries(stats.lifecycleStages)
+  const lifecycleData = Object.entries(metrics.lifecycleStages)
     .map(([name, value]) => ({ name, value }))
     .sort((a, b) => b.value - a.value);
 
   const kpiCards = [
     {
       label: "Total Contacts",
-      value: stats.total.toLocaleString(),
+      value: metrics.total.toLocaleString(),
       icon: Users,
-      description: `${stats.withEmail.toLocaleString()} with email`,
+      description: `${metrics.withEmail.toLocaleString()} with email`,
       gradient: "from-blue-500 to-indigo-600",
     },
     {
-      label: "Event Attendees",
-      value: stats.eventAttendees.toLocaleString(),
+      label: "Event Registered",
+      value: metrics.eventRegistered.toLocaleString(),
       icon: Calendar,
-      description: `${Math.round((stats.eventAttendees / stats.total) * 100)}% of contacts`,
+      description: `${Math.round((metrics.eventRegistered / metrics.total) * 100)}% of contacts`,
       gradient: "from-amber-500 to-orange-600",
     },
     {
+      label: "Actually Attended",
+      value: metrics.eventActuallyAttended.toLocaleString(),
+      icon: UserCheck,
+      description: metrics.eventRegistered > 0 
+        ? `${Math.round((metrics.eventActuallyAttended / metrics.eventRegistered) * 100)}% show rate`
+        : "No registrations",
+      gradient: "from-emerald-500 to-teal-600",
+    },
+    {
       label: "NPS Score",
-      value: stats.npsScore !== null ? `${stats.npsScore > 0 ? '+' : ''}${stats.npsScore}` : "N/A",
+      value: metrics.npsScore !== null ? `${metrics.npsScore > 0 ? '+' : ''}${metrics.npsScore}` : "N/A",
       icon: TrendingUp,
-      description: stats.npsResponses > 0 ? `${stats.npsResponses} responses` : "No responses",
-      gradient: stats.npsScore && stats.npsScore >= 50 ? "from-emerald-500 to-green-600" : "from-slate-500 to-gray-600",
+      description: metrics.npsResponses > 0 ? `${metrics.npsResponses} responses` : "No responses",
+      gradient: metrics.npsScore && metrics.npsScore >= 50 ? "from-emerald-500 to-green-600" : "from-slate-500 to-gray-600",
     },
     {
       label: "Data Quality",
-      value: `${stats.avgCompleteness}%`,
+      value: `${metrics.avgCompleteness}%`,
       icon: Target,
-      description: `${stats.complete} complete, ${stats.incomplete} need attention`,
-      gradient: stats.avgCompleteness >= 70 ? "from-emerald-500 to-teal-600" : "from-amber-500 to-orange-600",
+      description: `${metrics.complete} complete, ${metrics.incomplete} need attention`,
+      gradient: metrics.avgCompleteness >= 70 ? "from-emerald-500 to-teal-600" : "from-amber-500 to-orange-600",
     },
   ];
 
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-4">
         {kpiCards.map((kpi) => (
           <Card key={kpi.label} className="relative overflow-hidden border-border/50 hover:border-primary/30 transition-all duration-300 group">
             <div className={cn(
@@ -321,7 +267,7 @@ export function ExecutiveSummary({ contacts, onNavigateToContacts }: ExecutiveSu
               >
                 <CheckCircle className="h-5 w-5 text-emerald-500 shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-foreground">{stats.complete} Complete Profiles</p>
+                  <p className="font-medium text-foreground">{metrics.complete} Complete Profiles</p>
                   <p className="text-xs text-muted-foreground">80%+ data completeness - click to view high-quality contacts</p>
                 </div>
                 <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
@@ -334,7 +280,7 @@ export function ExecutiveSummary({ contacts, onNavigateToContacts }: ExecutiveSu
               >
                 <AlertCircle className="h-5 w-5 text-amber-500 shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-foreground">{stats.incomplete} Need Attention</p>
+                  <p className="font-medium text-foreground">{metrics.incomplete} Need Attention</p>
                   <p className="text-xs text-muted-foreground">Less than 50% complete - click to review and enrich</p>
                 </div>
                 <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
@@ -347,31 +293,31 @@ export function ExecutiveSummary({ contacts, onNavigateToContacts }: ExecutiveSu
               >
                 <Brain className="h-5 w-5 text-primary shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-foreground">{stats.withFeedback} Feedback Submissions</p>
-                  <p className="text-xs text-muted-foreground">{stats.buildDayParticipants} with Build Day projects - click to view</p>
+                  <p className="font-medium text-foreground">{metrics.withFeedback} Feedback Submissions</p>
+                  <p className="text-xs text-muted-foreground">{metrics.buildDayParticipants} with Build Day projects - click to view</p>
                 </div>
                 <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
               </button>
 
               {/* NPS Breakdown - clickable */}
-              {stats.npsScore !== null && (
+              {metrics.npsScore !== null && (
                 <button 
                   onClick={() => onNavigateToContacts?.({ hasFeedback: true })}
                   className={cn(
                     "w-full flex items-center gap-3 p-3 rounded-lg border hover:opacity-90 transition-all text-left group",
-                    stats.npsScore >= 50 
+                    metrics.npsScore >= 50 
                       ? "bg-emerald-500/10 border-emerald-500/20 hover:bg-emerald-500/20" 
-                      : stats.npsScore >= 0 
+                      : metrics.npsScore >= 0 
                         ? "bg-amber-500/10 border-amber-500/20 hover:bg-amber-500/20"
                         : "bg-red-500/10 border-red-500/20 hover:bg-red-500/20"
                   )}
                 >
                   <TrendingUp className={cn(
                     "h-5 w-5 shrink-0",
-                    stats.npsScore >= 50 ? "text-emerald-500" : stats.npsScore >= 0 ? "text-amber-500" : "text-red-500"
+                    metrics.npsScore >= 50 ? "text-emerald-500" : metrics.npsScore >= 0 ? "text-amber-500" : "text-red-500"
                   )} />
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-foreground">{stats.promoters} Promoters vs {stats.detractors} Detractors</p>
+                    <p className="font-medium text-foreground">{metrics.promoters} Promoters vs {metrics.detractors} Detractors</p>
                     <p className="text-xs text-muted-foreground">NPS breakdown - click to see feedback details</p>
                   </div>
                   <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
