@@ -62,59 +62,59 @@
     --sidebar-ring: 160 84% 45%;
   }
 
-  /* Light mode override if needed */
+  /* Light mode override - improved contrast */
   .light {
-    --background: 0 0% 98%;
-    --foreground: 220 15% 15%;
+    --background: 0 0% 100%;
+    --foreground: 220 20% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 15% 15%;
+    --card-foreground: 220 20% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 15% 15%;
+    --popover-foreground: 220 20% 12%;
 
-    --primary: 160 84% 35%;
+    --primary: 160 84% 32%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 160 70% 45%;
+    --primary-glow: 160 70% 40%;
 
-    --secondary: 220 10% 92%;
-    --secondary-foreground: 220 15% 20%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 20% 20%;
 
-    --muted: 220 10% 88%;
-    --muted-foreground: 220 10% 40%;
+    --muted: 220 14% 92%;
+    --muted-foreground: 220 10% 45%;
 
-    --accent: 160 84% 35%;
+    --accent: 160 84% 32%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 55%;
+    --destructive: 0 72% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 15% 78%;
-    --input: 220 15% 82%;
-    --ring: 160 84% 35%;
+    --border: 220 13% 82%;
+    --input: 220 13% 88%;
+    --ring: 160 84% 32%;
 
-    /* Dashboard specific colors for light mode */
-    --nps-gradient-start: 160 70% 40%;
-    --nps-gradient-end: 142 60% 35%;
-    --chart-blue: 217 80% 55%;
-    --chart-purple: 280 65% 55%;
-    --chart-amber: 38 85% 50%;
-    --chart-pink: 330 70% 55%;
-    --chart-emerald: 160 70% 40%;
-    --chart-cyan: 187 80% 45%;
+    /* Dashboard specific colors for light mode - richer colors */
+    --nps-gradient-start: 160 65% 35%;
+    --nps-gradient-end: 142 55% 30%;
+    --chart-blue: 217 85% 50%;
+    --chart-purple: 280 70% 50%;
+    --chart-amber: 38 90% 45%;
+    --chart-pink: 330 75% 50%;
+    --chart-emerald: 160 65% 35%;
+    --chart-cyan: 187 85% 40%;
 
     /* CRM Specific */
-    --gold: 45 85% 45%;
+    --gold: 45 90% 42%;
     --gold-foreground: 0 0% 100%;
     
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 220 15% 20%;
-    --sidebar-primary: 160 84% 35%;
+    --sidebar-foreground: 220 20% 18%;
+    --sidebar-primary: 160 84% 32%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 10% 94%;
-    --sidebar-accent-foreground: 220 15% 20%;
-    --sidebar-border: 220 15% 85%;
-    --sidebar-ring: 160 84% 35%;
+    --sidebar-accent: 220 14% 94%;
+    --sidebar-accent-foreground: 220 20% 18%;
+    --sidebar-border: 220 13% 82%;
+    --sidebar-ring: 160 84% 32%;
   }
 }
 
@@ -140,7 +140,7 @@
 @layer utilities {
   /* Glass morphism card */
   .glass-card {
-    @apply bg-card/70 backdrop-blur-xl border border-border/50 shadow-2xl;
+    @apply bg-card/70 backdrop-blur-xl border border-border/50 shadow-lg dark:shadow-2xl;
   }
   
   /* Premium gradient backgrounds */
