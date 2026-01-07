@@ -17,8 +17,14 @@ interface EventInfo {
   type: "workshop" | "build-day" | "social" | "training";
   icon: React.ReactNode;
   filter: (contact: Contact) => boolean;
+  attendedFilter: (contact: Contact) => boolean;
   filterKey: string;
   color: string;
+}
+
+// Helper to check if contact actually attended an event
+function actuallyAttendedEvent(contact: Contact, eventKeyword: string): boolean {
+  return !!(contact.eventsActuallyAttended && contact.eventsActuallyAttended.toLowerCase().includes(eventKeyword.toLowerCase()));
 }
 
 const EVENTS: EventInfo[] = [
@@ -29,6 +35,7 @@ const EVENTS: EventInfo[] = [
     type: "workshop",
     icon: <Rocket className="h-5 w-5" />,
     filter: isJune2025Event,
+    attendedFilter: (c) => actuallyAttendedEvent(c, "June"),
     filterKey: "june2025Event",
     color: "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/30",
   },
@@ -39,28 +46,20 @@ const EVENTS: EventInfo[] = [
     type: "social",
     icon: <PartyPopper className="h-5 w-5" />,
     filter: isHappyHourAug2025,
+    attendedFilter: (c) => actuallyAttendedEvent(c, "Happy Hour"),
     filterKey: "happyHourAug2025",
     color: "bg-pink-500/10 text-pink-600 dark:text-pink-400 border-pink-500/30",
   },
   {
-    id: "sep-2025-aspire",
-    name: "ASPIRE AI Fluency",
+    id: "sep-2025-aspire-build-day",
+    name: "ASPIRE AI Fluency + Build Day",
     date: "September 27, 2025",
     type: "workshop",
     icon: <GraduationCap className="h-5 w-5" />,
-    filter: isSep2025Event,
+    filter: (c) => isSep2025Event(c) || isSept27BuildDay(c),
+    attendedFilter: (c) => actuallyAttendedEvent(c, "Sep") || actuallyAttendedEvent(c, "ASPIRE Sep"),
     filterKey: "sept27BuildDay",
     color: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
-  },
-  {
-    id: "sept-27-build-day",
-    name: "Build Day",
-    date: "September 27, 2025",
-    type: "build-day",
-    icon: <Briefcase className="h-5 w-5" />,
-    filter: isSept27BuildDay,
-    filterKey: "sept27BuildDay",
-    color: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30",
   },
   {
     id: "dec-6-workshop",
@@ -69,16 +68,18 @@ const EVENTS: EventInfo[] = [
     type: "workshop",
     icon: <GraduationCap className="h-5 w-5" />,
     filter: isDec6Workshop,
+    attendedFilter: (c) => actuallyAttendedEvent(c, "Dec 6"),
     filterKey: "dec6Workshop",
     color: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30",
   },
   {
     id: "dec-13-ltf",
-    name: "Learn to Fly",
+    name: "Lead The Future",
     date: "December 13, 2025",
     type: "training",
     icon: <Sparkles className="h-5 w-5" />,
     filter: isDec13LTF,
+    attendedFilter: (c) => actuallyAttendedEvent(c, "Dec 13") || actuallyAttendedEvent(c, "LTF"),
     filterKey: "dec13LTF",
     color: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30",
   },
@@ -97,8 +98,10 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
   const eventStats = useMemo(() => {
     return EVENTS.map(event => ({
       ...event,
-      attendeeCount: contacts.filter(event.filter).length,
-      attendees: contacts.filter(event.filter),
+      registeredCount: contacts.filter(event.filter).length,
+      attendedCount: contacts.filter(event.attendedFilter).length,
+      registeredContacts: contacts.filter(event.filter),
+      attendedContacts: contacts.filter(event.attendedFilter),
     }));
   }, [contacts]);
 
@@ -179,7 +182,7 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
             <Calendar className="h-5 w-5 text-primary" />
             Events Timeline
           </CardTitle>
-          <CardDescription>All tracked events and their attendance</CardDescription>
+          <CardDescription>All tracked events with registration and attendance</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -208,9 +211,16 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
                   <p className="text-sm text-muted-foreground">{event.date}</p>
                 </div>
                 
-                <div className="text-right">
-                  <p className="text-2xl font-bold text-foreground">{event.attendeeCount}</p>
-                  <p className="text-xs text-muted-foreground">registered</p>
+                <div className="flex items-center gap-4 text-right">
+                  <div>
+                    <p className="text-xl font-bold text-foreground">{event.registeredCount}</p>
+                    <p className="text-xs text-muted-foreground">registered</p>
+                  </div>
+                  <div className="w-px h-10 bg-border" />
+                  <div>
+                    <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">{event.attendedCount}</p>
+                    <p className="text-xs text-muted-foreground">attended</p>
+                  </div>
                 </div>
               </div>
             ))}
@@ -222,14 +232,19 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {Object.entries(EVENT_TYPE_LABELS).map(([type, label]) => {
           const eventsOfType = eventStats.filter(e => e.type === type);
-          const totalAttendees = eventsOfType.reduce((sum, e) => sum + e.attendeeCount, 0);
+          const totalRegistered = eventsOfType.reduce((sum, e) => sum + e.registeredCount, 0);
+          const totalAttended = eventsOfType.reduce((sum, e) => sum + e.attendedCount, 0);
           
           return (
             <Card key={type} className="bg-card/50">
               <CardContent className="p-4 text-center">
                 <p className="text-lg font-bold text-foreground">{eventsOfType.length}</p>
                 <p className="text-sm text-muted-foreground">{label}s</p>
-                <p className="text-xs text-muted-foreground mt-1">{totalAttendees} registered</p>
+                <div className="flex justify-center gap-2 mt-2 text-xs text-muted-foreground">
+                  <span>{totalRegistered} reg</span>
+                  <span>•</span>
+                  <span className="text-emerald-600 dark:text-emerald-400">{totalAttended} att</span>
+                </div>
               </CardContent>
             </Card>
           );
