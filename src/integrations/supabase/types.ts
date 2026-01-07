@@ -137,6 +137,7 @@ export type Database = {
           created_by: string | null
           email: string | null
           email_domain: string | null
+          events_actually_attended: string | null
           events_attended: string | null
           favorite_part: string | null
           first_name: string | null
@@ -208,6 +209,7 @@ export type Database = {
           created_by?: string | null
           email?: string | null
           email_domain?: string | null
+          events_actually_attended?: string | null
           events_attended?: string | null
           favorite_part?: string | null
           first_name?: string | null
@@ -279,6 +281,7 @@ export type Database = {
           created_by?: string | null
           email?: string | null
           email_domain?: string | null
+          events_actually_attended?: string | null
           events_attended?: string | null
           favorite_part?: string | null
           first_name?: string | null
