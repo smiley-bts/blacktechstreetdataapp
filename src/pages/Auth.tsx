@@ -29,6 +29,7 @@ export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [capsLockOn, setCapsLockOn] = useState(false);
   const { signIn, user, loading, session } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -152,6 +153,8 @@ export default function Auth() {
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onKeyDown={(e) => setCapsLockOn(e.getModifierState('CapsLock'))}
+                  onKeyUp={(e) => setCapsLockOn(e.getModifierState('CapsLock'))}
                   className="pl-10 pr-10"
                   disabled={isLoading}
                   autoComplete="current-password"
@@ -165,6 +168,11 @@ export default function Auth() {
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
+              {capsLockOn && (
+                <p className="text-xs text-amber-500 flex items-center gap-1 mt-1">
+                  <span className="font-medium">⚠ Caps Lock is on</span>
+                </p>
+              )}
             </div>
             <div className="flex items-center space-x-2">
               <Checkbox 
