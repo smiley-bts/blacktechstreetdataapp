@@ -8,6 +8,7 @@ import { QuickStats } from "./QuickStats";
 import { EventFilterToggles, EventFilters } from "./EventFilterToggles";
 import { ExportModal } from "./ExportModal";
 import { ImportContactsModal } from "./ImportContactsModal";
+import { AttendanceImportModal } from "./AttendanceImportModal";
 import { DeduplicationModal } from "./DeduplicationModal";
 import { ExecutiveSummary } from "./ExecutiveSummary";
 import { SavedReports } from "./SavedReports";
@@ -426,6 +427,8 @@ export default function CRMDashboard() {
                 <div className="flex items-center gap-2 bg-background/40 backdrop-blur-sm rounded-lg p-1.5 border border-border/30">
                   <DeduplicationModal contacts={contacts} onMerge={handleMergeContacts} />
                   <ImportContactsModal onImport={handleImportContacts} />
+                  <AttendanceImportModal />
+                  <ExportModal contacts={contacts} filteredContacts={filteredContacts} />
                   <ExportModal contacts={contacts} filteredContacts={filteredContacts} />
                   <Button 
                     variant="outline" 

@@ -1,1 +1,13 @@
 project_id = "woqjbwotxaaczkptnjfd"
+
+[functions.import-csv-contacts]
+verify_jwt = false
+
+[functions.manage-admin]
+verify_jwt = false
+
+[functions.setup-admins]
+verify_jwt = false
+
+[functions.sync-attendance]
+verify_jwt = false

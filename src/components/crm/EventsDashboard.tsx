@@ -1,9 +1,9 @@
 import { useMemo } from "react";
-import { Contact, isDec6Workshop, isDec13LTF, isSept27BuildDay, isHappyHourAug2025, isJune2025Event, isSep2025Event } from "@/types/contact";
+import { Contact, isDec6Workshop, isDec13LTF, isSept27BuildDay, isHappyHourAug2025, isJune2025Event, isSep2025Event, isMarch2025Event, isMay2025Event } from "@/types/contact";
 import { useContactMetrics } from "@/hooks/useContactMetrics";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Users, PartyPopper, Briefcase, GraduationCap, Sparkles, Rocket, UserCheck } from "lucide-react";
+import { Calendar, Users, PartyPopper, GraduationCap, Sparkles, Rocket, UserCheck, ClipboardList, Wrench } from "lucide-react";
 
 interface EventsDashboardProps {
   contacts: Contact[];
@@ -14,7 +14,7 @@ interface EventInfo {
   id: string;
   name: string;
   date: string;
-  type: "workshop" | "build-day" | "social" | "training";
+  type: "workshop" | "build-day" | "social" | "training" | "survey";
   icon: React.ReactNode;
   filter: (contact: Contact) => boolean;
   attendedFilter: (contact: Contact) => boolean;
@@ -28,6 +28,28 @@ function actuallyAttendedEvent(contact: Contact, eventKeyword: string): boolean 
 }
 
 const EVENTS: EventInfo[] = [
+  {
+    id: "march-2025-presurvey",
+    name: "Pre-Survey/Interest",
+    date: "March 6, 2025",
+    type: "survey",
+    icon: <ClipboardList className="h-5 w-5" />,
+    filter: isMarch2025Event,
+    attendedFilter: (c) => actuallyAttendedEvent(c, "March"),
+    filterKey: "march2025Event",
+    color: "bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/30",
+  },
+  {
+    id: "may-2025-workshops",
+    name: "May Workshops",
+    date: "May 15 & 30, 2025",
+    type: "workshop",
+    icon: <Wrench className="h-5 w-5" />,
+    filter: isMay2025Event,
+    attendedFilter: (c) => actuallyAttendedEvent(c, "May"),
+    filterKey: "may2025Event",
+    color: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/30",
+  },
   {
     id: "june-2025-aspire",
     name: "ASPIRE Workshop",
@@ -54,7 +76,7 @@ const EVENTS: EventInfo[] = [
     id: "sep-2025-aspire-build-day",
     name: "ASPIRE AI Fluency + Build Day",
     date: "September 27, 2025",
-    type: "workshop",
+    type: "build-day",
     icon: <GraduationCap className="h-5 w-5" />,
     filter: (c) => isSep2025Event(c) || isSept27BuildDay(c),
     attendedFilter: (c) => actuallyAttendedEvent(c, "Sep") || actuallyAttendedEvent(c, "ASPIRE Sep"),
@@ -90,6 +112,7 @@ const EVENT_TYPE_LABELS: Record<string, string> = {
   "build-day": "Build Day",
   "social": "Social",
   "training": "Training",
+  "survey": "Survey",
 };
 
 export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps) {
@@ -249,7 +272,7 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
       </Card>
 
       {/* Event Type Breakdown */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
         {Object.entries(EVENT_TYPE_LABELS).map(([type, label]) => {
           const eventsOfType = eventStats.filter(e => e.type === type);
           const totalRegistered = eventsOfType.reduce((sum, e) => sum + e.registeredCount, 0);

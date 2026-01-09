@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Contact, hasEventFeedback, hasBuildDayData, isDec6Workshop, isDec13LTF, isSept27BuildDay, isJune2025Event, isHappyHourAug2025, isSep2025Event } from "@/types/contact";
+import { Contact, hasEventFeedback, hasBuildDayData, isDec6Workshop, isDec13LTF, isSept27BuildDay, isJune2025Event, isHappyHourAug2025, isSep2025Event, isMarch2025Event, isMay2025Event } from "@/types/contact";
 import { getCompletenessScore } from "@/lib/contactCompleteness";
 
 export interface ContactMetrics {
@@ -18,6 +18,8 @@ export interface ContactMetrics {
   june2025Event: number;
   happyHourAug2025: number;
   sep2025Event: number;
+  march2025Event: number;
+  may2025Event: number;
   
   // Unique attendee calculations
   uniqueEventAttendees: number;
@@ -66,10 +68,12 @@ export function useContactMetrics(contacts: Contact[]): ContactMetrics {
     const june2025Event = contacts.filter(isJune2025Event).length;
     const happyHourAug2025 = contacts.filter(isHappyHourAug2025).length;
     const sep2025Event = contacts.filter(isSep2025Event).length;
+    const march2025Event = contacts.filter(isMarch2025Event).length;
+    const may2025Event = contacts.filter(isMay2025Event).length;
     
     // Calculate unique attendees across all events
     const attendeeEmails = new Set<string>();
-    const eventCheckFns = [isDec6Workshop, isDec13LTF, isSept27BuildDay, isJune2025Event, isHappyHourAug2025, isSep2025Event];
+    const eventCheckFns = [isDec6Workshop, isDec13LTF, isSept27BuildDay, isJune2025Event, isHappyHourAug2025, isSep2025Event, isMarch2025Event, isMay2025Event];
     
     eventCheckFns.forEach(checkFn => {
       contacts.filter(checkFn).forEach(c => {
@@ -145,6 +149,8 @@ export function useContactMetrics(contacts: Contact[]): ContactMetrics {
       june2025Event,
       happyHourAug2025,
       sep2025Event,
+      march2025Event,
+      may2025Event,
       uniqueEventAttendees,
       multiEventAttendees,
       withFeedback,
