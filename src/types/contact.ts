@@ -356,6 +356,22 @@ export function isSep2025Event(contact: Contact): boolean {
   );
 }
 
+// Check if contact attended March 2025 Pre-Survey event
+export function isMarch2025Event(contact: Contact): boolean {
+  return !!(
+    contact.eventsActuallyAttended?.toLowerCase().includes("march") ||
+    contact.rawData?.["march_2025_attended"]
+  );
+}
+
+// Check if contact attended May 2025 Workshops
+export function isMay2025Event(contact: Contact): boolean {
+  return !!(
+    contact.eventsActuallyAttended?.toLowerCase().includes("may") ||
+    contact.rawData?.["may_2025_attended"]
+  );
+}
+
 // Blocklist of corporate/non-name terms
 const NON_NAME_TERMS = new Set([
   'info', 'admin', 'contact', 'support', 'hello', 'team', 'sales', 'hr',
