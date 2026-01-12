@@ -429,7 +429,6 @@ export default function CRMDashboard() {
                   <ImportContactsModal onImport={handleImportContacts} />
                   <AttendanceImportModal />
                   <ExportModal contacts={contacts} filteredContacts={filteredContacts} />
-                  <ExportModal contacts={contacts} filteredContacts={filteredContacts} />
                   <Button 
                     variant="outline" 
                     size="sm"
