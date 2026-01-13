@@ -25,6 +25,8 @@ interface EventInfo {
   multiDay?: boolean;
   day1Filter?: (contact: Contact) => boolean;
   day2Filter?: (contact: Contact) => boolean;
+  isYouthEvent?: boolean;
+  fixedAttendeeCount?: number;
 }
 
 // Helper to check if contact actually attended an event
@@ -113,6 +115,8 @@ const EVENTS: EventInfo[] = [
     attendedFilter: (c) => actuallyAttendedEvent(c, "Dec 13") || actuallyAttendedEvent(c, "LTF"),
     filterKey: "dec13LTF",
     color: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30",
+    isYouthEvent: true,
+    fixedAttendeeCount: 22, // 22 student participants with 100% feedback
   },
 ];
 
@@ -131,7 +135,8 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
   const eventStats = useMemo(() => {
     return EVENTS.map(event => {
       const registeredCount = contacts.filter(event.filter).length;
-      const attendedCount = contacts.filter(event.attendedFilter).length;
+      // For youth events, use fixed attendee count instead of counting contacts
+      const attendedCount = event.fixedAttendeeCount ?? contacts.filter(event.attendedFilter).length;
       const day1Count = event.day1Filter ? contacts.filter(event.day1Filter).length : 0;
       const day2Count = event.day2Filter ? contacts.filter(event.day2Filter).length : 0;
       
@@ -147,8 +152,8 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
         ...event,
         registeredCount,
         attendedCount,
-        registeredContacts: contacts.filter(event.filter),
-        attendedContacts: contacts.filter(event.attendedFilter),
+        registeredContacts: event.isYouthEvent ? [] : contacts.filter(event.filter),
+        attendedContacts: event.isYouthEvent ? [] : contacts.filter(event.attendedFilter),
         day1Count,
         day2Count,
         registrationToAttendance,
