@@ -1,3 +1,27 @@
+/**
+ * CONTACT MATCHING RULES - CRM DATA INTEGRITY
+ * ============================================
+ * 
+ * This CRM enforces strict contact matching to ensure data cohesion.
+ * ALL contacts must be matched by a unique identifier - no random data allowed.
+ * 
+ * MATCHING PRIORITY (in order):
+ * 1. EMAIL (primary) - Case-insensitive, most reliable identifier
+ * 2. PHONE (secondary) - Normalized format, used when email unavailable
+ * 3. NAME + OTHER FIELDS - Only as fallback with high similarity threshold
+ * 
+ * RULES:
+ * - Every attendance record MUST match an existing contact by email
+ * - New contacts are only created during registration/signup flows
+ * - Attendance imports update existing records, never create duplicates
+ * - All email comparisons are case-insensitive (lowercased)
+ * 
+ * EVENT ATTENDANCE TRACKING:
+ * - events_actually_attended: Comma-separated list of verified attendances
+ * - Format: "Dec 6 Workshop, June 2025 Day 1, Sep 2025" etc.
+ * - Only updated when attendance is verified against existing contacts
+ */
+
 import { Contact } from "@/types/contact";
 import { June2025Signup } from "@/hooks/useJune2025Event";
 import { HappyHourRSVP } from "@/hooks/useHappyHourEvent";
