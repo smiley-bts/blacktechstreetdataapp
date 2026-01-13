@@ -24,7 +24,7 @@ export function parseProject(row: string[]): Project {
   if (eventDate.startsWith("2025-06-27") || eventDate.startsWith("2025-06-28")) {
     eventName = "June 27-28, 2025 ASPIRE Build Day";
   } else if (eventDate.startsWith("2025-09-27")) {
-    eventName = "September 27, 2025 ASPIRE Build Day";
+    eventName = "September 27-28, 2025 ASPIRE Build Day";
   } else if (eventDate.startsWith("2025-12-06")) {
     eventName = "December 6, 2025 ASPIRE Workshop";
   }

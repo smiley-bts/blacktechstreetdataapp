@@ -76,7 +76,7 @@ const EVENTS: Record<string, EventConfig> = {
   "sept27BuildDay": {
     id: "sep-2025-aspire-build-day",
     name: "ASPIRE AI Fluency + Build Day",
-    date: "September 27, 2025",
+    date: "September 27-28, 2025",
     type: "build-day",
     icon: <GraduationCap className="h-6 w-6" />,
     filter: (c) => isSep2025Event(c) || isSept27BuildDay(c),
