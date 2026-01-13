@@ -1,5 +1,5 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useContacts } from "@/hooks/useContacts";
 import { Contact, isDec6Workshop, isDec13LTF, isSept27BuildDay, isHappyHourAug2025, isJune2025Event, isSep2025Event, isMarch2025Event, isMay2025Event, getDisplayName } from "@/types/contact";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, Users, UserCheck, TrendingUp, Calendar, Rocket, GraduationCap, PartyPopper, Sparkles, ClipboardList, Wrench, BarChart3 } from "lucide-react";
+import { ContactDetailModal } from "@/components/crm/ContactDetailModal";
 
 interface EventConfig {
   id: string;
@@ -117,6 +118,7 @@ export default function EventBreakdown() {
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
   const { contacts, loading: isLoading } = useContacts();
+  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
 
   const event = eventId ? EVENTS[eventId] : null;
 
@@ -473,9 +475,10 @@ export default function EventBreakdown() {
           <CardContent>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 max-h-96 overflow-y-auto">
               {stats?.attended.map(contact => (
-                <div 
+                <button 
                   key={contact.recordId}
-                  className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+                  onClick={() => setSelectedContact(contact)}
+                  className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 hover:bg-muted hover:ring-2 hover:ring-primary/30 transition-all cursor-pointer text-left w-full"
                 >
                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">
                     {getDisplayName(contact).slice(0, 2).toUpperCase()}
@@ -496,12 +499,19 @@ export default function EventBreakdown() {
                       )}
                     </div>
                   )}
-                </div>
+                </button>
               ))}
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Contact Detail Modal */}
+      <ContactDetailModal
+        contact={selectedContact}
+        open={!!selectedContact}
+        onOpenChange={(open) => !open && setSelectedContact(null)}
+      />
     </div>
   );
 }
