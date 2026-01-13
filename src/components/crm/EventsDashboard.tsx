@@ -21,6 +21,9 @@ interface EventInfo {
   filterKey: string;
   color: string;
   inviteOnly?: boolean;
+  multiDay?: boolean;
+  day1Filter?: (contact: Contact) => boolean;
+  day2Filter?: (contact: Contact) => boolean;
 }
 
 // Helper to check if contact actually attended an event
@@ -59,9 +62,12 @@ const EVENTS: EventInfo[] = [
     type: "workshop",
     icon: <Rocket className="h-5 w-5" />,
     filter: isJune2025Event,
-    attendedFilter: (c) => actuallyAttendedEvent(c, "June"),
+    attendedFilter: (c) => actuallyAttendedEvent(c, "June 2025 Day 1") || actuallyAttendedEvent(c, "June 2025 Day 2"),
     filterKey: "june2025Event",
     color: "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/30",
+    multiDay: true,
+    day1Filter: (c: Contact) => actuallyAttendedEvent(c, "June 2025 Day 1"),
+    day2Filter: (c: Contact) => actuallyAttendedEvent(c, "June 2025 Day 2"),
   },
   {
     id: "happy-hour-aug-2025",
@@ -127,6 +133,8 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
       attendedCount: contacts.filter(event.attendedFilter).length,
       registeredContacts: contacts.filter(event.filter),
       attendedContacts: contacts.filter(event.attendedFilter),
+      day1Count: event.day1Filter ? contacts.filter(event.day1Filter).length : 0,
+      day2Count: event.day2Filter ? contacts.filter(event.day2Filter).length : 0,
     }));
   }, [contacts]);
 
@@ -266,10 +274,24 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
                       <div className="w-px h-10 bg-border" />
                     </>
                   )}
-                  <div>
-                    <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">{event.attendedCount}</p>
-                    <p className="text-xs text-muted-foreground">attended</p>
-                  </div>
+                  {event.multiDay ? (
+                    <>
+                      <div>
+                        <p className="text-xl font-bold text-cyan-600 dark:text-cyan-400">{event.day1Count}</p>
+                        <p className="text-xs text-muted-foreground">Day 1</p>
+                      </div>
+                      <div className="w-px h-10 bg-border" />
+                      <div>
+                        <p className="text-xl font-bold text-cyan-600 dark:text-cyan-400">{event.day2Count}</p>
+                        <p className="text-xs text-muted-foreground">Day 2</p>
+                      </div>
+                    </>
+                  ) : (
+                    <div>
+                      <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">{event.attendedCount}</p>
+                      <p className="text-xs text-muted-foreground">attended</p>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
