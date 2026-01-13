@@ -88,9 +88,12 @@ const EVENTS: EventInfo[] = [
     type: "build-day",
     icon: <GraduationCap className="h-5 w-5" />,
     filter: (c) => isSep2025Event(c) || isSept27BuildDay(c),
-    attendedFilter: (c) => actuallyAttendedEvent(c, "Sep") || actuallyAttendedEvent(c, "ASPIRE Sep"),
+    attendedFilter: (c) => actuallyAttendedEvent(c, "Sep 2025 Day 1") || actuallyAttendedEvent(c, "Sep 2025 Day 2"),
     filterKey: "sept27BuildDay",
     color: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
+    multiDay: true,
+    day1Filter: (c: Contact) => actuallyAttendedEvent(c, "Sep 2025 Day 1"),
+    day2Filter: (c: Contact) => actuallyAttendedEvent(c, "Sep 2025 Day 2"),
   },
   {
     id: "dec-6-workshop",
