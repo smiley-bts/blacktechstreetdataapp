@@ -1,9 +1,10 @@
 import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Contact, isDec6Workshop, isDec13LTF, isSept27BuildDay, isHappyHourAug2025, isJune2025Event, isSep2025Event, isMarch2025Event, isMay2025Event } from "@/types/contact";
 import { useContactMetrics } from "@/hooks/useContactMetrics";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Users, PartyPopper, GraduationCap, Sparkles, Rocket, UserCheck, ClipboardList, Wrench } from "lucide-react";
+import { Calendar, Users, PartyPopper, GraduationCap, Sparkles, Rocket, UserCheck, ClipboardList, Wrench, ExternalLink } from "lucide-react";
 
 interface EventsDashboardProps {
   contacts: Contact[];
@@ -124,6 +125,7 @@ const EVENT_TYPE_LABELS: Record<string, string> = {
 };
 
 export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps) {
+  const navigate = useNavigate();
   const metrics = useContactMetrics(contacts);
 
   const eventStats = useMemo(() => {
@@ -260,7 +262,7 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
               <div
                 key={event.id}
                 className={`relative flex items-center gap-4 p-4 rounded-xl border ${event.color} cursor-pointer hover:scale-[1.01] transition-all duration-200`}
-                onClick={() => onEventClick?.(event.filterKey)}
+                onClick={() => navigate(`/events/${event.filterKey}`)}
               >
                 {/* Timeline connector */}
                 {index < sortedEvents.length - 1 && (
