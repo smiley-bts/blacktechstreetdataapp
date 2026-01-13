@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Contact, getDisplayName, hasValidDisplayName } from "@/types/contact";
+import { Contact, getDisplayName, hasValidDisplayName, hasEventFeedback as checkEventFeedback, hasBuildDayData as checkBuildDayData } from "@/types/contact";
 import {
   Dialog,
   DialogContent,
@@ -235,18 +235,10 @@ export function ContactDetailModal({ contact, open, onOpenChange }: ContactDetai
     }
   };
 
-  const hasEventFeedback = !!(
-    contact.npsScore || 
-    contact.ahaMoment || 
-    contact.favoritePart || 
-    contact.optionalQuote
-  );
-
-  const hasBuildDay = !!(
-    contact.teamBuildDescription || 
-    contact.aiToolsUsed || 
-    contact.rolesOnTeam
-  );
+  // Use consistent feedback detection from types/contact.ts
+  // This ensures the same logic is used in ContactCard, ContactListRow, and here
+  const hasEventFeedbackData = checkEventFeedback(displayContact);
+  const hasBuildDayData = checkBuildDayData(displayContact);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -336,13 +328,13 @@ export function ContactDetailModal({ contact, open, onOpenChange }: ContactDetai
                         : contact.aiExperienceLevel.substring(0, 20)}
                     </Badge>
                   )}
-                  {hasEventFeedback && (
+                  {hasEventFeedbackData && (
                     <Badge className="bg-gold/20 text-gold border-gold/30">
                       <Star className="h-3 w-3 mr-1" />
                       Has Feedback
                     </Badge>
                   )}
-                  {hasBuildDay && (
+                  {hasBuildDayData && (
                     <Badge className="bg-chart-purple/20 text-chart-purple border-chart-purple/30">
                       <Hammer className="h-3 w-3 mr-1" />
                       Build Day
@@ -517,44 +509,44 @@ export function ContactDetailModal({ contact, open, onOpenChange }: ContactDetai
             <TabsContent value="feedback" className="m-0 space-y-6 animate-fade-in">
               {/* NPS and Key Stats */}
               <div className="flex flex-wrap gap-3">
-                <StatBadge value={contact.npsScore} label="NPS Score" icon={Star} />
-                <StatBadge value={contact.postEventAIConfidence} label="Post-Event Confidence" icon={Sparkles} />
-                <StatBadge value={contact.responsibleAIPreparedness} label="AI Preparedness" icon={CheckCircle} />
+                <StatBadge value={displayContact.npsScore} label="NPS Score" icon={Star} />
+                <StatBadge value={displayContact.postEventAIConfidence} label="Post-Event Confidence" icon={Sparkles} />
+                <StatBadge value={displayContact.responsibleAIPreparedness} label="AI Preparedness" icon={CheckCircle} />
               </div>
 
               {/* Quotes & Insights */}
               <div className="space-y-4">
-                <QuoteCard quote={contact.optionalQuote} label="Their Quote About the Experience" />
-                <QuoteCard quote={contact.ahaMoment} label="Biggest Aha Moment" />
-                <QuoteCard quote={contact.favoritePart} label="Favorite Part" />
-                <QuoteCard quote={contact.oneWayToUseAI} label="How They Plan to Use AI" />
+                <QuoteCard quote={displayContact.optionalQuote} label="Their Quote About the Experience" />
+                <QuoteCard quote={displayContact.ahaMoment} label="Biggest Aha Moment" />
+                <QuoteCard quote={displayContact.favoritePart} label="Favorite Part" />
+                <QuoteCard quote={displayContact.oneWayToUseAI} label="How They Plan to Use AI" />
               </div>
 
               {/* More Feedback Data */}
               <div>
                 <SectionTitle icon={MessageSquareQuote}>More Feedback</SectionTitle>
                 <div className="grid gap-1 bg-secondary/30 rounded-xl p-2 border border-border/50">
-                  <InfoRow icon={Lightbulb} label="New Concept Learned" value={contact.newConceptLearned} />
-                  <InfoRow icon={Target} label="After Event Opportunities" value={contact.afterEventOpportunities} />
-                  <InfoRow icon={Brain} label="AI Task Understanding" value={contact.aiTaskUnderstanding} />
-                  <InfoRow icon={Star} label="Strongest Skill After Today" value={contact.strongestSkillAfterToday} />
-                  <InfoRow icon={MessageSquareQuote} label="Wish We Covered More" value={contact.wishCoveredMore} />
+                  <InfoRow icon={Lightbulb} label="New Concept Learned" value={displayContact.newConceptLearned} />
+                  <InfoRow icon={Target} label="After Event Opportunities" value={displayContact.afterEventOpportunities} />
+                  <InfoRow icon={Brain} label="AI Task Understanding" value={displayContact.aiTaskUnderstanding} />
+                  <InfoRow icon={Star} label="Strongest Skill After Today" value={displayContact.strongestSkillAfterToday} />
+                  <InfoRow icon={MessageSquareQuote} label="Wish We Covered More" value={displayContact.wishCoveredMore} />
                 </div>
               </div>
             </TabsContent>
 
             {/* BUILD DAY TAB */}
             <TabsContent value="buildday" className="m-0 space-y-6 animate-fade-in">
-              {hasBuildDay ? (
+              {hasBuildDayData ? (
                 <>
                   {/* What They Built */}
-                  {contact.teamBuildDescription && (
+                  {displayContact.teamBuildDescription && (
                     <div className="p-4 rounded-xl bg-gradient-to-br from-chart-purple/10 via-accent/5 to-transparent border border-chart-purple/20">
                       <div className="flex items-center gap-2 mb-3">
                         <Hammer className="h-5 w-5 text-chart-purple" />
                         <h4 className="font-semibold text-foreground">What Their Team Built</h4>
                       </div>
-                      <p className="text-sm text-foreground leading-relaxed">{contact.teamBuildDescription}</p>
+                      <p className="text-sm text-foreground leading-relaxed">{displayContact.teamBuildDescription}</p>
                     </div>
                   )}
 
@@ -565,25 +557,25 @@ export function ContactDetailModal({ contact, open, onOpenChange }: ContactDetai
                         <Sparkles className="h-4 w-4 text-primary" />
                         <h5 className="font-medium text-foreground text-sm">AI Tools Used</h5>
                       </div>
-                      <p className="text-sm text-muted-foreground">{contact.aiToolsUsed || "Not specified"}</p>
+                      <p className="text-sm text-muted-foreground">{displayContact.aiToolsUsed || "Not specified"}</p>
                     </div>
                     <div className="bg-secondary/30 rounded-xl p-4 border border-border/50">
                       <div className="flex items-center gap-2 mb-3">
                         <Users className="h-4 w-4 text-accent" />
                         <h5 className="font-medium text-foreground text-sm">Roles on Team</h5>
                       </div>
-                      <p className="text-sm text-muted-foreground">{contact.rolesOnTeam || "Not specified"}</p>
+                      <p className="text-sm text-muted-foreground">{displayContact.rolesOnTeam || "Not specified"}</p>
                     </div>
                   </div>
 
                   {/* More Build Day Data */}
                   <div className="grid gap-1 bg-secondary/30 rounded-xl p-2 border border-border/50">
-                    <InfoRow icon={Target} label="Team Impact" value={contact.teamImpact} />
-                    <InfoRow icon={Users} label="Knew Team Before?" value={contact.knewTeamBefore} />
-                    <InfoRow icon={CheckCircle} label="Space Felt Welcoming?" value={contact.spaceFeltWelcoming} />
-                    <InfoRow icon={Brain} label="Bias Responsibility" value={contact.biasResponsibility} />
-                    <InfoRow icon={Target} label="Community Design" value={contact.teamCommunityDesign} />
-                    <InfoRow icon={Calendar} label="Would Attend Follow-up?" value={contact.attendFollowUp} />
+                    <InfoRow icon={Target} label="Team Impact" value={displayContact.teamImpact} />
+                    <InfoRow icon={Users} label="Knew Team Before?" value={displayContact.knewTeamBefore} />
+                    <InfoRow icon={CheckCircle} label="Space Felt Welcoming?" value={displayContact.spaceFeltWelcoming} />
+                    <InfoRow icon={Brain} label="Bias Responsibility" value={displayContact.biasResponsibility} />
+                    <InfoRow icon={Target} label="Community Design" value={displayContact.teamCommunityDesign} />
+                    <InfoRow icon={Calendar} label="Would Attend Follow-up?" value={displayContact.attendFollowUp} />
                   </div>
                 </>
               ) : (
