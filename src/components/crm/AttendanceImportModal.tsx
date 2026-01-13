@@ -17,8 +17,9 @@ const EVENT_OPTIONS = [
   { value: "June 2025 Day 1", label: "June 27th Day 1" },
   { value: "June 2025 Day 2", label: "June 28th Day 2" },
   { value: "Happy Hour Aug 2025", label: "Happy Hour August 27th" },
-  { value: "LTF Dec 2025", label: "LTF Workshop" },
   { value: "Sep 2025 Build Day", label: "September 27th Build Day" },
+  { value: "Dec 6 2025 Workshop", label: "December 6th ASPIRE Workshop" },
+  { value: "LTF Dec 2025", label: "December 13th LTF Workshop" },
 ];
 
 interface SyncResult {
