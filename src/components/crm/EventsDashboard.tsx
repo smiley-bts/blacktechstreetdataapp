@@ -84,7 +84,7 @@ const EVENTS: EventInfo[] = [
   {
     id: "sep-2025-aspire-build-day",
     name: "ASPIRE AI Fluency + Build Day",
-    date: "September 27, 2025",
+    date: "September 27-28, 2025",
     type: "build-day",
     icon: <GraduationCap className="h-5 w-5" />,
     filter: (c) => isSep2025Event(c) || isSept27BuildDay(c),
