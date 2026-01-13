@@ -127,15 +127,32 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
   const metrics = useContactMetrics(contacts);
 
   const eventStats = useMemo(() => {
-    return EVENTS.map(event => ({
-      ...event,
-      registeredCount: contacts.filter(event.filter).length,
-      attendedCount: contacts.filter(event.attendedFilter).length,
-      registeredContacts: contacts.filter(event.filter),
-      attendedContacts: contacts.filter(event.attendedFilter),
-      day1Count: event.day1Filter ? contacts.filter(event.day1Filter).length : 0,
-      day2Count: event.day2Filter ? contacts.filter(event.day2Filter).length : 0,
-    }));
+    return EVENTS.map(event => {
+      const registeredCount = contacts.filter(event.filter).length;
+      const attendedCount = contacts.filter(event.attendedFilter).length;
+      const day1Count = event.day1Filter ? contacts.filter(event.day1Filter).length : 0;
+      const day2Count = event.day2Filter ? contacts.filter(event.day2Filter).length : 0;
+      
+      // Calculate conversion rates
+      const registrationToAttendance = registeredCount > 0 
+        ? Math.round((attendedCount / registeredCount) * 100) 
+        : 0;
+      const day1ToDay2Retention = event.multiDay && day1Count > 0 
+        ? Math.round((day2Count / day1Count) * 100) 
+        : null;
+      
+      return {
+        ...event,
+        registeredCount,
+        attendedCount,
+        registeredContacts: contacts.filter(event.filter),
+        attendedContacts: contacts.filter(event.attendedFilter),
+        day1Count,
+        day2Count,
+        registrationToAttendance,
+        day1ToDay2Retention,
+      };
+    });
   }, [contacts]);
 
   // Sort events by date (chronological order - oldest first)
@@ -285,12 +302,32 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
                         <p className="text-xl font-bold text-cyan-600 dark:text-cyan-400">{event.day2Count}</p>
                         <p className="text-xs text-muted-foreground">Day 2</p>
                       </div>
+                      {event.day1ToDay2Retention !== null && (
+                        <>
+                          <div className="w-px h-10 bg-border" />
+                          <div>
+                            <p className="text-xl font-bold text-amber-600 dark:text-amber-400">{event.day1ToDay2Retention}%</p>
+                            <p className="text-xs text-muted-foreground">retention</p>
+                          </div>
+                        </>
+                      )}
                     </>
                   ) : (
-                    <div>
-                      <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">{event.attendedCount}</p>
-                      <p className="text-xs text-muted-foreground">attended</p>
-                    </div>
+                    <>
+                      <div>
+                        <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">{event.attendedCount}</p>
+                        <p className="text-xs text-muted-foreground">attended</p>
+                      </div>
+                      {!event.inviteOnly && event.registrationToAttendance > 0 && (
+                        <>
+                          <div className="w-px h-10 bg-border" />
+                          <div>
+                            <p className="text-xl font-bold text-amber-600 dark:text-amber-400">{event.registrationToAttendance}%</p>
+                            <p className="text-xs text-muted-foreground">conversion</p>
+                          </div>
+                        </>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
