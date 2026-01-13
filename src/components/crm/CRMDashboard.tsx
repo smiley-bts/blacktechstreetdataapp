@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useContacts, useFilteredContacts, getUniqueValues } from "@/hooks/useContacts";
 import { useEventAutoSync } from "@/hooks/useEventAutoSync";
+import { useAutoDeduplication } from "@/hooks/useAutoDeduplication";
 import { ContactFilter, SavedSearch, hasEventFeedback, hasBuildDayData, isDec6Workshop, isDec13LTF, isSept27BuildDay, isHappyHourAug2025, Contact } from "@/types/contact";
 import { ContactSearchBar } from "./ContactSearchBar";
 import { ContactList } from "./ContactList";
@@ -25,7 +26,8 @@ import { openExecutiveReport } from "./ExecutiveReportGenerator";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, FileText, Printer, MessageSquare, Folder, Settings, Presentation, LogOut, FileBarChart, RefreshCw, FileCheck, CalendarDays, Database, Upload } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { LayoutDashboard, Users, FileText, Printer, MessageSquare, Folder, Settings, Presentation, LogOut, FileBarChart, RefreshCw, FileCheck, CalendarDays, Database, Upload, Wand2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useContactTags } from "@/hooks/useContactTags";
 import { getFiltersFromUrl, serializeFilters } from "@/lib/urlState";
@@ -69,6 +71,13 @@ const TAGLINES = [
 export default function CRMDashboard() {
   const { contacts, loading, error, addContacts, mergeContacts, importing, needsImport, importCsvToDatabase } = useContacts();
   const { syncing, forceSyncAll } = useEventAutoSync(contacts, loading);
+  const { 
+    autoMergeEnabled, 
+    setAutoMergeEnabled, 
+    mergeInProgress, 
+    runAutoDedup,
+    findObviousDuplicateGroups 
+  } = useAutoDeduplication(contacts, !loading);
   const { syncReleaseFormsToContacts, totalForms, getUnsyncedCount } = useReleaseForms();
   const { getAllUniqueTags, getContactsWithTag } = useContactTags();
   const { user, signOut, profile } = useAuth();
@@ -78,6 +87,11 @@ export default function CRMDashboard() {
   const [taglineIndex, setTaglineIndex] = useState(0);
   const [taglineFading, setTaglineFading] = useState(false);
   const [showPresentationMode, setShowPresentationMode] = useState(false);
+
+  // Count pending duplicates
+  const pendingDuplicateCount = useMemo(() => {
+    return findObviousDuplicateGroups(contacts).length;
+  }, [contacts, findObviousDuplicateGroups]);
 
   // Collect quotes and project names for executive report
   const feedbackQuotes = useMemo(() => {
@@ -450,6 +464,32 @@ export default function CRMDashboard() {
                     >
                       <FileCheck className="h-4 w-4" />
                       <span className="hidden md:inline">Sync Releases ({unsyncedFormsCount})</span>
+                    </Button>
+                  )}
+                </div>
+                
+                {/* Auto-merge toggle */}
+                <div className="flex items-center gap-2 bg-background/40 backdrop-blur-sm rounded-lg p-1.5 px-3 border border-border/30">
+                  <Wand2 className={`h-4 w-4 ${autoMergeEnabled ? 'text-primary' : 'text-muted-foreground'}`} />
+                  <span className="text-xs font-medium text-muted-foreground hidden md:inline">Auto-merge</span>
+                  <Switch 
+                    checked={autoMergeEnabled} 
+                    onCheckedChange={setAutoMergeEnabled}
+                    className="data-[state=checked]:bg-primary"
+                  />
+                  {pendingDuplicateCount > 0 && autoMergeEnabled && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={runAutoDedup}
+                      disabled={mergeInProgress}
+                      className="h-6 px-2 text-xs gap-1 text-primary hover:text-primary hover:bg-primary/10"
+                    >
+                      {mergeInProgress ? (
+                        <RefreshCw className="h-3 w-3 animate-spin" />
+                      ) : (
+                        <>Merge {pendingDuplicateCount}</>
+                      )}
                     </Button>
                   )}
                 </div>
