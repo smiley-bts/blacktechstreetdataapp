@@ -63,10 +63,44 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    // Verify authentication
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      console.log('Unauthorized: No authorization header');
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    
+    // Verify user from token
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    
+    if (authError || !user) {
+      console.log('Unauthorized: Invalid token', authError?.message);
+      return new Response(
+        JSON.stringify({ error: 'Invalid token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Verify user is admin
+    const { data: isAdmin, error: roleError } = await supabase.rpc('is_admin', { _user_id: user.id });
+    if (roleError || !isAdmin) {
+      console.log('Forbidden: User is not admin', user.id);
+      return new Response(
+        JSON.stringify({ error: 'Admin access required' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('Authenticated admin user:', user.id);
     
     const { attendanceRecords, dryRun = false }: { attendanceRecords: AttendanceRecord[]; dryRun?: boolean } = await req.json();
     
@@ -169,6 +203,22 @@ Deno.serve(async (req: Request) => {
       } else {
         result.unmatched.push({ name, email, event });
       }
+    }
+
+    // Log activity
+    try {
+      await supabase.rpc('log_activity', {
+        _action: 'sync_attendance',
+        _details: { 
+          recordsProcessed: attendanceRecords.length,
+          matched: result.matched.length,
+          unmatched: result.unmatched.length,
+          updated: result.updated,
+          dryRun
+        }
+      });
+    } catch (logError) {
+      console.error('Failed to log activity:', logError);
     }
 
     console.log(`Sync complete: ${result.matched.length} matched, ${result.unmatched.length} unmatched, ${result.updated} updated`);
