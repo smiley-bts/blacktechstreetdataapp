@@ -20,6 +20,7 @@ interface EventInfo {
   attendedFilter: (contact: Contact) => boolean;
   filterKey: string;
   color: string;
+  inviteOnly?: boolean;
 }
 
 // Helper to check if contact actually attended an event
@@ -49,6 +50,7 @@ const EVENTS: EventInfo[] = [
     attendedFilter: (c) => actuallyAttendedEvent(c, "May"),
     filterKey: "may2025Event",
     color: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/30",
+    inviteOnly: true,
   },
   {
     id: "june-2025-aspire",
@@ -255,11 +257,15 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
                 </div>
                 
                 <div className="flex items-center gap-4 text-right">
-                  <div>
-                    <p className="text-xl font-bold text-foreground">{event.registeredCount}</p>
-                    <p className="text-xs text-muted-foreground">registered</p>
-                  </div>
-                  <div className="w-px h-10 bg-border" />
+                  {!event.inviteOnly && (
+                    <>
+                      <div>
+                        <p className="text-xl font-bold text-foreground">{event.registeredCount}</p>
+                        <p className="text-xs text-muted-foreground">registered</p>
+                      </div>
+                      <div className="w-px h-10 bg-border" />
+                    </>
+                  )}
                   <div>
                     <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">{event.attendedCount}</p>
                     <p className="text-xs text-muted-foreground">attended</p>
