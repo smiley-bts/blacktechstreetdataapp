@@ -284,15 +284,6 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
                 </div>
                 
                 <div className="flex items-center gap-4 text-right">
-                  {!event.inviteOnly && (
-                    <>
-                      <div>
-                        <p className="text-xl font-bold text-foreground">{event.registeredCount}</p>
-                        <p className="text-xs text-muted-foreground">registered</p>
-                      </div>
-                      <div className="w-px h-10 bg-border" />
-                    </>
-                  )}
                   {event.multiDay ? (
                     <>
                       <div>
@@ -315,21 +306,10 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
                       )}
                     </>
                   ) : (
-                    <>
-                      <div>
-                        <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">{event.attendedCount}</p>
-                        <p className="text-xs text-muted-foreground">attended</p>
-                      </div>
-                      {!event.inviteOnly && event.registrationToAttendance > 0 && (
-                        <>
-                          <div className="w-px h-10 bg-border" />
-                          <div>
-                            <p className="text-xl font-bold text-amber-600 dark:text-amber-400">{event.registrationToAttendance}%</p>
-                            <p className="text-xs text-muted-foreground">conversion</p>
-                          </div>
-                        </>
-                      )}
-                    </>
+                    <div>
+                      <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">{event.attendedCount}</p>
+                      <p className="text-xs text-muted-foreground">attended</p>
+                    </div>
                   )}
                 </div>
               </div>
