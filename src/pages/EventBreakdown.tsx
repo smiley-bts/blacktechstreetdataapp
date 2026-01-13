@@ -1,4 +1,4 @@
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useMemo, useState } from "react";
 import { useContacts } from "@/hooks/useContacts";
 import { Contact, isDec6Workshop, isDec13LTF, isSept27BuildDay, isHappyHourAug2025, isJune2025Event, isSep2025Event, isMarch2025Event, isMay2025Event, getDisplayName } from "@/types/contact";
@@ -7,7 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, Users, UserCheck, TrendingUp, Calendar, Rocket, GraduationCap, PartyPopper, Sparkles, ClipboardList, Wrench, BarChart3 } from "lucide-react";
+import { ArrowLeft, Users, UserCheck, TrendingUp, Calendar, Rocket, GraduationCap, PartyPopper, Sparkles, ClipboardList, Wrench, BarChart3, ShieldCheck } from "lucide-react";
+import { LTFDashboard } from "@/components/dashboard/LTFDashboard";
 import { ContactDetailModal } from "@/components/crm/ContactDetailModal";
 
 interface EventConfig {
@@ -23,6 +24,8 @@ interface EventConfig {
   day1Filter?: (contact: Contact) => boolean;
   day2Filter?: (contact: Contact) => boolean;
   inviteOnly?: boolean;
+  isYouthEvent?: boolean; // If true, don't show contact cards (minors)
+  fixedAttendeeCount?: number; // Override attendee count from CSV data
 }
 
 function actuallyAttendedEvent(contact: Contact, eventKeyword: string): boolean {
@@ -103,6 +106,8 @@ const EVENTS: Record<string, EventConfig> = {
     filter: isDec13LTF,
     attendedFilter: (c) => actuallyAttendedEvent(c, "Dec 13") || actuallyAttendedEvent(c, "LTF"),
     color: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30",
+    isYouthEvent: true, // Underage students - no contact cards, feedback only
+    fixedAttendeeCount: 22, // 100% feedback completion from 22 students
   },
 };
 
@@ -197,6 +202,75 @@ export default function EventBreakdown() {
             <Skeleton className="h-28" />
             <Skeleton className="h-28" />
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  // For youth events, show a simplified view with just the feedback dashboard
+  if (event.isYouthEvent) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="max-w-6xl mx-auto p-4 sm:p-6 space-y-6">
+          {/* Header */}
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div className="flex-1">
+              <div className="flex items-center gap-3">
+                <div className={`p-3 rounded-xl ${event.color}`}>
+                  {event.icon}
+                </div>
+                <div>
+                  <h1 className="text-2xl sm:text-3xl font-bold text-foreground">{event.name}</h1>
+                  <div className="flex items-center gap-2 mt-1 flex-wrap">
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">{event.date}</span>
+                    <Badge variant="outline">{EVENT_TYPE_LABELS[event.type]}</Badge>
+                    <Badge variant="secondary" className="bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30">
+                      <ShieldCheck className="h-3 w-3 mr-1" />
+                      Youth Program
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Youth Event Attendance Summary */}
+          <Card className="bg-gradient-to-br from-purple-500/5 to-purple-500/10 border-purple-500/20">
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-xl bg-purple-500/10">
+                  <Users className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                </div>
+                <div>
+                  <p className="text-3xl sm:text-4xl font-bold text-foreground">{event.fixedAttendeeCount || 0}</p>
+                  <p className="text-sm text-muted-foreground">Student Participants</p>
+                </div>
+                <div className="ml-auto text-right">
+                  <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30">
+                    100% Feedback Completion
+                  </Badge>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Privacy Notice */}
+          <Card className="border-amber-500/30 bg-amber-500/5">
+            <CardContent className="p-4 flex items-center gap-3">
+              <ShieldCheck className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0" />
+              <p className="text-sm text-muted-foreground">
+                <span className="font-medium text-foreground">Youth Privacy Protection:</span>{" "}
+                Individual student contact information is not displayed. Only aggregated feedback data is shown below.
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* LTF Feedback Dashboard */}
+          <LTFDashboard />
         </div>
       </div>
     );
