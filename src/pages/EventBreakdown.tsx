@@ -80,8 +80,11 @@ const EVENTS: Record<string, EventConfig> = {
     type: "build-day",
     icon: <GraduationCap className="h-6 w-6" />,
     filter: (c) => isSep2025Event(c) || isSept27BuildDay(c),
-    attendedFilter: (c) => actuallyAttendedEvent(c, "Sep") || actuallyAttendedEvent(c, "ASPIRE Sep"),
+    attendedFilter: (c) => actuallyAttendedEvent(c, "Sep 2025 Day 1") || actuallyAttendedEvent(c, "Sep 2025 Day 2"),
     color: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
+    multiDay: true,
+    day1Filter: (c: Contact) => actuallyAttendedEvent(c, "Sep 2025 Day 1"),
+    day2Filter: (c: Contact) => actuallyAttendedEvent(c, "Sep 2025 Day 2"),
   },
   "dec6Workshop": {
     id: "dec-6-workshop",
