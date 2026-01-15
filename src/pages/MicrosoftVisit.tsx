@@ -155,6 +155,12 @@ const organizations: Organization[] = [
     website: "https://tulsainnovationlabs.com"
   },
   {
+    name: "City Of Tulsa Mayor's Office",
+    description: "Mayor Monroe Nichols IV was sworn in as Tulsa's 41st Mayor on Monday, December 2, 2024. Mayor Nichols is focused on ending homelessness, improving student outcomes, expanding economic opportunity, making Tulsa the safest big city in America, increasing affordable housing and improving relations and co-governance with tribal governments.",
+    logo: cityOfTulsaLogo,
+    website: "https://www.cityoftulsa.org/mayor/"
+  },
+  {
     name: "Fixins Soul Kitchen",
     description: "Fixins Soul Kitchen is a full-service restaurant in downtown Tulsa's historic Greenwood District that combines authentic Southern comfort food with a high-energy, modern atmosphere.",
     logo: fixinsLogo,
@@ -183,12 +189,6 @@ const organizations: Organization[] = [
     description: "Tulsa Economic Development Corporation (TEDC) Creative Capital is a non-profit organization and certified Community Development Financial Institution that provides lending and educational services to small businesses and entrepreneurs in the Tulsa region and throughout Oklahoma.",
     logo: tedcLogo,
     website: "https://tedcorp.org"
-  },
-  {
-    name: "Tulsa City Hall",
-    description: "Tulsa City Hall serves as the central hub for the City of Tulsa's municipal government, housing the executive and legislative offices that manage the city's infrastructure, public safety, and community services.",
-    logo: cityOfTulsaLogo,
-    website: "https://www.cityoftulsa.org"
   },
   {
     name: "Tulsa Regional Chamber",
