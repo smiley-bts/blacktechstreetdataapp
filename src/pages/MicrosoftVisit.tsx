@@ -131,10 +131,10 @@ const schedule: ScheduleItem[] = [
   },
   {
     time: "5:15 – 6:15 PM",
-    session: "(GEM) Greenwood Entrepreneurship at Moton Building Tour",
-    location: "(GEM) Greenwood Entrepreneurship at Moton Building",
+    session: "Greenwood Entrepreneurship at Moton (GEM) Building Tour",
+    location: "GEM Building",
     address: "660 E. Pine St. Tulsa, OK 74106",
-    details: "Tour of the (GEM) Greenwood Entrepreneurship at Moton Building - the historic Moton Hospital transformed into a modern hub for Black-owned businesses and tech-enabled startups.",
+    details: "Tour of the GEM Building - the historic Moton Hospital transformed into a modern hub for Black-owned businesses and tech-enabled startups.",
     icon: <Building2 className="h-5 w-5" />,
     type: 'tour',
     coordinates: [36.1648, -95.9802]
