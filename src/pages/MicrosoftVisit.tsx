@@ -149,12 +149,6 @@ const organizations: Organization[] = [
     website: "https://blacktechstreet.com"
   },
   {
-    name: "Tulsa City Hall",
-    description: "Tulsa City Hall serves as the central hub for the City of Tulsa's municipal government, housing the executive and legislative offices that manage the city's infrastructure, public safety, and community services.",
-    logo: cityOfTulsaLogo,
-    website: "https://www.cityoftulsa.org"
-  },
-  {
     name: "Fixins Soul Kitchen",
     description: "Fixins Soul Kitchen is a full-service restaurant in downtown Tulsa's historic Greenwood District that combines authentic Southern comfort food with a high-energy, modern atmosphere.",
     logo: fixinsLogo,
@@ -183,6 +177,12 @@ const organizations: Organization[] = [
     description: "Tulsa Economic Development Corporation is a non-profit organization and certified Community Development Financial Institution that provides lending and educational services to small businesses and entrepreneurs in the Tulsa region and throughout Oklahoma.",
     logo: tedcLogo,
     website: "https://tedcorp.org"
+  },
+  {
+    name: "Tulsa City Hall",
+    description: "Tulsa City Hall serves as the central hub for the City of Tulsa's municipal government, housing the executive and legislative offices that manage the city's infrastructure, public safety, and community services.",
+    logo: cityOfTulsaLogo,
+    website: "https://www.cityoftulsa.org"
   },
   {
     name: "Tulsa Innovation Labs",
