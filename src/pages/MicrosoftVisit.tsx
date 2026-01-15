@@ -24,7 +24,7 @@ import gradientLogo from "@/assets/logos/gradient.png";
 import tedcLogo from "@/assets/logos/tedc.png";
 // griotsLogo moved to public folder
 import fixinsLogo from "@/assets/logos/fixins.png";
-import tulsaInnovationLabsLogo from "@/assets/logos/tulsa-innovation-labs-new.png";
+import tulsaInnovationLabsLogo from "@/assets/logos/tulsa-innovation-labs.png";
 import tulsaLibraryLogo from "@/assets/logos/tulsa-library.png";
 import tulsaRegionalChamberLogo from "@/assets/logos/tulsa-regional-chamber.png";
 import cityOfTulsaLogo from "@/assets/logos/city-of-tulsa.png";
