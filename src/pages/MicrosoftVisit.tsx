@@ -637,6 +637,11 @@ export default function MicrosoftVisit() {
                         src={org.logo} 
                         alt={org.name} 
                         className="w-full h-full object-contain"
+                        onError={(e) => {
+                          const img = e.currentTarget;
+                          console.warn("Organization logo failed to load:", org.name, img.src);
+                          img.src = "/placeholder.svg";
+                        }}
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: index * 0.05, duration: 0.4 }}
