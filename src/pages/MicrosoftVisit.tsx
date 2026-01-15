@@ -336,33 +336,15 @@ export default function MicrosoftVisit() {
           animate="visible"
           variants={staggerContainer}
         >
-          <motion.div 
-            className="inline-flex items-center gap-2 bg-[#0078D4]/10 text-[#0078D4] px-4 py-2 rounded-full text-sm font-medium mb-6"
-            variants={fadeInScale}
-            transition={{ duration: 0.5 }}
-          >
-            <Sparkles className="h-4 w-4 animate-pulse" />
-            Microsoft AI & Security Team
-            <Sparkles className="h-4 w-4 animate-pulse" />
-          </motion.div>
-          
           <motion.h1 
             className="text-4xl md:text-6xl font-display font-bold text-foreground mb-6"
             variants={fadeInUp}
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
             <span className="bg-gradient-to-r from-foreground via-foreground to-primary bg-clip-text">
-              Tulsa Innovation Tour
+              Microsoft AI & Security Team Visit
             </span>
           </motion.h1>
-          
-          <motion.p 
-            className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
-            variants={fadeInUp}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
-            A curated day exploring Tulsa's thriving tech ecosystem, from historic Greenwood to cutting-edge innovation hubs.
-          </motion.p>
 
           {/* Animated line */}
           <motion.div 
