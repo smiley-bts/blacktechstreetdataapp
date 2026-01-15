@@ -282,11 +282,16 @@ export default function MicrosoftVisit() {
                         </Badge>
                       </div>
                       <p className="text-sm text-muted-foreground mb-2">{item.details}</p>
-                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <a 
+                        href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(item.address)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors group/link"
+                      >
                         <MapPin className="h-3 w-3" />
-                        <span className="font-medium">{item.location}</span>
-                        <span className="hidden sm:inline">• {item.address}</span>
-                      </div>
+                        <span className="font-medium group-hover/link:underline">{item.location}</span>
+                        <span className="hidden sm:inline group-hover/link:underline">• {item.address}</span>
+                      </a>
                     </div>
                   </div>
                 );
