@@ -180,7 +180,7 @@ const organizations: Organization[] = [
     name: "Greenwood Entrepreneurship at Moton (GEM)",
     description: "GEM is a historic preservation and economic development project in North Tulsa that transforms the former Moton Hospital into a modern hub businesses and startups.",
     logo: gemMotonLogo,
-    website: "https://blacktechstreet.com"
+    website: "https://www.tedcnet.com/greenwood-entrepreneurship-at-moton-design-approved/"
   },
   {
     name: "Greenwood Griot Tours",
@@ -198,7 +198,7 @@ const organizations: Organization[] = [
     name: "TEDC Creative Capital",
     description: "Tulsa Economic Development Corporation (TEDC) Creative Capital is a non-profit organization and certified Community Development Financial Institution that provides lending and educational services to small businesses and entrepreneurs in the Tulsa region and throughout Oklahoma.",
     logo: tedcLogo,
-    website: "https://tedcorp.org"
+    website: "https://www.tedcnet.com"
   },
   {
     name: "Tulsa Higher Education Consortium",
