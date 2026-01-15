@@ -11,11 +11,17 @@ import {
   BookOpen,
   ArrowLeft,
   Calendar,
-  ExternalLink
+  Briefcase,
+  GraduationCap,
+  Store,
+  Library,
+  Building,
+  Rocket
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import btsLogo from "@/assets/black-tech-street-logo.png";
+import { VisitMap } from "@/components/microsoft-visit/VisitMap";
 
 interface ScheduleItem {
   time: string;
@@ -30,6 +36,8 @@ interface ScheduleItem {
 interface Organization {
   name: string;
   description: string;
+  icon: React.ReactNode;
+  color: string;
 }
 
 const schedule: ScheduleItem[] = [
@@ -119,47 +127,65 @@ const schedule: ScheduleItem[] = [
 const organizations: Organization[] = [
   {
     name: "Black Tech Street",
-    description: "An organization dedicated to rebirthing Black Wall Street as the nation's premiere innovative economy, with a strategic focus on responsible AI, cybersecurity and emerging technologies."
+    description: "Rebirthing Black Wall Street as the nation's premiere innovative economy with focus on responsible AI, cybersecurity and emerging technologies.",
+    icon: <Rocket className="h-6 w-6" />,
+    color: "from-violet-500 to-purple-600"
   },
   {
     name: "Gradient",
-    description: "Tulsa's premier innovation and technology hub, serving as a central \"basecamp\" for entrepreneurs, startups, and remote workers."
+    description: "Tulsa's premier innovation hub serving as a central basecamp for entrepreneurs, startups, and remote workers.",
+    icon: <Building className="h-6 w-6" />,
+    color: "from-cyan-500 to-blue-600"
   },
   {
-    name: "Greenwood Entrepreneurship at Moton (GEM)",
-    description: "A historic preservation and economic development project in North Tulsa that transforms the former Moton Hospital into a modern hub for Black-owned businesses and tech-enabled startups."
+    name: "GEM Building",
+    description: "Historic Moton Hospital transformed into a modern hub for Black-owned businesses and tech-enabled startups.",
+    icon: <Building2 className="h-6 w-6" />,
+    color: "from-amber-500 to-orange-600"
   },
   {
     name: "Greenwood Griot Tours",
-    description: "A Tulsa-based storytelling collective rooted in the Historic Greenwood District, committed to preserving and sharing the legacy of Black Wall Street through guided experiences, workshops, and immersive tours."
+    description: "Storytelling collective preserving Black Wall Street's legacy through guided experiences and immersive tours.",
+    icon: <Users className="h-6 w-6" />,
+    color: "from-emerald-500 to-green-600"
   },
   {
     name: "Tulsa Innovation Labs",
-    description: "Redefining what it means to build a thriving innovation economy in America's heartland. As a nationally designated Tech Hub, the Tulsa region boasts high-growth sectors like aerospace and defense, energy and manufacturing."
+    description: "Nationally designated Tech Hub redefining innovation economy in America's heartland.",
+    icon: <Briefcase className="h-6 w-6" />,
+    color: "from-rose-500 to-pink-600"
   },
   {
     name: "Tulsa Regional Chamber",
-    description: "Representing more than 2,150 member organizations and more than 178,000 workers, the Chamber is the primary driver of regional and individual prosperity in northeast Oklahoma."
+    description: "Primary driver of regional prosperity representing 2,150+ organizations and 178,000+ workers.",
+    icon: <Landmark className="h-6 w-6" />,
+    color: "from-blue-500 to-indigo-600"
   },
   {
-    name: "Tulsa Economic Development Corporation (TEDC)",
-    description: "A non-profit organization and certified Community Development Financial Institution that provides lending and educational services to small businesses and entrepreneurs in the Tulsa region."
+    name: "TEDC",
+    description: "Certified CDFI providing lending and educational services to small businesses and entrepreneurs.",
+    icon: <Store className="h-6 w-6" />,
+    color: "from-teal-500 to-cyan-600"
   },
   {
-    name: "Rudisill Regional Library",
-    description: "A key branch of the Tulsa City-County Library system that serves as a vital community hub and historical anchor for North Tulsa."
+    name: "Rudisill Library",
+    description: "Community hub and historical anchor for North Tulsa with new expanded facility opening in Greenwood.",
+    icon: <Library className="h-6 w-6" />,
+    color: "from-purple-500 to-violet-600"
   },
   {
     name: "Fixins Soul Kitchen",
-    description: "A full-service restaurant in downtown Tulsa's historic Greenwood District that combines authentic Southern comfort food with a high-energy, modern atmosphere."
+    description: "Full-service restaurant combining authentic Southern comfort food with modern atmosphere.",
+    icon: <Utensils className="h-6 w-6" />,
+    color: "from-orange-500 to-red-600"
   }
 ];
 
-const typeColors: Record<string, string> = {
-  meeting: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-  tour: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
-  meal: "bg-orange-500/10 text-orange-500 border-orange-500/20",
-  briefing: "bg-purple-500/10 text-purple-500 border-purple-500/20"
+const typeStyles: Record<string, { bg: string; border: string; text: string; dot: string }> = {
+  meeting: { bg: "bg-blue-500/5", border: "border-l-blue-500", text: "text-blue-500", dot: "bg-blue-500" },
+  tour: { bg: "bg-emerald-500/5", border: "border-l-emerald-500", text: "text-emerald-500", dot: "bg-emerald-500" },
+  meal: { bg: "bg-orange-500/5", border: "border-l-orange-500", text: "text-orange-500", dot: "bg-orange-500" },
+  briefing: { bg: "bg-purple-500/5", border: "border-l-purple-500", text: "text-purple-500", dot: "bg-purple-500" }
 };
 
 export default function MicrosoftVisit() {
@@ -201,33 +227,17 @@ export default function MicrosoftVisit() {
           </p>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-          <Card className="text-center">
-            <CardContent className="pt-6">
-              <div className="text-3xl font-bold text-primary mb-1">9</div>
-              <div className="text-sm text-muted-foreground">Sessions</div>
-            </CardContent>
-          </Card>
-          <Card className="text-center">
-            <CardContent className="pt-6">
-              <div className="text-3xl font-bold text-emerald-500 mb-1">6</div>
-              <div className="text-sm text-muted-foreground">Locations</div>
-            </CardContent>
-          </Card>
-          <Card className="text-center">
-            <CardContent className="pt-6">
-              <div className="text-3xl font-bold text-purple-500 mb-1">10+</div>
-              <div className="text-sm text-muted-foreground">Organizations</div>
-            </CardContent>
-          </Card>
-          <Card className="text-center">
-            <CardContent className="pt-6">
-              <div className="text-3xl font-bold text-orange-500 mb-1">10 hrs</div>
-              <div className="text-sm text-muted-foreground">Full Day</div>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Interactive Map */}
+        <section className="mb-12">
+          <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
+            <MapPin className="h-6 w-6 text-primary" />
+            Tour Route
+          </h2>
+          <VisitMap />
+          <p className="text-sm text-muted-foreground mt-3 text-center">
+            Click markers for location details • Dashed line shows tour route
+          </p>
+        </section>
 
         {/* Schedule Section */}
         <section className="mb-12">
@@ -236,42 +246,52 @@ export default function MicrosoftVisit() {
             Day Schedule
           </h2>
           
-          <div className="space-y-4">
-            {schedule.map((item, index) => (
-              <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="flex flex-col md:flex-row">
-                  {/* Time Column */}
-                  <div className="bg-muted/50 px-6 py-4 md:w-48 flex-shrink-0 flex items-center justify-center md:justify-start border-b md:border-b-0 md:border-r border-border">
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${typeColors[item.type]}`}>
-                        {item.icon}
+          <div className="relative">
+            {/* Timeline line */}
+            <div className="absolute left-[140px] top-0 bottom-0 w-px bg-gradient-to-b from-primary/50 via-primary/20 to-transparent hidden md:block" />
+            
+            <div className="space-y-3">
+              {schedule.map((item, index) => {
+                const styles = typeStyles[item.type];
+                return (
+                  <div 
+                    key={index} 
+                    className={`relative flex flex-col md:flex-row gap-4 p-4 rounded-xl ${styles.bg} border-l-4 ${styles.border} hover:shadow-md transition-all`}
+                  >
+                    {/* Time badge */}
+                    <div className="md:w-32 flex-shrink-0">
+                      <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-background border border-border shadow-sm`}>
+                        <div className={`w-2 h-2 rounded-full ${styles.dot} animate-pulse`} />
+                        <span className="text-xs font-semibold text-foreground whitespace-nowrap">
+                          {item.time.split('–')[0].trim()}
+                        </span>
                       </div>
-                      <span className="font-mono text-sm font-medium text-foreground">{item.time}</span>
                     </div>
-                  </div>
-                  
-                  {/* Content Column */}
-                  <div className="flex-1 p-6">
-                    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                      <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-foreground mb-2">{item.session}</h3>
-                        <p className="text-muted-foreground text-sm mb-3">{item.details}</p>
-                        <div className="flex items-start gap-2 text-sm">
-                          <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
-                          <div>
-                            <span className="font-medium text-foreground">{item.location}</span>
-                            <span className="text-muted-foreground"> — {item.address}</span>
+                    
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-3 mb-2">
+                        <div className="flex items-center gap-2">
+                          <div className={`p-1.5 rounded-lg ${styles.text} bg-background border border-border`}>
+                            {item.icon}
                           </div>
+                          <h3 className="font-semibold text-foreground">{item.session}</h3>
                         </div>
+                        <Badge variant="outline" className={`${styles.text} border-current/20 text-xs hidden sm:inline-flex`}>
+                          {item.type}
+                        </Badge>
                       </div>
-                      <Badge variant="outline" className={typeColors[item.type]}>
-                        {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
-                      </Badge>
+                      <p className="text-sm text-muted-foreground mb-2">{item.details}</p>
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <MapPin className="h-3 w-3" />
+                        <span className="font-medium">{item.location}</span>
+                        <span className="hidden sm:inline">• {item.address}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Card>
-            ))}
+                );
+              })}
+            </div>
           </div>
         </section>
 
@@ -284,11 +304,17 @@ export default function MicrosoftVisit() {
             Featured Organizations
           </h2>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {organizations.map((org, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
+              <Card key={index} className="group hover:shadow-lg transition-all overflow-hidden border-0 bg-card/50">
+                <div className={`h-2 bg-gradient-to-r ${org.color}`} />
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">{org.name}</CardTitle>
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2.5 rounded-xl bg-gradient-to-br ${org.color} text-white shadow-lg`}>
+                      {org.icon}
+                    </div>
+                    <CardTitle className="text-base group-hover:text-primary transition-colors">{org.name}</CardTitle>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <CardDescription className="text-sm leading-relaxed">
