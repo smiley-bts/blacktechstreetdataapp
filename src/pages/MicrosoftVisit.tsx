@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { VisitMap } from "@/components/microsoft-visit/VisitMap";
 
 // Organization logos
-import blackTechStreetLogo from "@/assets/logos/black-tech-street.png";
+import blackTechStreetLogo from "@/assets/logos/bts-square-logo.png";
 import gradientLogo from "@/assets/logos/gradient.png";
 import tedcLogo from "@/assets/logos/tedc.png";
 // griotsLogo moved to public folder
