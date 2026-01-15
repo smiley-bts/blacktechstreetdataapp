@@ -149,6 +149,12 @@ const organizations: Organization[] = [
     website: "https://blacktechstreet.com"
   },
   {
+    name: "Tulsa Innovation Labs",
+    description: "At Tulsa Innovation Labs, we're redefining what it means to build a thriving innovation economy in America's heartland. As a nationally designated Tech Hub, the Tulsa region boasts high-growth sectors like aerospace and defense, energy and manufacturing.",
+    logo: tulsaInnovationLabsLogo,
+    website: "https://tulsainnovationlabs.com"
+  },
+  {
     name: "Fixins Soul Kitchen",
     description: "Fixins Soul Kitchen is a full-service restaurant in downtown Tulsa's historic Greenwood District that combines authentic Southern comfort food with a high-energy, modern atmosphere.",
     logo: fixinsLogo,
@@ -183,12 +189,6 @@ const organizations: Organization[] = [
     description: "Tulsa City Hall serves as the central hub for the City of Tulsa's municipal government, housing the executive and legislative offices that manage the city's infrastructure, public safety, and community services.",
     logo: cityOfTulsaLogo,
     website: "https://www.cityoftulsa.org"
-  },
-  {
-    name: "Tulsa Innovation Labs",
-    description: "At Tulsa Innovation Labs, we're redefining what it means to build a thriving innovation economy in America's heartland. As a nationally designated Tech Hub, the Tulsa region boasts high-growth sectors like aerospace and defense, energy and manufacturing.",
-    logo: tulsaInnovationLabsLogo,
-    website: "https://tulsainnovationlabs.com"
   },
   {
     name: "Tulsa Regional Chamber",
