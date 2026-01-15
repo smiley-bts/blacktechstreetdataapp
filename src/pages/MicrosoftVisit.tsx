@@ -590,7 +590,7 @@ export default function MicrosoftVisit() {
                   <Card className="group overflow-hidden border border-gray-200 bg-white flex flex-col h-full hover:shadow-xl transition-shadow">
                     <motion.div 
                       className={`aspect-square flex items-center justify-center p-6 overflow-hidden ${
-                        org.name === "Greenwood Griot Tours" 
+                        org.name === "Greenwood Griot Tours" || org.name === "Tulsa Regional Chamber"
                           ? "bg-white" 
                           : "bg-gray-900"
                       }`}
