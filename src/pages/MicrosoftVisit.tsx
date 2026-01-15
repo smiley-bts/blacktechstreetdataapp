@@ -29,6 +29,7 @@ import tulsaLibraryLogo from "@/assets/logos/tulsa-library.png";
 import tulsaRegionalChamberLogo from "@/assets/logos/tulsa-regional-chamber.png";
 import cityOfTulsaLogo from "@/assets/logos/city-of-tulsa.png";
 import tulsaHigherEdLogo from "@/assets/logos/tulsa-higher-ed-consortium.png";
+import gemMotonLogo from "@/assets/logos/gem-moton.png";
 import btsBLogo from "@/assets/logos/bts-b-logo.png";
 
 interface ScheduleItem {
@@ -174,6 +175,12 @@ const organizations: Organization[] = [
     description: "Gradient is Tulsa's premier innovation and technology hub, serving as a central \"basecamp\" for entrepreneurs, startups, and remote workers.",
     logo: gradientLogo,
     website: "https://joingradient.com"
+  },
+  {
+    name: "Greenwood Entrepreneurship at Moton (GEM)",
+    description: "GEM is a historic preservation and economic development project in North Tulsa that transforms the former Moton Hospital into a modern hub businesses and startups.",
+    logo: gemMotonLogo,
+    website: "https://blacktechstreet.com"
   },
   {
     name: "Greenwood Griot Tours",
