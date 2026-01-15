@@ -149,7 +149,7 @@ const organizations: Organization[] = [
     website: "https://blacktechstreet.com"
   },
   {
-    name: "City of Tulsa",
+    name: "Tulsa City Hall",
     description: "Tulsa City Hall serves as the central hub for the City of Tulsa's municipal government, housing the executive and legislative offices that manage the city's infrastructure, public safety, and community services.",
     logo: cityOfTulsaLogo,
     website: "https://www.cityoftulsa.org"
