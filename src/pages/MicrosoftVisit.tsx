@@ -153,7 +153,7 @@ const organizations: Organization[] = [
     name: "Gradient",
     description: "Tulsa's premier innovation hub serving as a central basecamp for entrepreneurs, startups, and remote workers.",
     logo: gradientLogo,
-    website: "https://www.yourbasecampawaits.com"
+    website: "https://joingradient.com"
   },
   {
     name: "City of Tulsa",
