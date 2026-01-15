@@ -121,7 +121,7 @@ const schedule: ScheduleItem[] = [
   {
     time: "4:00 – 5:00 PM",
     session: "Community Roundtable",
-    location: "Rudisill Library",
+    location: "Rudisill Regional Library",
     address: "1520 N Hartford Ave, Tulsa, OK 74106",
     details: "Discussion with the Elders of Greenwood, dignitaries and local leaders who care deeply about GEM and feel a great sense of significance in the project.",
     icon: <Users className="h-5 w-5" />,
@@ -359,14 +359,6 @@ export default function MicrosoftVisit() {
             </span>
           </motion.h1>
           
-          <motion.p
-            className="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto mb-6"
-            variants={fadeInUp}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            A curated day exploring Tulsa's thriving tech ecosystem
-          </motion.p>
-
           {/* Animated line */}
           <motion.div 
             className="h-1 bg-gradient-to-r from-transparent via-emerald-500 to-transparent w-64 md:w-96 rounded-full"
