@@ -341,56 +341,54 @@ export default function MicrosoftVisit() {
           style={{ backgroundImage: 'url(/images/tulsa-skyline-banner.png)' }}
         />
         
-        {/* Header Overlay */}
-        <motion.header 
-          className="absolute top-0 left-0 right-0 z-20"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-        >
-          <div className="max-w-6xl mx-auto px-4 py-4">
-            <div className="flex items-center justify-between">
-              <motion.img 
-                src={btsBLogo} 
-                alt="Black Tech Street" 
-                className="h-14 md:h-16 w-auto drop-shadow-lg"
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 400 }}
-              />
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2, duration: 0.4 }}
-              >
-                <Badge className="bg-emerald-500 text-white border-emerald-400 hover:bg-emerald-600">
-                  <Calendar className="h-3 w-3 mr-1" />
-                  Friday, January 16, 2026
-                </Badge>
-              </motion.div>
-            </div>
-          </div>
-        </motion.header>
-
         {/* Hero Content */}
         <motion.div 
-          className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-4"
+          className="absolute inset-0 z-10 flex flex-col items-center justify-center px-4"
           initial="hidden"
           animate="visible"
           variants={staggerContainer}
         >
-          <motion.h1 
-            className="text-4xl md:text-6xl font-display font-bold text-white mb-6 drop-shadow-2xl"
+          {/* Logo + Title Row */}
+          <motion.div 
+            className="flex items-center gap-4 md:gap-6 mb-4"
             variants={fadeInUp}
-            transition={{ duration: 0.6, ease: "easeOut" }}
           >
-            <span className="bg-gradient-to-r from-white via-emerald-100 to-emerald-300 bg-clip-text text-transparent">
-              Microsoft AI & Security Team Visit
-            </span>
-          </motion.h1>
+            {/* B Logo */}
+            <motion.img 
+              src={btsBLogo} 
+              alt="Black Tech Street" 
+              className="h-16 md:h-24 lg:h-28 w-auto drop-shadow-2xl"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 400 }}
+            />
+            
+            {/* Vertical Separator */}
+            <div className="h-12 md:h-20 lg:h-24 w-px bg-white/60" />
+            
+            {/* Title */}
+            <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-display font-bold text-white drop-shadow-2xl text-left">
+              <span className="bg-gradient-to-r from-white via-emerald-100 to-emerald-300 bg-clip-text text-transparent">
+                Microsoft AI &<br className="hidden sm:block" /> Security Team Visit
+              </span>
+            </h1>
+          </motion.div>
+          
+          {/* Date Badge - Below H1 */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3, duration: 0.4 }}
+            className="mb-4"
+          >
+            <Badge className="bg-emerald-500 text-white border-emerald-400 hover:bg-emerald-600 text-sm md:text-base px-4 py-1.5">
+              <Calendar className="h-3.5 w-3.5 md:h-4 md:w-4 mr-2" />
+              Friday, January 16, 2026
+            </Badge>
+          </motion.div>
           
           {/* Animated line */}
           <motion.div 
-            className="h-1 bg-gradient-to-r from-transparent via-emerald-500 to-transparent w-64 md:w-96 rounded-full"
+            className="h-1 bg-gradient-to-r from-transparent via-emerald-500 to-transparent w-48 md:w-80 lg:w-96 rounded-full"
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
             transition={{ duration: 1, delay: 0.5 }}
