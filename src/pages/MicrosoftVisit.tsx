@@ -545,13 +545,13 @@ export default function MicrosoftVisit() {
                         href={`https://www.google.com/maps/dir/?api=1&destination=${item.coordinates[0]},${item.coordinates[1]}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-xs transition-all group/link bg-white/25 hover:bg-white/35 px-4 py-2.5 rounded-xl border border-white/30 text-white backdrop-blur-sm shadow-lg hover:shadow-xl"
+                        className="inline-flex items-center gap-2 text-xs transition-all group/link bg-white hover:bg-gray-100 px-4 py-2.5 rounded-xl border border-gray-200 text-gray-800 shadow-lg hover:shadow-xl"
                         whileHover={{ x: 4, scale: 1.02 }}
                       >
-                        <Navigation className="h-3.5 w-3.5" />
+                        <Navigation className="h-3.5 w-3.5 text-gray-700" />
                         <span className="font-semibold group-hover/link:underline">{item.location}</span>
                         <span className="hidden sm:inline opacity-60">•</span>
-                        <span className="hidden sm:inline group-hover/link:underline opacity-90">{item.address}</span>
+                        <span className="hidden sm:inline group-hover/link:underline opacity-75">{item.address}</span>
                         <span className="font-bold ml-1 group-hover/link:translate-x-1 transition-transform">→</span>
                       </motion.a>
                     </div>
