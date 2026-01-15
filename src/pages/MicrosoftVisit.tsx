@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -22,7 +22,7 @@ import { VisitMap } from "@/components/microsoft-visit/VisitMap";
 import blackTechStreetLogo from "@/assets/logos/black-tech-street.png";
 import gradientLogo from "@/assets/logos/gradient.png";
 import tedcLogo from "@/assets/logos/tedc.png";
-import griotsLogo from "@/assets/logos/griots.png";
+// griotsLogo moved to public folder
 import fixinsLogo from "@/assets/logos/fixins.png";
 import tulsaInnovationLabsLogo from "@/assets/logos/tulsa-innovation-labs.png";
 import tulsaLibraryLogo from "@/assets/logos/tulsa-library.png";
@@ -168,7 +168,7 @@ const organizations: Organization[] = [
   {
     name: "Greenwood Griot Tours",
     description: "Storytelling collective preserving Black Wall Street's legacy through guided experiences and immersive tours.",
-    logo: griotsLogo,
+    logo: "/images/greenwood-griots-logo.png",
     website: "https://www.greenwoodgriot.com"
   },
   {
@@ -241,8 +241,7 @@ const scheduleItemVariant = {
 };
 
 export default function MicrosoftVisit() {
-  const { scrollYProgress } = useScroll();
-  const headerOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0.95]);
+  // Removed unused scroll hooks since header is now part of the banner
 
   useEffect(() => {
     // Force light mode for this page
@@ -298,33 +297,37 @@ export default function MicrosoftVisit() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
-      {/* Animated Background Gradient - Emerald themed */}
+    <div className="min-h-screen bg-stone-100 overflow-x-hidden">
+      {/* Subtle Background Texture */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-emerald-400/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-500/3 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-emerald-400/3 rounded-full blur-3xl" />
       </div>
 
-      {/* Header - Dark header with emerald accent */}
-      <motion.header 
-        style={{ opacity: headerOpacity }}
-        className="border-b border-gray-200 bg-gray-900 sticky top-0 z-50"
-      >
-        <div className="max-w-6xl mx-auto px-4 py-4">
-          <motion.div 
-            className="flex items-center justify-between"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-          >
-            <motion.img 
-              src="/images/bts-logo-white.png" 
-              alt="Black Tech Street" 
-              className="h-10 w-auto"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 400 }}
-            />
-            <div className="flex items-center gap-3">
+      {/* Hero Banner with City Image */}
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/60 to-gray-900/90 z-10" />
+        <div 
+          className="h-[400px] md:h-[500px] bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: 'url(/images/tulsa-skyline-banner.png)' }}
+        />
+        
+        {/* Header Overlay */}
+        <motion.header 
+          className="absolute top-0 left-0 right-0 z-20"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        >
+          <div className="max-w-6xl mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+              <motion.img 
+                src="/images/bts-logo-white.png" 
+                alt="Black Tech Street" 
+                className="h-10 w-auto"
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 400 }}
+              />
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -336,36 +339,45 @@ export default function MicrosoftVisit() {
                 </Badge>
               </motion.div>
             </div>
-          </motion.div>
-        </div>
-      </motion.header>
+          </div>
+        </motion.header>
 
-      <main className="max-w-6xl mx-auto px-4 py-8 relative">
-        {/* Hero Section */}
+        {/* Hero Content */}
         <motion.div 
-          className="text-center mb-16"
+          className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-4"
           initial="hidden"
           animate="visible"
           variants={staggerContainer}
         >
           <motion.h1 
-            className="text-4xl md:text-6xl font-display font-bold text-gray-900 mb-6"
+            className="text-4xl md:text-6xl font-display font-bold text-white mb-6 drop-shadow-2xl"
             variants={fadeInUp}
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
-            <span className="bg-gradient-to-r from-gray-900 via-gray-800 to-emerald-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-white via-emerald-100 to-emerald-300 bg-clip-text text-transparent">
               Microsoft AI & Security Team Visit
             </span>
           </motion.h1>
+          
+          <motion.p
+            className="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto mb-6"
+            variants={fadeInUp}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            A curated day exploring Tulsa's thriving tech ecosystem
+          </motion.p>
 
           {/* Animated line */}
           <motion.div 
-            className="mt-8 h-1 bg-gradient-to-r from-transparent via-emerald-500 to-transparent max-w-md mx-auto rounded-full"
+            className="h-1 bg-gradient-to-r from-transparent via-emerald-500 to-transparent w-64 md:w-96 rounded-full"
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
             transition={{ duration: 1, delay: 0.5 }}
           />
         </motion.div>
+      </div>
+
+      <main className="max-w-6xl mx-auto px-4 py-12 relative">
 
         {/* Interactive Map */}
         <motion.section 
@@ -585,7 +597,11 @@ export default function MicrosoftVisit() {
                 <motion.div variants={cardHover}>
                   <Card className="group overflow-hidden border border-gray-200 bg-white flex flex-col h-full hover:shadow-xl transition-shadow">
                     <motion.div 
-                      className="aspect-square bg-gray-900 flex items-center justify-center p-6 overflow-hidden"
+                      className={`aspect-square flex items-center justify-center p-6 overflow-hidden ${
+                        org.name === "Greenwood Griot Tours" 
+                          ? "bg-white" 
+                          : "bg-gray-900"
+                      }`}
                       whileHover={{ scale: 1.02 }}
                       transition={{ type: "spring", stiffness: 300 }}
                     >
