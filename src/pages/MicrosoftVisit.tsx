@@ -61,16 +61,6 @@ const schedule: ScheduleItem[] = [
     coordinates: [36.1540, -95.9934]
   },
   {
-    time: "8:45 – 9:00 AM",
-    session: "Travel to City Hall",
-    location: "In Transit",
-    address: "",
-    details: "5-minute drive to City Hall.",
-    icon: <MapPin className="h-5 w-5" />,
-    type: 'tour',
-    coordinates: [36.1534, -95.9891]
-  },
-  {
     time: "9:00 – 9:45 AM",
     session: "Mayor's Welcome & City Perspective",
     location: "City Hall",
@@ -81,32 +71,12 @@ const schedule: ScheduleItem[] = [
     coordinates: [36.1534, -95.9891]
   },
   {
-    time: "9:45 – 10:00 AM",
-    session: "Travel to Gradient",
-    location: "In Transit",
-    address: "",
-    details: "5-minute drive to Gradient.",
-    icon: <MapPin className="h-5 w-5" />,
-    type: 'tour',
-    coordinates: [36.1556, -95.9944]
-  },
-  {
     time: "10:00 – 11:00 AM",
     session: "Tulsa Higher Education Consortium Briefing",
     location: "Gradient",
     address: "12 N Cheyenne Ave, Tulsa, OK 74103",
     details: "Overview of regional higher education collaboration, talent pipelines, and potential Lab Synergies.",
     icon: <BookOpen className="h-5 w-5" />,
-    type: 'briefing',
-    coordinates: [36.1556, -95.9944]
-  },
-  {
-    time: "11:00 – 11:05 AM",
-    session: "Break",
-    location: "Gradient",
-    address: "12 N Cheyenne Ave, Tulsa, OK 74103",
-    details: "Short break before next session.",
-    icon: <Clock className="h-5 w-5" />,
     type: 'briefing',
     coordinates: [36.1556, -95.9944]
   },
@@ -121,16 +91,6 @@ const schedule: ScheduleItem[] = [
     coordinates: [36.1556, -95.9944]
   },
   {
-    time: "12:05 – 12:10 PM",
-    session: "Travel to Fixins Soul Kitchen",
-    location: "In Transit",
-    address: "",
-    details: "5-minute drive to lunch.",
-    icon: <MapPin className="h-5 w-5" />,
-    type: 'tour',
-    coordinates: [36.1582, -95.9912]
-  },
-  {
     time: "12:10 – 1:15 PM",
     session: "Lunch",
     location: "Fixins Soul Kitchen",
@@ -139,16 +99,6 @@ const schedule: ScheduleItem[] = [
     icon: <Utensils className="h-5 w-5" />,
     type: 'meal',
     coordinates: [36.1582, -95.9912]
-  },
-  {
-    time: "1:15 – 1:30 PM",
-    session: "Travel to Tulsa Regional Chamber",
-    location: "In Transit",
-    address: "",
-    details: "15-minute drive to Tulsa Regional Chamber.",
-    icon: <MapPin className="h-5 w-5" />,
-    type: 'tour',
-    coordinates: [36.1543, -95.9920]
   },
   {
     time: "1:30 – 2:30 PM",
@@ -161,16 +111,6 @@ const schedule: ScheduleItem[] = [
     coordinates: [36.1543, -95.9920]
   },
   {
-    time: "2:30 – 2:45 PM",
-    session: "Travel to Greenwood District",
-    location: "In Transit",
-    address: "",
-    details: "15-minute drive to Greenwood District.",
-    icon: <MapPin className="h-5 w-5" />,
-    type: 'tour',
-    coordinates: [36.1568, -95.9863]
-  },
-  {
     time: "2:45 – 3:45 PM",
     session: "Greenwood District Tour",
     location: "Liquid Lounge",
@@ -181,16 +121,6 @@ const schedule: ScheduleItem[] = [
     coordinates: [36.1568, -95.9863]
   },
   {
-    time: "3:45 – 4:00 PM",
-    session: "Travel to Rudisill Library",
-    location: "In Transit",
-    address: "",
-    details: "15-minute drive to Rudisill Library.",
-    icon: <MapPin className="h-5 w-5" />,
-    type: 'tour',
-    coordinates: [36.1742, -95.9876]
-  },
-  {
     time: "4:00 – 5:00 PM",
     session: "Community Roundtable",
     location: "Rudisill Library",
@@ -199,16 +129,6 @@ const schedule: ScheduleItem[] = [
     icon: <Users className="h-5 w-5" />,
     type: 'meeting',
     coordinates: [36.1742, -95.9876]
-  },
-  {
-    time: "5:00 – 5:15 PM",
-    session: "Travel to GEM Building",
-    location: "In Transit",
-    address: "",
-    details: "15-minute drive to GEM Building.",
-    icon: <MapPin className="h-5 w-5" />,
-    type: 'tour',
-    coordinates: [36.1648, -95.9802]
   },
   {
     time: "5:15 – 6:15 PM",
@@ -502,6 +422,22 @@ export default function MicrosoftVisit() {
             Day Schedule
           </motion.h2>
           
+          {/* Legend */}
+          <motion.div 
+            className="flex flex-wrap gap-3 mb-6"
+            initial={{ opacity: 0, y: -10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+          >
+            {Object.entries(typeStyles).map(([type, styles]) => (
+              <div key={type} className="flex items-center gap-2">
+                <div className={`w-3 h-3 rounded-full ${styles.dot}`} />
+                <span className="text-xs text-muted-foreground capitalize">{type}</span>
+              </div>
+            ))}
+          </motion.div>
+          
           <div className="relative">
             {/* Animated Timeline line */}
             <motion.div 
@@ -533,7 +469,7 @@ export default function MicrosoftVisit() {
                     className={`relative flex flex-col md:flex-row gap-4 p-5 rounded-xl ${styles.bg} border-l-4 ${styles.border} hover:shadow-lg transition-shadow cursor-default backdrop-blur-sm`}
                   >
                     {/* Time badge */}
-                    <div className="md:w-32 flex-shrink-0">
+                    <div className="md:w-40 flex-shrink-0">
                       <motion.div 
                         className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-background border border-border shadow-sm"
                         whileHover={{ scale: 1.05 }}
@@ -544,7 +480,7 @@ export default function MicrosoftVisit() {
                           transition={{ duration: 2, repeat: Infinity }}
                         />
                         <span className="text-xs font-semibold text-foreground whitespace-nowrap">
-                          {item.time.split('–')[0].trim()}
+                          {item.time}
                         </span>
                       </motion.div>
                     </div>
