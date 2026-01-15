@@ -64,7 +64,7 @@
 
   /* Light mode override - improved contrast */
   .light {
-    --background: 0 0% 100%;
+    --background: 220 20% 97%;
     --foreground: 220 20% 12%;
 
     --card: 0 0% 100%;
