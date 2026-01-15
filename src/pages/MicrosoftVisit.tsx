@@ -133,7 +133,7 @@ const schedule: ScheduleItem[] = [
   },
   {
     time: "5:15 – 6:15 PM",
-    session: "Greenwood Entrepreneurship at Moton (GEM) Building Tour",
+    session: "Greenwood Entrepreneurship at Moton (GEM) Building Tour with Tulsa Innovation Labs (TIL)",
     location: "GEM Building",
     address: "660 E. Pine St. Tulsa, OK 74106",
     details: "Tour of the GEM Building - the historic Moton Hospital transformed into a modern hub for Black-owned businesses and tech-enabled startups.",
