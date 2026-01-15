@@ -173,7 +173,7 @@ const organizations: Organization[] = [
     website: "https://www.greenwoodgriot.com"
   },
   {
-    name: "Rudisill Library",
+    name: "Rudisill Regional Library",
     description: "The Rudisill Regional Library is a key branch of the Tulsa City-County Library system that serves as a vital community hub and historical anchor for North Tulsa.",
     logo: tulsaLibraryLogo,
     website: "https://www.tulsalibrary.org/locations/rudisill-regional-library"
