@@ -292,10 +292,16 @@ export default function MicrosoftVisit() {
                         </Badge>
                       </div>
                       <p className="text-sm text-muted-foreground mb-2">{item.details}</p>
-                      <a 
+                      <a
                         href={`https://www.google.com/maps/dir/?api=1&destination=${item.coordinates[0]},${item.coordinates[1]}`}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={(e) => {
+                          // Some sandboxed iframes won't honor target=_blank; force a new tab.
+                          e.preventDefault();
+                          const url = `https://www.google.com/maps/dir/?api=1&destination=${item.coordinates[0]},${item.coordinates[1]}`;
+                          window.open(url, "_blank", "noopener,noreferrer");
+                        }}
                         className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors group/link"
                       >
                         <MapPin className="h-3 w-3" />
