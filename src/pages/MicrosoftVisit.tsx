@@ -24,7 +24,7 @@ import gradientLogo from "@/assets/logos/gradient.png";
 import tedcLogo from "@/assets/logos/tedc.png";
 // griotsLogo moved to public folder
 import fixinsLogo from "@/assets/logos/fixins.png";
-import tulsaInnovationLabsLogo from "@/assets/logos/tulsa-innovation-labs.png";
+import tulsaInnovationLabsLogo from "@/assets/logos/tulsa-innovation-labs-new.png";
 import tulsaLibraryLogo from "@/assets/logos/tulsa-library.png";
 import tulsaRegionalChamberLogo from "@/assets/logos/tulsa-regional-chamber.png";
 import cityOfTulsaLogo from "@/assets/logos/city-of-tulsa.png";
@@ -612,7 +612,7 @@ export default function MicrosoftVisit() {
                 <motion.div variants={cardHover}>
                   <Card className="group overflow-hidden border border-gray-200 bg-white flex flex-col h-full hover:shadow-xl transition-shadow">
                     <motion.div 
-                      className="aspect-square flex items-center justify-center p-6 overflow-hidden bg-black"
+                      className={`aspect-square flex items-center justify-center p-6 overflow-hidden ${org.name === "Tulsa Innovation Labs" ? "bg-white" : "bg-black"}`}
                       whileHover={{ scale: 1.02 }}
                       transition={{ type: "spring", stiffness: 300 }}
                     >
