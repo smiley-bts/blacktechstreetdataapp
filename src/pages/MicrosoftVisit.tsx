@@ -28,6 +28,7 @@ import tulsaInnovationLabsLogo from "@/assets/logos/tulsa-innovation-labs.png";
 import tulsaLibraryLogo from "@/assets/logos/tulsa-library.png";
 import tulsaRegionalChamberLogo from "@/assets/logos/tulsa-regional-chamber.png";
 import cityOfTulsaLogo from "@/assets/logos/city-of-tulsa.png";
+import btsBLogo from "@/assets/logos/bts-b-logo.png";
 
 interface ScheduleItem {
   time: string;
@@ -197,12 +198,12 @@ const organizations: Organization[] = [
   }
 ];
 
-// Updated type styles with emerald-focused color scheme
-const typeStyles: Record<string, { bg: string; border: string; text: string; dot: string }> = {
-  meeting: { bg: "bg-emerald-500/10", border: "border-l-emerald-500", text: "text-emerald-600", dot: "bg-emerald-500" },
-  tour: { bg: "bg-gray-900/5", border: "border-l-gray-800", text: "text-gray-700", dot: "bg-gray-800" },
-  meal: { bg: "bg-emerald-600/10", border: "border-l-emerald-600", text: "text-emerald-700", dot: "bg-emerald-600" },
-  briefing: { bg: "bg-gray-500/10", border: "border-l-gray-500", text: "text-gray-600", dot: "bg-gray-500" }
+// Updated type styles with full background colors
+const typeStyles: Record<string, { bg: string; text: string; dot: string; headingText: string; bodyText: string }> = {
+  meeting: { bg: "bg-emerald-500", text: "text-white", dot: "bg-white", headingText: "text-white", bodyText: "text-emerald-50" },
+  tour: { bg: "bg-gray-800", text: "text-white", dot: "bg-white", headingText: "text-white", bodyText: "text-gray-200" },
+  meal: { bg: "bg-emerald-600", text: "text-white", dot: "bg-white", headingText: "text-white", bodyText: "text-emerald-50" },
+  briefing: { bg: "bg-gray-500", text: "text-white", dot: "bg-white", headingText: "text-white", bodyText: "text-gray-100" }
 };
 
 // Animation variants
@@ -322,9 +323,9 @@ export default function MicrosoftVisit() {
           <div className="max-w-6xl mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <motion.img 
-                src="/images/bts-logo-white.png" 
+                src={btsBLogo} 
                 alt="Black Tech Street" 
-                className="h-10 w-auto"
+                className="h-14 md:h-16 w-auto drop-shadow-lg"
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 400 }}
               />
@@ -479,15 +480,15 @@ export default function MicrosoftVisit() {
                     key={index}
                     variants={scheduleItemVariant}
                     whileHover={{ 
-                      x: 4, 
+                      scale: 1.01,
                       transition: { type: "spring", stiffness: 300 } 
                     }}
-                    className={`relative flex flex-col md:flex-row gap-4 p-5 rounded-xl ${styles.bg} border-l-4 ${styles.border} hover:shadow-lg transition-shadow cursor-default bg-white/80 backdrop-blur-sm border border-gray-100`}
+                    className={`relative flex flex-col md:flex-row gap-4 p-5 rounded-xl ${styles.bg} hover:shadow-xl transition-all cursor-default shadow-lg`}
                   >
                     {/* Time badge */}
                     <div className="md:w-40 flex-shrink-0">
                       <motion.div 
-                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm"
+                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-sm border border-white/30"
                         whileHover={{ scale: 1.05 }}
                       >
                         <motion.div 
@@ -495,7 +496,7 @@ export default function MicrosoftVisit() {
                           animate={{ scale: [1, 1.2, 1] }}
                           transition={{ duration: 2, repeat: Infinity }}
                         />
-                        <span className="text-xs font-semibold text-gray-800 whitespace-nowrap">
+                        <span className="text-xs font-semibold text-white whitespace-nowrap">
                           {item.time}
                         </span>
                       </motion.div>
@@ -506,30 +507,30 @@ export default function MicrosoftVisit() {
                       <div className="flex items-start justify-between gap-3 mb-2">
                         <div className="flex items-center gap-2">
                           <motion.div 
-                            className={`p-1.5 rounded-lg ${styles.text} bg-white border border-gray-200`}
+                            className="p-1.5 rounded-lg bg-white/20 backdrop-blur-sm text-white"
                             whileHover={{ rotate: 10 }}
                           >
                             {item.icon}
                           </motion.div>
-                          <h3 className="font-semibold text-gray-900">{item.session}</h3>
+                          <h3 className={`font-semibold ${styles.headingText}`}>{item.session}</h3>
                         </div>
-                        <Badge variant="outline" className={`${styles.text} border-current/20 text-xs hidden sm:inline-flex bg-white`}>
+                        <Badge className="bg-white/20 text-white border-white/30 text-xs hidden sm:inline-flex hover:bg-white/30">
                           {item.type}
                         </Badge>
                       </div>
-                      <p className="text-sm text-gray-600 mb-3">{item.details}</p>
+                      <p className={`text-sm ${styles.bodyText} mb-3`}>{item.details}</p>
                       <motion.a
                         href={`https://www.google.com/maps/dir/?api=1&destination=${item.coordinates[0]},${item.coordinates[1]}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-xs text-gray-500 hover:text-emerald-600 transition-colors group/link bg-gray-50 hover:bg-emerald-50 px-3 py-2 rounded-lg border border-gray-200 hover:border-emerald-200"
+                        className="inline-flex items-center gap-2 text-xs transition-colors group/link bg-white/20 hover:bg-white/30 px-3 py-2 rounded-lg border border-white/30 text-white"
                         whileHover={{ x: 2 }}
                       >
-                        <Navigation className="h-3 w-3 text-emerald-500" />
+                        <Navigation className="h-3 w-3" />
                         <span className="font-medium group-hover/link:underline">{item.location}</span>
-                        <span className="hidden sm:inline text-gray-400">•</span>
-                        <span className="hidden sm:inline group-hover/link:underline">{item.address}</span>
-                        <span className="text-emerald-500 font-medium ml-1">Get Directions →</span>
+                        <span className="hidden sm:inline opacity-60">•</span>
+                        <span className="hidden sm:inline group-hover/link:underline opacity-90">{item.address}</span>
+                        <span className="font-medium ml-1">Get Directions →</span>
                       </motion.a>
                     </div>
                   </motion.div>
