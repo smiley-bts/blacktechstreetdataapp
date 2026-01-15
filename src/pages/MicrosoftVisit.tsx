@@ -467,7 +467,7 @@ export default function MicrosoftVisit() {
             >
               <Clock className="h-6 w-6 text-emerald-600" />
             </motion.div>
-            Day Schedule
+            Schedule
           </motion.h2>
           
           <div className="relative">
