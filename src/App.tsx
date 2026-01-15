@@ -14,6 +14,7 @@ import PreSurvey from "./pages/PreSurvey";
 import BuildDayProjects from "./pages/BuildDayProjects";
 import StudentDashboard from "./pages/StudentDashboard";
 import EventBreakdown from "./pages/EventBreakdown";
+import MicrosoftVisit from "./pages/MicrosoftVisit";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ function AnimatedRoutes() {
         <Route path="/build-day" element={<BuildDayProjects />} />
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         <Route path="/events/:eventId" element={<EventBreakdown />} />
+        <Route path="/microsoftvisit" element={<MicrosoftVisit />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
