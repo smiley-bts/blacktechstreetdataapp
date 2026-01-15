@@ -608,8 +608,9 @@ export default function MicrosoftVisit() {
                 initial="rest"
                 whileHover="hover"
                 animate="rest"
+                className="h-full"
               >
-                <motion.div variants={cardHover}>
+                <motion.div variants={cardHover} className="h-full">
                   <Card className="group overflow-hidden border border-gray-200 bg-white flex flex-col h-full hover:shadow-xl transition-shadow">
                     <motion.div 
                       className="aspect-square flex items-center justify-center p-6 overflow-hidden bg-black"
