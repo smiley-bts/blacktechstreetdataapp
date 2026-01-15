@@ -174,7 +174,7 @@ const organizations: Organization[] = [
   },
   {
     name: "TEDC Creative Capital",
-    description: "Tulsa Economic Development Corporation is a non-profit organization and certified Community Development Financial Institution that provides lending and educational services to small businesses and entrepreneurs in the Tulsa region and throughout Oklahoma.",
+    description: "Tulsa Economic Development Corporation (TEDC) Creative Capital is a non-profit organization and certified Community Development Financial Institution that provides lending and educational services to small businesses and entrepreneurs in the Tulsa region and throughout Oklahoma.",
     logo: tedcLogo,
     website: "https://tedcorp.org"
   },
