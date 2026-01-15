@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -204,6 +205,44 @@ const typeStyles: Record<string, { bg: string; border: string; text: string; dot
 };
 
 export default function MicrosoftVisit() {
+  useEffect(() => {
+    // Update document title
+    document.title = "Microsoft AI & Security Team Visit | Black Tech Street - Tulsa Innovation Tour";
+    
+    // Update meta description
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute("content", "Join Microsoft's AI & Security Team for a curated day exploring Tulsa's thriving tech ecosystem. Tour historic Greenwood, meet local innovators, and discover cutting-edge innovation hubs. January 16, 2026.");
+    }
+    
+    // Update Open Graph tags
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) {
+      ogTitle.setAttribute("content", "Microsoft AI & Security Team Visit | Black Tech Street");
+    }
+    
+    const ogDescription = document.querySelector('meta[property="og:description"]');
+    if (ogDescription) {
+      ogDescription.setAttribute("content", "A curated day exploring Tulsa's thriving tech ecosystem, from historic Greenwood to cutting-edge innovation hubs. January 16, 2026.");
+    }
+    
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    if (!ogUrl) {
+      const newOgUrl = document.createElement('meta');
+      newOgUrl.setAttribute('property', 'og:url');
+      newOgUrl.setAttribute('content', 'https://blacktechstreet.app/microsoftvisit');
+      document.head.appendChild(newOgUrl);
+    }
+    
+    // Cleanup on unmount
+    return () => {
+      document.title = "ASPIRE Workshop Analytics | Feedback Dashboard";
+      if (metaDescription) {
+        metaDescription.setAttribute("content", "Interactive analytics dashboard for ASPIRE Workshop feedback surveys. View NPS scores, mindset transformations, and participant insights.");
+      }
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
