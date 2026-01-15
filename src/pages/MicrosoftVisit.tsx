@@ -150,22 +150,40 @@ const organizations: Organization[] = [
     website: "https://blacktechstreet.com"
   },
   {
-    name: "Gradient",
-    description: "Tulsa's premier innovation hub serving as a central basecamp for entrepreneurs, startups, and remote workers.",
-    logo: gradientLogo,
-    website: "https://joingradient.com"
-  },
-  {
     name: "City of Tulsa",
     description: "Municipal government committed to driving innovation and economic development across the Tulsa region.",
     logo: cityOfTulsaLogo,
     website: "https://www.cityoftulsa.org"
   },
   {
+    name: "Fixins Soul Kitchen",
+    description: "Full-service restaurant combining authentic Southern comfort food with modern atmosphere.",
+    logo: fixinsLogo,
+    website: "https://fixinssoulkitchen.com"
+  },
+  {
+    name: "Gradient",
+    description: "Tulsa's premier innovation hub serving as a central basecamp for entrepreneurs, startups, and remote workers.",
+    logo: gradientLogo,
+    website: "https://joingradient.com"
+  },
+  {
     name: "Greenwood Griot Tours",
     description: "Storytelling collective preserving Black Wall Street's legacy through guided experiences and immersive tours.",
     logo: griotsLogo,
     website: "https://www.greenwoodgriot.com"
+  },
+  {
+    name: "Rudisill Library",
+    description: "Community hub and historical anchor for North Tulsa with new expanded facility opening in Greenwood.",
+    logo: tulsaLibraryLogo,
+    website: "https://www.tulsalibrary.org/locations/rudisill-regional-library"
+  },
+  {
+    name: "TEDC",
+    description: "Certified CDFI providing lending and educational services to small businesses and entrepreneurs.",
+    logo: tedcLogo,
+    website: "https://tedcorp.org"
   },
   {
     name: "Tulsa Innovation Labs",
@@ -178,24 +196,6 @@ const organizations: Organization[] = [
     description: "Primary driver of regional prosperity representing 2,150+ organizations and 178,000+ workers.",
     logo: tulsaRegionalChamberLogo,
     website: "https://tulsachamber.com"
-  },
-  {
-    name: "TEDC",
-    description: "Certified CDFI providing lending and educational services to small businesses and entrepreneurs.",
-    logo: tedcLogo,
-    website: "https://tedcorp.org"
-  },
-  {
-    name: "Rudisill Library",
-    description: "Community hub and historical anchor for North Tulsa with new expanded facility opening in Greenwood.",
-    logo: tulsaLibraryLogo,
-    website: "https://www.tulsalibrary.org/locations/rudisill-regional-library"
-  },
-  {
-    name: "Fixins Soul Kitchen",
-    description: "Full-service restaurant combining authentic Southern comfort food with modern atmosphere.",
-    logo: fixinsLogo,
-    website: "https://fixinssoulkitchen.com"
   }
 ];
 
