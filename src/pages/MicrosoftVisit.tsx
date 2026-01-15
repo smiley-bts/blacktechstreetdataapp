@@ -13,11 +13,9 @@ import {
   BookOpen,
   Calendar,
   ExternalLink,
-  Sparkles
+  Navigation
 } from "lucide-react";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
-import btsLogo from "@/assets/black-tech-street-logo.png";
 import { VisitMap } from "@/components/microsoft-visit/VisitMap";
 
 // Organization logos
@@ -199,22 +197,18 @@ const organizations: Organization[] = [
   }
 ];
 
+// Updated type styles with emerald-focused color scheme
 const typeStyles: Record<string, { bg: string; border: string; text: string; dot: string }> = {
-  meeting: { bg: "bg-blue-500/5", border: "border-l-blue-500", text: "text-blue-500", dot: "bg-blue-500" },
-  tour: { bg: "bg-emerald-500/5", border: "border-l-emerald-500", text: "text-emerald-500", dot: "bg-emerald-500" },
-  meal: { bg: "bg-orange-500/5", border: "border-l-orange-500", text: "text-orange-500", dot: "bg-orange-500" },
-  briefing: { bg: "bg-purple-500/5", border: "border-l-purple-500", text: "text-purple-500", dot: "bg-purple-500" }
+  meeting: { bg: "bg-emerald-500/10", border: "border-l-emerald-500", text: "text-emerald-600", dot: "bg-emerald-500" },
+  tour: { bg: "bg-gray-900/5", border: "border-l-gray-800", text: "text-gray-700", dot: "bg-gray-800" },
+  meal: { bg: "bg-emerald-600/10", border: "border-l-emerald-600", text: "text-emerald-700", dot: "bg-emerald-600" },
+  briefing: { bg: "bg-gray-500/10", border: "border-l-gray-500", text: "text-gray-600", dot: "bg-gray-500" }
 };
 
 // Animation variants
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0 }
-};
-
-const fadeInScale = {
-  hidden: { opacity: 0, scale: 0.9 },
-  visible: { opacity: 1, scale: 1 }
 };
 
 const staggerContainer = {
@@ -251,30 +245,49 @@ export default function MicrosoftVisit() {
   const headerOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0.95]);
 
   useEffect(() => {
+    // Force light mode for this page
+    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.add('light');
+
     document.title = "Microsoft AI & Security Team Visit | Black Tech Street - Tulsa Innovation Tour";
     
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute("content", "Join Microsoft's AI & Security Team for a curated day exploring Tulsa's thriving tech ecosystem. Tour historic Greenwood, meet local innovators, and discover cutting-edge innovation hubs. January 16, 2026.");
+      metaDescription.setAttribute("content", "Join Microsoft's AI & Security Team for a curated day exploring Tulsa's thriving tech ecosystem hosted by Black Tech Street. Tour historic Greenwood, meet local innovators, and discover cutting-edge innovation hubs. January 16, 2026.");
     }
     
-    const ogTitle = document.querySelector('meta[property="og:title"]');
-    if (ogTitle) {
-      ogTitle.setAttribute("content", "Microsoft AI & Security Team Visit | Black Tech Street");
-    }
+    // Update or create OG tags
+    const updateOrCreateMeta = (property: string, content: string) => {
+      let meta = document.querySelector(`meta[property="${property}"]`);
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute('property', property);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', content);
+    };
+
+    updateOrCreateMeta('og:title', 'Microsoft AI & Security Team Visit | Black Tech Street - Tulsa');
+    updateOrCreateMeta('og:description', 'A curated day exploring Tulsa\'s thriving tech ecosystem, from historic Greenwood to cutting-edge innovation hubs. Hosted by Black Tech Street. January 16, 2026.');
+    updateOrCreateMeta('og:url', 'https://blacktechstreetdataapp.lovable.app/microsoftvisit');
+    updateOrCreateMeta('og:image', 'https://blacktechstreetdataapp.lovable.app/images/microsoft-visit-og.jpg');
+    updateOrCreateMeta('og:type', 'website');
     
-    const ogDescription = document.querySelector('meta[property="og:description"]');
-    if (ogDescription) {
-      ogDescription.setAttribute("content", "A curated day exploring Tulsa's thriving tech ecosystem, from historic Greenwood to cutting-edge innovation hubs. January 16, 2026.");
-    }
-    
-    const ogUrl = document.querySelector('meta[property="og:url"]');
-    if (!ogUrl) {
-      const newOgUrl = document.createElement('meta');
-      newOgUrl.setAttribute('property', 'og:url');
-      newOgUrl.setAttribute('content', 'https://blacktechstreet.app/microsoftvisit');
-      document.head.appendChild(newOgUrl);
-    }
+    // Twitter card tags
+    const updateOrCreateTwitterMeta = (name: string, content: string) => {
+      let meta = document.querySelector(`meta[name="${name}"]`);
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute('name', name);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', content);
+    };
+
+    updateOrCreateTwitterMeta('twitter:card', 'summary_large_image');
+    updateOrCreateTwitterMeta('twitter:title', 'Microsoft AI & Security Team Visit | Black Tech Street');
+    updateOrCreateTwitterMeta('twitter:description', 'A curated day exploring Tulsa\'s thriving tech ecosystem. January 16, 2026.');
+    updateOrCreateTwitterMeta('twitter:image', 'https://blacktechstreetdataapp.lovable.app/images/microsoft-visit-og.jpg');
     
     return () => {
       document.title = "ASPIRE Workshop Analytics | Feedback Dashboard";
@@ -285,17 +298,17 @@ export default function MicrosoftVisit() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-muted overflow-x-hidden">
-      {/* Animated Background Gradient */}
+    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
+      {/* Animated Background Gradient - Emerald themed */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-[#0078D4]/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-emerald-400/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
       </div>
 
-      {/* Header */}
+      {/* Header - Dark header with emerald accent */}
       <motion.header 
         style={{ opacity: headerOpacity }}
-        className="border-b border-border bg-card/80 backdrop-blur-md sticky top-0 z-50"
+        className="border-b border-gray-200 bg-gray-900 sticky top-0 z-50"
       >
         <div className="max-w-6xl mx-auto px-4 py-4">
           <motion.div 
@@ -305,7 +318,7 @@ export default function MicrosoftVisit() {
             transition={{ duration: 0.5, ease: "easeOut" }}
           >
             <motion.img 
-              src={btsLogo} 
+              src="/images/bts-logo-white.png" 
               alt="Black Tech Street" 
               className="h-10 w-auto"
               whileHover={{ scale: 1.05 }}
@@ -317,12 +330,11 @@ export default function MicrosoftVisit() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2, duration: 0.4 }}
               >
-                <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+                <Badge className="bg-emerald-500 text-white border-emerald-400 hover:bg-emerald-600">
                   <Calendar className="h-3 w-3 mr-1" />
                   Friday, January 16, 2026
                 </Badge>
               </motion.div>
-              <ThemeToggle />
             </div>
           </motion.div>
         </div>
@@ -337,18 +349,18 @@ export default function MicrosoftVisit() {
           variants={staggerContainer}
         >
           <motion.h1 
-            className="text-4xl md:text-6xl font-display font-bold text-foreground mb-6"
+            className="text-4xl md:text-6xl font-display font-bold text-gray-900 mb-6"
             variants={fadeInUp}
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
-            <span className="bg-gradient-to-r from-foreground via-foreground to-primary bg-clip-text">
+            <span className="bg-gradient-to-r from-gray-900 via-gray-800 to-emerald-600 bg-clip-text text-transparent">
               Microsoft AI & Security Team Visit
             </span>
           </motion.h1>
 
           {/* Animated line */}
           <motion.div 
-            className="mt-8 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent max-w-md mx-auto"
+            className="mt-8 h-1 bg-gradient-to-r from-transparent via-emerald-500 to-transparent max-w-md mx-auto rounded-full"
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
             transition={{ duration: 1, delay: 0.5 }}
@@ -364,7 +376,7 @@ export default function MicrosoftVisit() {
           transition={{ duration: 0.7 }}
         >
           <motion.h2 
-            className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2"
+            className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2"
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -374,7 +386,7 @@ export default function MicrosoftVisit() {
               animate={{ rotate: [0, 10, -10, 0] }}
               transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
             >
-              <MapPin className="h-6 w-6 text-primary" />
+              <MapPin className="h-6 w-6 text-emerald-600" />
             </motion.div>
             Tour Route
           </motion.h2>
@@ -383,12 +395,12 @@ export default function MicrosoftVisit() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="rounded-xl overflow-hidden shadow-xl"
+            className="rounded-xl overflow-hidden shadow-xl border border-gray-200"
           >
             <VisitMap />
           </motion.div>
           <motion.p 
-            className="text-sm text-muted-foreground mt-4 text-center"
+            className="text-sm text-gray-500 mt-4 text-center"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -407,7 +419,7 @@ export default function MicrosoftVisit() {
           transition={{ duration: 0.5 }}
         >
           <motion.h2 
-            className="text-2xl font-bold text-foreground mb-8 flex items-center gap-2"
+            className="text-2xl font-bold text-gray-900 mb-8 flex items-center gap-2"
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -417,14 +429,14 @@ export default function MicrosoftVisit() {
               animate={{ rotate: 360 }}
               transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
             >
-              <Clock className="h-6 w-6 text-primary" />
+              <Clock className="h-6 w-6 text-emerald-600" />
             </motion.div>
             Day Schedule
           </motion.h2>
           
           {/* Legend */}
           <motion.div 
-            className="flex flex-wrap gap-3 mb-6"
+            className="flex flex-wrap gap-4 mb-6 p-4 bg-white rounded-lg border border-gray-200 shadow-sm"
             initial={{ opacity: 0, y: -10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -433,7 +445,7 @@ export default function MicrosoftVisit() {
             {Object.entries(typeStyles).map(([type, styles]) => (
               <div key={type} className="flex items-center gap-2">
                 <div className={`w-3 h-3 rounded-full ${styles.dot}`} />
-                <span className="text-xs text-muted-foreground capitalize">{type}</span>
+                <span className="text-sm text-gray-600 capitalize font-medium">{type}</span>
               </div>
             ))}
           </motion.div>
@@ -441,7 +453,7 @@ export default function MicrosoftVisit() {
           <div className="relative">
             {/* Animated Timeline line */}
             <motion.div 
-              className="absolute left-[140px] top-0 bottom-0 w-px bg-gradient-to-b from-primary/50 via-primary/20 to-transparent hidden md:block"
+              className="absolute left-[140px] top-0 bottom-0 w-0.5 bg-gradient-to-b from-emerald-500 via-emerald-300 to-transparent hidden md:block"
               initial={{ scaleY: 0 }}
               whileInView={{ scaleY: 1 }}
               viewport={{ once: true }}
@@ -466,12 +478,12 @@ export default function MicrosoftVisit() {
                       x: 4, 
                       transition: { type: "spring", stiffness: 300 } 
                     }}
-                    className={`relative flex flex-col md:flex-row gap-4 p-5 rounded-xl ${styles.bg} border-l-4 ${styles.border} hover:shadow-lg transition-shadow cursor-default backdrop-blur-sm`}
+                    className={`relative flex flex-col md:flex-row gap-4 p-5 rounded-xl ${styles.bg} border-l-4 ${styles.border} hover:shadow-lg transition-shadow cursor-default bg-white/80 backdrop-blur-sm border border-gray-100`}
                   >
                     {/* Time badge */}
                     <div className="md:w-40 flex-shrink-0">
                       <motion.div 
-                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-background border border-border shadow-sm"
+                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm"
                         whileHover={{ scale: 1.05 }}
                       >
                         <motion.div 
@@ -479,7 +491,7 @@ export default function MicrosoftVisit() {
                           animate={{ scale: [1, 1.2, 1] }}
                           transition={{ duration: 2, repeat: Infinity }}
                         />
-                        <span className="text-xs font-semibold text-foreground whitespace-nowrap">
+                        <span className="text-xs font-semibold text-gray-800 whitespace-nowrap">
                           {item.time}
                         </span>
                       </motion.div>
@@ -490,28 +502,30 @@ export default function MicrosoftVisit() {
                       <div className="flex items-start justify-between gap-3 mb-2">
                         <div className="flex items-center gap-2">
                           <motion.div 
-                            className={`p-1.5 rounded-lg ${styles.text} bg-background border border-border`}
+                            className={`p-1.5 rounded-lg ${styles.text} bg-white border border-gray-200`}
                             whileHover={{ rotate: 10 }}
                           >
                             {item.icon}
                           </motion.div>
-                          <h3 className="font-semibold text-foreground">{item.session}</h3>
+                          <h3 className="font-semibold text-gray-900">{item.session}</h3>
                         </div>
-                        <Badge variant="outline" className={`${styles.text} border-current/20 text-xs hidden sm:inline-flex`}>
+                        <Badge variant="outline" className={`${styles.text} border-current/20 text-xs hidden sm:inline-flex bg-white`}>
                           {item.type}
                         </Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground mb-3">{item.details}</p>
+                      <p className="text-sm text-gray-600 mb-3">{item.details}</p>
                       <motion.a
                         href={`https://www.google.com/maps/dir/?api=1&destination=${item.coordinates[0]},${item.coordinates[1]}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors group/link"
+                        className="inline-flex items-center gap-2 text-xs text-gray-500 hover:text-emerald-600 transition-colors group/link bg-gray-50 hover:bg-emerald-50 px-3 py-2 rounded-lg border border-gray-200 hover:border-emerald-200"
                         whileHover={{ x: 2 }}
                       >
-                        <MapPin className="h-3 w-3" />
+                        <Navigation className="h-3 w-3 text-emerald-500" />
                         <span className="font-medium group-hover/link:underline">{item.location}</span>
-                        <span className="hidden sm:inline group-hover/link:underline">• {item.address}</span>
+                        <span className="hidden sm:inline text-gray-400">•</span>
+                        <span className="hidden sm:inline group-hover/link:underline">{item.address}</span>
+                        <span className="text-emerald-500 font-medium ml-1">Get Directions →</span>
                       </motion.a>
                     </div>
                   </motion.div>
@@ -527,7 +541,7 @@ export default function MicrosoftVisit() {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <Separator className="my-16" />
+          <Separator className="my-16 bg-gray-200" />
         </motion.div>
 
         {/* Featured Organizations */}
@@ -538,7 +552,7 @@ export default function MicrosoftVisit() {
           transition={{ duration: 0.5 }}
         >
           <motion.h2 
-            className="text-2xl font-bold text-foreground mb-8 flex items-center gap-2"
+            className="text-2xl font-bold text-gray-900 mb-8 flex items-center gap-2"
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -548,7 +562,7 @@ export default function MicrosoftVisit() {
               animate={{ y: [0, -3, 0] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
-              <Building2 className="h-6 w-6 text-primary" />
+              <Building2 className="h-6 w-6 text-emerald-600" />
             </motion.div>
             Featured Organizations
           </motion.h2>
@@ -569,9 +583,9 @@ export default function MicrosoftVisit() {
                 animate="rest"
               >
                 <motion.div variants={cardHover}>
-                  <Card className="group overflow-hidden border border-border bg-card/80 backdrop-blur-sm flex flex-col h-full hover:shadow-xl transition-shadow">
+                  <Card className="group overflow-hidden border border-gray-200 bg-white flex flex-col h-full hover:shadow-xl transition-shadow">
                     <motion.div 
-                      className="aspect-square bg-black flex items-center justify-center p-6 overflow-hidden"
+                      className="aspect-square bg-gray-900 flex items-center justify-center p-6 overflow-hidden"
                       whileHover={{ scale: 1.02 }}
                       transition={{ type: "spring", stiffness: 300 }}
                     >
@@ -585,12 +599,12 @@ export default function MicrosoftVisit() {
                       />
                     </motion.div>
                     <CardHeader className="pb-3">
-                      <CardTitle className="text-base group-hover:text-primary transition-colors duration-300">
+                      <CardTitle className="text-base text-gray-900 group-hover:text-emerald-600 transition-colors duration-300">
                         {org.name}
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="flex-1 flex flex-col">
-                      <CardDescription className="text-sm leading-relaxed flex-1">
+                      <CardDescription className="text-sm leading-relaxed flex-1 text-gray-600">
                         {org.description}
                       </CardDescription>
                       <motion.div
@@ -599,7 +613,7 @@ export default function MicrosoftVisit() {
                       >
                         <Button 
                           size="sm" 
-                          className="mt-4 w-full gap-2 group/btn bg-primary hover:bg-primary/90 text-primary-foreground"
+                          className="mt-4 w-full gap-2 group/btn bg-emerald-500 hover:bg-emerald-600 text-white"
                           asChild
                         >
                           <a href={org.website} target="_blank" rel="noopener noreferrer">
@@ -618,7 +632,7 @@ export default function MicrosoftVisit() {
 
         {/* Footer */}
         <motion.footer 
-          className="mt-20 text-center text-sm text-muted-foreground border-t border-border pt-10"
+          className="mt-20 text-center text-sm text-gray-500 border-t border-gray-200 pt-10"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -636,7 +650,7 @@ export default function MicrosoftVisit() {
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
           >
-            Hosted by <span className="text-primary font-medium">Black Tech Street</span>
+            Hosted by <span className="text-emerald-600 font-medium">Black Tech Street</span>
           </motion.p>
         </motion.footer>
       </main>
