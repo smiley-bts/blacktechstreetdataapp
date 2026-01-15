@@ -198,12 +198,40 @@ const organizations: Organization[] = [
   }
 ];
 
-// Updated type styles with full background colors
-const typeStyles: Record<string, { bg: string; text: string; dot: string; headingText: string; bodyText: string }> = {
-  meeting: { bg: "bg-emerald-500", text: "text-white", dot: "bg-white", headingText: "text-white", bodyText: "text-emerald-50" },
-  tour: { bg: "bg-gray-800", text: "text-white", dot: "bg-white", headingText: "text-white", bodyText: "text-gray-200" },
-  meal: { bg: "bg-emerald-600", text: "text-white", dot: "bg-white", headingText: "text-white", bodyText: "text-emerald-50" },
-  briefing: { bg: "bg-gray-500", text: "text-white", dot: "bg-white", headingText: "text-white", bodyText: "text-gray-100" }
+// Updated type styles with gradients and enhanced visuals
+const typeStyles: Record<string, { gradient: string; glow: string; dot: string; headingText: string; bodyText: string; accent: string }> = {
+  meeting: { 
+    gradient: "bg-gradient-to-br from-emerald-400 via-emerald-500 to-emerald-700", 
+    glow: "shadow-emerald-500/30",
+    dot: "bg-white", 
+    headingText: "text-white", 
+    bodyText: "text-emerald-50",
+    accent: "from-white/30 to-transparent"
+  },
+  tour: { 
+    gradient: "bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900", 
+    glow: "shadow-gray-800/40",
+    dot: "bg-emerald-400", 
+    headingText: "text-white", 
+    bodyText: "text-gray-200",
+    accent: "from-emerald-400/20 to-transparent"
+  },
+  meal: { 
+    gradient: "bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700", 
+    glow: "shadow-emerald-600/30",
+    dot: "bg-white", 
+    headingText: "text-white", 
+    bodyText: "text-emerald-50",
+    accent: "from-white/25 to-transparent"
+  },
+  briefing: { 
+    gradient: "bg-gradient-to-br from-slate-500 via-slate-600 to-slate-700", 
+    glow: "shadow-slate-600/30",
+    dot: "bg-emerald-300", 
+    headingText: "text-white", 
+    bodyText: "text-slate-100",
+    accent: "from-emerald-300/20 to-transparent"
+  }
 };
 
 // Animation variants
@@ -480,57 +508,62 @@ export default function MicrosoftVisit() {
                     key={index}
                     variants={scheduleItemVariant}
                     whileHover={{ 
-                      scale: 1.01,
+                      scale: 1.02,
                       transition: { type: "spring", stiffness: 300 } 
                     }}
-                    className={`relative flex flex-col md:flex-row gap-4 p-5 rounded-xl ${styles.bg} hover:shadow-xl transition-all cursor-default shadow-lg`}
+                    className={`relative flex flex-col md:flex-row gap-4 p-5 rounded-2xl ${styles.gradient} hover:shadow-2xl transition-all cursor-default shadow-xl ${styles.glow} overflow-hidden group`}
                   >
+                    {/* Decorative accent overlay */}
+                    <div className={`absolute top-0 left-0 w-full h-full bg-gradient-to-br ${styles.accent} pointer-events-none`} />
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-500" />
+                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-black/10 rounded-full blur-xl translate-y-1/2 -translate-x-1/2" />
+                    
                     {/* Time badge */}
-                    <div className="md:w-40 flex-shrink-0">
+                    <div className="md:w-40 flex-shrink-0 relative z-10">
                       <motion.div 
-                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-sm border border-white/30"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-md border border-white/30 shadow-inner"
                         whileHover={{ scale: 1.05 }}
                       >
                         <motion.div 
-                          className={`w-2 h-2 rounded-full ${styles.dot}`}
-                          animate={{ scale: [1, 1.2, 1] }}
+                          className={`w-2.5 h-2.5 rounded-full ${styles.dot} shadow-lg`}
+                          animate={{ scale: [1, 1.3, 1], opacity: [1, 0.7, 1] }}
                           transition={{ duration: 2, repeat: Infinity }}
                         />
-                        <span className="text-xs font-semibold text-white whitespace-nowrap">
+                        <span className="text-xs font-bold text-white whitespace-nowrap tracking-wide">
                           {item.time}
                         </span>
                       </motion.div>
                     </div>
                     
                     {/* Content */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-3 mb-2">
-                        <div className="flex items-center gap-2">
+                    <div className="flex-1 min-w-0 relative z-10">
+                      <div className="flex items-start justify-between gap-3 mb-3">
+                        <div className="flex items-center gap-3">
                           <motion.div 
-                            className="p-1.5 rounded-lg bg-white/20 backdrop-blur-sm text-white"
-                            whileHover={{ rotate: 10 }}
+                            className="p-2 rounded-xl bg-white/20 backdrop-blur-sm text-white shadow-lg border border-white/20"
+                            whileHover={{ rotate: 10, scale: 1.1 }}
                           >
                             {item.icon}
                           </motion.div>
-                          <h3 className={`font-semibold ${styles.headingText}`}>{item.session}</h3>
+                          <h3 className={`font-bold text-lg ${styles.headingText} drop-shadow-sm`}>{item.session}</h3>
                         </div>
-                        <Badge className="bg-white/20 text-white border-white/30 text-xs hidden sm:inline-flex hover:bg-white/30">
+                        <Badge className="bg-white/25 text-white border-white/40 text-xs hidden sm:inline-flex hover:bg-white/35 backdrop-blur-sm font-semibold uppercase tracking-wider shadow-sm">
                           {item.type}
                         </Badge>
                       </div>
-                      <p className={`text-sm ${styles.bodyText} mb-3`}>{item.details}</p>
+                      <p className={`text-sm ${styles.bodyText} mb-4 leading-relaxed`}>{item.details}</p>
                       <motion.a
                         href={`https://www.google.com/maps/dir/?api=1&destination=${item.coordinates[0]},${item.coordinates[1]}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-xs transition-colors group/link bg-white/20 hover:bg-white/30 px-3 py-2 rounded-lg border border-white/30 text-white"
-                        whileHover={{ x: 2 }}
+                        className="inline-flex items-center gap-2 text-xs transition-all group/link bg-white/25 hover:bg-white/35 px-4 py-2.5 rounded-xl border border-white/30 text-white backdrop-blur-sm shadow-lg hover:shadow-xl"
+                        whileHover={{ x: 4, scale: 1.02 }}
                       >
-                        <Navigation className="h-3 w-3" />
-                        <span className="font-medium group-hover/link:underline">{item.location}</span>
+                        <Navigation className="h-3.5 w-3.5" />
+                        <span className="font-semibold group-hover/link:underline">{item.location}</span>
                         <span className="hidden sm:inline opacity-60">•</span>
                         <span className="hidden sm:inline group-hover/link:underline opacity-90">{item.address}</span>
-                        <span className="font-medium ml-1">Get Directions →</span>
+                        <span className="font-bold ml-1 group-hover/link:translate-x-1 transition-transform">→</span>
                       </motion.a>
                     </div>
                   </motion.div>
