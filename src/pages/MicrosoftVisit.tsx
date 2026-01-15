@@ -17,6 +17,17 @@ import { Button } from "@/components/ui/button";
 import btsLogo from "@/assets/black-tech-street-logo.png";
 import { VisitMap } from "@/components/microsoft-visit/VisitMap";
 
+// Organization logos
+import blackTechStreetLogo from "@/assets/logos/black-tech-street.png";
+import gradientLogo from "@/assets/logos/gradient.png";
+import tedcLogo from "@/assets/logos/tedc.png";
+import griotsLogo from "@/assets/logos/griots.png";
+import fixinsLogo from "@/assets/logos/fixins.png";
+import tulsaInnovationLabsLogo from "@/assets/logos/tulsa-innovation-labs.png";
+import tulsaLibraryLogo from "@/assets/logos/tulsa-library.png";
+import tulsaRegionalChamberLogo from "@/assets/logos/tulsa-regional-chamber.png";
+import cityOfTulsaLogo from "@/assets/logos/city-of-tulsa.png";
+
 interface ScheduleItem {
   time: string;
   session: string;
@@ -31,7 +42,7 @@ interface ScheduleItem {
 interface Organization {
   name: string;
   description: string;
-  color: string;
+  logo: string;
   website: string;
 }
 
@@ -132,55 +143,55 @@ const organizations: Organization[] = [
   {
     name: "Black Tech Street",
     description: "Rebirthing Black Wall Street as the nation's premiere innovative economy with focus on responsible AI, cybersecurity and emerging technologies.",
-    color: "from-violet-500 to-purple-600",
+    logo: blackTechStreetLogo,
     website: "https://blacktechstreet.com"
   },
   {
     name: "Gradient",
     description: "Tulsa's premier innovation hub serving as a central basecamp for entrepreneurs, startups, and remote workers.",
-    color: "from-cyan-500 to-blue-600",
+    logo: gradientLogo,
     website: "https://www.yourbasecampawaits.com"
   },
   {
-    name: "GEM Building",
-    description: "Historic Moton Hospital transformed into a modern hub for Black-owned businesses and tech-enabled startups.",
-    color: "from-amber-500 to-orange-600",
-    website: "https://www.gem-tulsa.org"
+    name: "City of Tulsa",
+    description: "Municipal government committed to driving innovation and economic development across the Tulsa region.",
+    logo: cityOfTulsaLogo,
+    website: "https://www.cityoftulsa.org"
   },
   {
     name: "Greenwood Griot Tours",
     description: "Storytelling collective preserving Black Wall Street's legacy through guided experiences and immersive tours.",
-    color: "from-emerald-500 to-green-600",
+    logo: griotsLogo,
     website: "https://www.greenwoodgriot.com"
   },
   {
     name: "Tulsa Innovation Labs",
     description: "Nationally designated Tech Hub redefining innovation economy in America's heartland.",
-    color: "from-rose-500 to-pink-600",
+    logo: tulsaInnovationLabsLogo,
     website: "https://tulsainnovationlabs.com"
   },
   {
     name: "Tulsa Regional Chamber",
     description: "Primary driver of regional prosperity representing 2,150+ organizations and 178,000+ workers.",
-    color: "from-blue-500 to-indigo-600",
+    logo: tulsaRegionalChamberLogo,
     website: "https://tulsachamber.com"
   },
   {
     name: "TEDC",
     description: "Certified CDFI providing lending and educational services to small businesses and entrepreneurs.",
-    color: "from-teal-500 to-cyan-600",
+    logo: tedcLogo,
     website: "https://tedcorp.org"
   },
   {
     name: "Rudisill Library",
     description: "Community hub and historical anchor for North Tulsa with new expanded facility opening in Greenwood.",
-    color: "from-purple-500 to-violet-600",
+    logo: tulsaLibraryLogo,
     website: "https://www.tulsalibrary.org/locations/rudisill-regional-library"
   },
   {
     name: "Fixins Soul Kitchen",
     description: "Full-service restaurant combining authentic Southern comfort food with modern atmosphere.",
-    color: "from-orange-500 to-red-600",
+    logo: fixinsLogo,
     website: "https://fixinssoulkitchen.com"
   }
 ];
@@ -310,8 +321,14 @@ export default function MicrosoftVisit() {
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {organizations.map((org, index) => (
-              <Card key={index} className="group hover:shadow-lg transition-all overflow-hidden border-0 bg-card/50 flex flex-col">
-                <div className={`h-2 bg-gradient-to-r ${org.color}`} />
+              <Card key={index} className="group hover:shadow-lg transition-all overflow-hidden border border-border bg-card flex flex-col">
+                <div className="h-24 bg-black flex items-center justify-center p-4">
+                  <img 
+                    src={org.logo} 
+                    alt={org.name} 
+                    className="h-full w-auto max-w-full object-contain"
+                  />
+                </div>
                 <CardHeader className="pb-3">
                   <CardTitle className="text-base group-hover:text-primary transition-colors">{org.name}</CardTitle>
                 </CardHeader>
