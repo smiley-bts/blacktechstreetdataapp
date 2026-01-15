@@ -144,55 +144,55 @@ const schedule: ScheduleItem[] = [
 const organizations: Organization[] = [
   {
     name: "Black Tech Street",
-    description: "Rebirthing Black Wall Street as the nation's premiere innovative economy with focus on responsible AI, cybersecurity and emerging technologies.",
+    description: "Black Tech Street is an organization dedicated to rebirthing Black Wall Street as the nation's premiere innovative economy, with a strategic focus on responsible AI, cybersecurity and emerging technologies.",
     logo: blackTechStreetLogo,
     website: "https://blacktechstreet.com"
   },
   {
     name: "City of Tulsa",
-    description: "Municipal government committed to driving innovation and economic development across the Tulsa region.",
+    description: "Tulsa City Hall serves as the central hub for the City of Tulsa's municipal government, housing the executive and legislative offices that manage the city's infrastructure, public safety, and community services.",
     logo: cityOfTulsaLogo,
     website: "https://www.cityoftulsa.org"
   },
   {
     name: "Fixins Soul Kitchen",
-    description: "Full-service restaurant combining authentic Southern comfort food with modern atmosphere.",
+    description: "Fixins Soul Kitchen is a full-service restaurant in downtown Tulsa's historic Greenwood District that combines authentic Southern comfort food with a high-energy, modern atmosphere.",
     logo: fixinsLogo,
     website: "https://fixinssoulkitchen.com"
   },
   {
     name: "Gradient",
-    description: "Tulsa's premier innovation hub serving as a central basecamp for entrepreneurs, startups, and remote workers.",
+    description: "Gradient is Tulsa's premier innovation and technology hub, serving as a central \"basecamp\" for entrepreneurs, startups, and remote workers.",
     logo: gradientLogo,
     website: "https://joingradient.com"
   },
   {
     name: "Greenwood Griot Tours",
-    description: "Storytelling collective preserving Black Wall Street's legacy through guided experiences and immersive tours.",
+    description: "Greenwood Griot Tours is a Tulsa-based storytelling collective rooted in the Historic Greenwood District, committed to preserving and sharing the legacy of Black Wall Street through guided experiences, workshops, and immersive tours.",
     logo: "/images/greenwood-griots-logo.png",
     website: "https://www.greenwoodgriot.com"
   },
   {
     name: "Rudisill Library",
-    description: "Community hub and historical anchor for North Tulsa with new expanded facility opening in Greenwood.",
+    description: "The Rudisill Regional Library is a key branch of the Tulsa City-County Library system that serves as a vital community hub and historical anchor for North Tulsa.",
     logo: tulsaLibraryLogo,
     website: "https://www.tulsalibrary.org/locations/rudisill-regional-library"
   },
   {
     name: "TEDC",
-    description: "Certified CDFI providing lending and educational services to small businesses and entrepreneurs.",
+    description: "Tulsa Economic Development Corporation is a non-profit organization and certified Community Development Financial Institution that provides lending and educational services to small businesses and entrepreneurs in the Tulsa region and throughout Oklahoma.",
     logo: tedcLogo,
     website: "https://tedcorp.org"
   },
   {
     name: "Tulsa Innovation Labs",
-    description: "Nationally designated Tech Hub redefining innovation economy in America's heartland.",
+    description: "At Tulsa Innovation Labs, we're redefining what it means to build a thriving innovation economy in America's heartland. As a nationally designated Tech Hub, the Tulsa region boasts high-growth sectors like aerospace and defense, energy and manufacturing.",
     logo: tulsaInnovationLabsLogo,
     website: "https://tulsainnovationlabs.com"
   },
   {
     name: "Tulsa Regional Chamber",
-    description: "Primary driver of regional prosperity representing 2,150+ organizations and 178,000+ workers.",
+    description: "Representing more than 2,150 member organizations and more than 178,000 workers, the Tulsa Regional Chamber is the primary driver of regional and individual prosperity in northeast Oklahoma.",
     logo: tulsaRegionalChamberLogo,
     website: "https://tulsachamber.com"
   }
