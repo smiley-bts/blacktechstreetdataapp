@@ -31,6 +31,7 @@ interface ScheduleItem {
   details: string;
   icon: React.ReactNode;
   type: 'meeting' | 'tour' | 'meal' | 'briefing';
+  coordinates: [number, number]; // [lat, lng] for Google Maps
 }
 
 interface Organization {
@@ -48,7 +49,8 @@ const schedule: ScheduleItem[] = [
     address: "125 W 3rd St, Tulsa, OK 74103",
     details: "Overview of Black Tech Street mission, programs, and strategic vision.",
     icon: <Building2 className="h-5 w-5" />,
-    type: 'meeting'
+    type: 'meeting',
+    coordinates: [36.1540, -95.9934]
   },
   {
     time: "9:00 – 9:45 AM",
@@ -57,7 +59,8 @@ const schedule: ScheduleItem[] = [
     address: "175 E 2nd St S, Tulsa, OK 74103",
     details: "Opening remarks and discussion with Mayor Nichols on Tulsa's innovation and economic priorities.",
     icon: <Landmark className="h-5 w-5" />,
-    type: 'meeting'
+    type: 'meeting',
+    coordinates: [36.1534, -95.9891]
   },
   {
     time: "10:00 – 11:00 AM",
@@ -66,7 +69,8 @@ const schedule: ScheduleItem[] = [
     address: "12 N Cheyenne Ave, Tulsa, OK 74103",
     details: "Overview of regional higher education collaboration, talent pipelines, and potential Lab Synergies.",
     icon: <BookOpen className="h-5 w-5" />,
-    type: 'briefing'
+    type: 'briefing',
+    coordinates: [36.1556, -95.9944]
   },
   {
     time: "11:05 AM – 12:05 PM",
@@ -75,7 +79,8 @@ const schedule: ScheduleItem[] = [
     address: "12 N Cheyenne Ave, Tulsa, OK 74103",
     details: "Focused discussion on the vast network of startups housed and role as funnel for startup based Lab engagements.",
     icon: <Users className="h-5 w-5" />,
-    type: 'meeting'
+    type: 'meeting',
+    coordinates: [36.1556, -95.9944]
   },
   {
     time: "12:10 – 1:15 PM",
@@ -84,7 +89,8 @@ const schedule: ScheduleItem[] = [
     address: "222 N Detroit Ave, Tulsa, OK 74120",
     details: "Authentic Southern comfort food in Tulsa's historic Greenwood District.",
     icon: <Utensils className="h-5 w-5" />,
-    type: 'meal'
+    type: 'meal',
+    coordinates: [36.1582, -95.9912]
   },
   {
     time: "1:30 – 2:30 PM",
@@ -93,7 +99,8 @@ const schedule: ScheduleItem[] = [
     address: "1 W 3rd St, Tulsa, OK 74103",
     details: "Regional economic development strategy and business ecosystem overview. Emphasis on role as a channel partner for corporate Lab engagements.",
     icon: <Building2 className="h-5 w-5" />,
-    type: 'briefing'
+    type: 'briefing',
+    coordinates: [36.1543, -95.9920]
   },
   {
     time: "2:45 – 3:45 PM",
@@ -102,7 +109,8 @@ const schedule: ScheduleItem[] = [
     address: "10 N Greenwood Ave Suite 101, Tulsa, OK 74120",
     details: "Historical and future-facing tour of Greenwood, critical importance of the project and significance of GEM.",
     icon: <MapPin className="h-5 w-5" />,
-    type: 'tour'
+    type: 'tour',
+    coordinates: [36.1568, -95.9863]
   },
   {
     time: "4:00 – 5:00 PM",
@@ -111,7 +119,8 @@ const schedule: ScheduleItem[] = [
     address: "1520 N Hartford Ave, Tulsa, OK 74106",
     details: "Discussion with the Elders of Greenwood, dignitaries and local leaders who care deeply about GEM and feel a great sense of significance in the project.",
     icon: <Users className="h-5 w-5" />,
-    type: 'meeting'
+    type: 'meeting',
+    coordinates: [36.1742, -95.9876]
   },
   {
     time: "5:15 – 6:15 PM",
@@ -120,7 +129,8 @@ const schedule: ScheduleItem[] = [
     address: "660 E. Pine St. Tulsa, OK 74106",
     details: "Tour of the GEM Building - the historic Moton Hospital transformed into a modern hub for Black-owned businesses and tech-enabled startups.",
     icon: <Building2 className="h-5 w-5" />,
-    type: 'tour'
+    type: 'tour',
+    coordinates: [36.1648, -95.9802]
   }
 ];
 
@@ -283,7 +293,7 @@ export default function MicrosoftVisit() {
                       </div>
                       <p className="text-sm text-muted-foreground mb-2">{item.details}</p>
                       <a 
-                        href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(item.address)}`}
+                        href={`https://www.google.com/maps/dir/?api=1&destination=${item.coordinates[0]},${item.coordinates[1]}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors group/link"
