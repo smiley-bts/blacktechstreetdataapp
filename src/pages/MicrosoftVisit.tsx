@@ -10,15 +10,12 @@ import {
   Landmark, 
   BookOpen,
   Calendar,
-  Briefcase,
-  Store,
-  Library,
-  Building,
-  Rocket
+  ExternalLink
 } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { Button } from "@/components/ui/button";
 import btsLogo from "@/assets/black-tech-street-logo.png";
 import { VisitMap } from "@/components/microsoft-visit/VisitMap";
-import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface ScheduleItem {
   time: string;
@@ -34,8 +31,8 @@ interface ScheduleItem {
 interface Organization {
   name: string;
   description: string;
-  icon: React.ReactNode;
   color: string;
+  website: string;
 }
 
 const schedule: ScheduleItem[] = [
@@ -135,56 +132,56 @@ const organizations: Organization[] = [
   {
     name: "Black Tech Street",
     description: "Rebirthing Black Wall Street as the nation's premiere innovative economy with focus on responsible AI, cybersecurity and emerging technologies.",
-    icon: <Rocket className="h-6 w-6" />,
-    color: "from-violet-500 to-purple-600"
+    color: "from-violet-500 to-purple-600",
+    website: "https://blacktechstreet.com"
   },
   {
     name: "Gradient",
     description: "Tulsa's premier innovation hub serving as a central basecamp for entrepreneurs, startups, and remote workers.",
-    icon: <Building className="h-6 w-6" />,
-    color: "from-cyan-500 to-blue-600"
+    color: "from-cyan-500 to-blue-600",
+    website: "https://www.yourbasecampawaits.com"
   },
   {
     name: "GEM Building",
     description: "Historic Moton Hospital transformed into a modern hub for Black-owned businesses and tech-enabled startups.",
-    icon: <Building2 className="h-6 w-6" />,
-    color: "from-amber-500 to-orange-600"
+    color: "from-amber-500 to-orange-600",
+    website: "https://www.gem-tulsa.org"
   },
   {
     name: "Greenwood Griot Tours",
     description: "Storytelling collective preserving Black Wall Street's legacy through guided experiences and immersive tours.",
-    icon: <Users className="h-6 w-6" />,
-    color: "from-emerald-500 to-green-600"
+    color: "from-emerald-500 to-green-600",
+    website: "https://www.greenwoodgriot.com"
   },
   {
     name: "Tulsa Innovation Labs",
     description: "Nationally designated Tech Hub redefining innovation economy in America's heartland.",
-    icon: <Briefcase className="h-6 w-6" />,
-    color: "from-rose-500 to-pink-600"
+    color: "from-rose-500 to-pink-600",
+    website: "https://tulsainnovationlabs.com"
   },
   {
     name: "Tulsa Regional Chamber",
     description: "Primary driver of regional prosperity representing 2,150+ organizations and 178,000+ workers.",
-    icon: <Landmark className="h-6 w-6" />,
-    color: "from-blue-500 to-indigo-600"
+    color: "from-blue-500 to-indigo-600",
+    website: "https://tulsachamber.com"
   },
   {
     name: "TEDC",
     description: "Certified CDFI providing lending and educational services to small businesses and entrepreneurs.",
-    icon: <Store className="h-6 w-6" />,
-    color: "from-teal-500 to-cyan-600"
+    color: "from-teal-500 to-cyan-600",
+    website: "https://tedcorp.org"
   },
   {
     name: "Rudisill Library",
     description: "Community hub and historical anchor for North Tulsa with new expanded facility opening in Greenwood.",
-    icon: <Library className="h-6 w-6" />,
-    color: "from-purple-500 to-violet-600"
+    color: "from-purple-500 to-violet-600",
+    website: "https://www.tulsalibrary.org/locations/rudisill-regional-library"
   },
   {
     name: "Fixins Soul Kitchen",
     description: "Full-service restaurant combining authentic Southern comfort food with modern atmosphere.",
-    icon: <Utensils className="h-6 w-6" />,
-    color: "from-orange-500 to-red-600"
+    color: "from-orange-500 to-red-600",
+    website: "https://fixinssoulkitchen.com"
   }
 ];
 
@@ -313,20 +310,26 @@ export default function MicrosoftVisit() {
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {organizations.map((org, index) => (
-              <Card key={index} className="group hover:shadow-lg transition-all overflow-hidden border-0 bg-card/50">
+              <Card key={index} className="group hover:shadow-lg transition-all overflow-hidden border-0 bg-card/50 flex flex-col">
                 <div className={`h-2 bg-gradient-to-r ${org.color}`} />
                 <CardHeader className="pb-3">
-                  <div className="flex items-center gap-3">
-                    <div className={`p-2.5 rounded-xl bg-gradient-to-br ${org.color} text-white shadow-lg`}>
-                      {org.icon}
-                    </div>
-                    <CardTitle className="text-base group-hover:text-primary transition-colors">{org.name}</CardTitle>
-                  </div>
+                  <CardTitle className="text-base group-hover:text-primary transition-colors">{org.name}</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-sm leading-relaxed">
+                <CardContent className="flex-1 flex flex-col">
+                  <CardDescription className="text-sm leading-relaxed flex-1">
                     {org.description}
                   </CardDescription>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="mt-4 w-full gap-2"
+                    asChild
+                  >
+                    <a href={org.website} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="h-4 w-4" />
+                      Visit Website
+                    </a>
+                  </Button>
                 </CardContent>
               </Card>
             ))}
