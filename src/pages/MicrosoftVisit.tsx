@@ -205,15 +205,7 @@ export default function MicrosoftVisit() {
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link to="/">
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <ArrowLeft className="h-4 w-4" />
-                  Back
-                </Button>
-              </Link>
-              <img src={btsLogo} alt="Black Tech Street" className="h-10 w-auto" />
-            </div>
+            <img src={btsLogo} alt="Black Tech Street" className="h-10 w-auto" />
             <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
               <Calendar className="h-3 w-3 mr-1" />
               Friday, January 16, 2026
