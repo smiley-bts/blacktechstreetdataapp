@@ -358,8 +358,15 @@ export default function MicrosoftVisit() {
               src={btsBLogo} 
               alt="Black Tech Street" 
               className="h-16 md:h-24 lg:h-28 w-auto drop-shadow-2xl"
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
               whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 400 }}
+              transition={{ 
+                type: "spring", 
+                stiffness: 100, 
+                damping: 15,
+                delay: 0.2 
+              }}
             />
             
             {/* Vertical Separator */}
