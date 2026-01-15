@@ -467,22 +467,6 @@ export default function MicrosoftVisit() {
             Day Schedule
           </motion.h2>
           
-          {/* Legend */}
-          <motion.div 
-            className="flex flex-wrap gap-4 mb-6 p-4 bg-white rounded-lg border border-gray-200 shadow-sm"
-            initial={{ opacity: 0, y: -10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4, delay: 0.1 }}
-          >
-            {Object.entries(typeStyles).map(([type, styles]) => (
-              <div key={type} className="flex items-center gap-2">
-                <div className={`w-3 h-3 rounded-full ${styles.dot}`} />
-                <span className="text-sm text-gray-600 capitalize font-medium">{type}</span>
-              </div>
-            ))}
-          </motion.div>
-          
           <div className="relative">
             {/* Animated Timeline line */}
             <motion.div 
