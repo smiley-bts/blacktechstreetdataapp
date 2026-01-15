@@ -612,7 +612,7 @@ export default function MicrosoftVisit() {
                 <motion.div variants={cardHover}>
                   <Card className="group overflow-hidden border border-gray-200 bg-white flex flex-col h-full hover:shadow-xl transition-shadow">
                     <motion.div 
-                      className={`aspect-square flex items-center justify-center p-6 overflow-hidden ${org.name === "Tulsa Innovation Labs" ? "bg-white" : "bg-black"}`}
+                      className="aspect-square flex items-center justify-center p-6 overflow-hidden bg-black"
                       whileHover={{ scale: 1.02 }}
                       transition={{ type: "spring", stiffness: 300 }}
                     >
