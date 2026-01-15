@@ -28,6 +28,7 @@ import tulsaInnovationLabsLogo from "@/assets/logos/tulsa-innovation-labs.png";
 import tulsaLibraryLogo from "@/assets/logos/tulsa-library.png";
 import tulsaRegionalChamberLogo from "@/assets/logos/tulsa-regional-chamber.png";
 import cityOfTulsaLogo from "@/assets/logos/city-of-tulsa.png";
+import tulsaHigherEdLogo from "@/assets/logos/tulsa-higher-ed-consortium.png";
 import btsBLogo from "@/assets/logos/bts-b-logo.png";
 
 interface ScheduleItem {
@@ -142,6 +143,7 @@ const schedule: ScheduleItem[] = [
 ];
 
 const organizations: Organization[] = [
+  // Top 3 (fixed order)
   {
     name: "Black Tech Street",
     description: "Black Tech Street is an organization dedicated to rebirthing Black Wall Street as the nation's premiere innovative economy, with a strategic focus on responsible AI, cybersecurity and emerging technologies.",
@@ -160,6 +162,7 @@ const organizations: Organization[] = [
     logo: cityOfTulsaLogo,
     website: "https://www.cityoftulsa.org/mayor/"
   },
+  // Remaining organizations (alphabetical)
   {
     name: "Fixins Soul Kitchen",
     description: "Fixins Soul Kitchen is a full-service restaurant in downtown Tulsa's historic Greenwood District that combines authentic Southern comfort food with a high-energy, modern atmosphere.",
@@ -189,6 +192,12 @@ const organizations: Organization[] = [
     description: "Tulsa Economic Development Corporation (TEDC) Creative Capital is a non-profit organization and certified Community Development Financial Institution that provides lending and educational services to small businesses and entrepreneurs in the Tulsa region and throughout Oklahoma.",
     logo: tedcLogo,
     website: "https://tedcorp.org"
+  },
+  {
+    name: "Tulsa Higher Education Consortium",
+    description: "The Tulsa Higher Education Consortium is a collaborative effort developed to meaningfully improve Tulsa-area students' journeys towards degree completion, professional independence, and economic mobility. The Consortium is comprised of nine higher education institutions and seven affiliate organizations.",
+    logo: tulsaHigherEdLogo,
+    website: "https://tulsahighered.com"
   },
   {
     name: "Tulsa Regional Chamber",
