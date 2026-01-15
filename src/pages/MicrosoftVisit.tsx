@@ -373,10 +373,8 @@ export default function MicrosoftVisit() {
             <div className="h-12 md:h-20 lg:h-24 w-px bg-white/60" />
             
             {/* Title */}
-            <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-display font-bold text-white drop-shadow-2xl text-left">
-              <span className="bg-gradient-to-r from-white via-emerald-100 to-emerald-300 bg-clip-text text-transparent">
-                Microsoft AI &<br className="hidden sm:block" /> Security Team Visit
-              </span>
+            <h1 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-display font-bold text-white drop-shadow-2xl text-left">
+              Microsoft AI & Security Team Visit
             </h1>
           </motion.div>
           
