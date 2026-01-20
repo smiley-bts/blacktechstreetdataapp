@@ -134,9 +134,12 @@ export default function Timeline() {
       <TimelineProgress />
 
       {/* Fixed header */}
-      <header className="fixed top-1 left-0 right-0 z-40 px-4 pt-4">
-        <div className="flex items-center justify-between max-w-3xl mx-auto bg-card/80 backdrop-blur-md border border-border/50 rounded-2xl px-4 py-2 shadow-lg">
-          <div className="text-sm font-display font-semibold text-foreground">BTS</div>
+      <header className="fixed top-2 left-0 right-0 z-40 px-4">
+        <div className="flex items-center justify-between max-w-3xl mx-auto bg-card/90 backdrop-blur-xl border border-border/40 rounded-2xl px-5 py-2.5 shadow-2xl shadow-black/20">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            <span className="text-sm font-display font-bold text-foreground tracking-wide">BTS</span>
+          </div>
           
           <VisualModeToggle isCleanMode={isCleanMode} onToggle={() => setIsCleanMode(!isCleanMode)} />
           
@@ -144,12 +147,12 @@ export default function Timeline() {
             variant="ghost"
             size="sm"
             onClick={() => setIsFilterOpen(true)}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 hover:bg-primary/10"
           >
             <Filter className="h-4 w-4" />
-            <span className="text-sm">Explore</span>
+            <span className="text-sm font-medium">Explore</span>
             {hasFilters && (
-              <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">
+              <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">
                 {selectedYears.length + selectedCategories.length}
               </span>
             )}
@@ -172,12 +175,13 @@ export default function Timeline() {
           viewport={{ once: true }}
           className="text-center py-16"
         >
-          <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-3">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4">
+            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            <span className="text-xs font-medium text-primary uppercase tracking-wider">Timeline</span>
+          </div>
+          <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground">
             Our Journey
           </h2>
-          <p className="text-muted-foreground max-w-md mx-auto">
-            Key milestones in building the future of tech in Greenwood.
-          </p>
         </motion.div>
 
         {/* Timeline section with vertical line */}
@@ -200,9 +204,9 @@ export default function Timeline() {
                   viewport={{ once: true }}
                   className="sticky top-20 z-20 mb-6"
                 >
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-card/90 backdrop-blur-md border border-border/50 rounded-full shadow-lg">
-                    <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                    <span className="text-lg font-display font-bold text-foreground">{group.year}</span>
+                  <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-card/95 backdrop-blur-xl border border-border/40 rounded-2xl shadow-xl shadow-black/10">
+                    <div className="w-2.5 h-2.5 rounded-full bg-gradient-to-br from-primary to-primary/60 animate-pulse shadow-lg shadow-primary/30" />
+                    <span className="text-xl font-display font-bold text-foreground tracking-wide">{group.year}</span>
                   </div>
                 </motion.div>
 
