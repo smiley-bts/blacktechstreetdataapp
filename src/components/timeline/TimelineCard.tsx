@@ -66,11 +66,6 @@ export function TimelineCard({ item, index, isCleanMode }: TimelineCardProps) {
             </a>
           )}
         </div>
-        
-        {/* Featured indicator */}
-        {item.isFeatured && (
-          <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-        )}
       </div>
     </motion.div>
   );
