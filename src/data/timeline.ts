@@ -63,7 +63,7 @@ export const timelineItems: TimelineItem[] = [
     id: 'ai-executive-order-2023',
     date: '2023-10',
     year: 2023,
-    title: 'AI Executive Order Signing',
+    title: 'AI Executive Order Signing Under the Biden Administration',
     description: 'Biden Administration signs executive order on responsible AI development.',
     category: 'Policy',
     tags: ['Executive Order', 'Biden Administration'],

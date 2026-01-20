@@ -10,15 +10,6 @@ interface TimelineCardProps {
   isCleanMode: boolean;
 }
 
-const categoryColors: Record<string, string> = {
-  Policy: 'bg-chart-blue/20 text-chart-blue border-chart-blue/40',
-  Partnerships: 'bg-primary/20 text-primary border-primary/40',
-  Community: 'bg-chart-pink/20 text-chart-pink border-chart-pink/40',
-  Research: 'bg-chart-purple/20 text-chart-purple border-chart-purple/40',
-  Events: 'bg-chart-amber/20 text-chart-amber border-chart-amber/40',
-  Infrastructure: 'bg-chart-cyan/20 text-chart-cyan border-chart-cyan/40',
-};
-
 const categoryDots: Record<string, string> = {
   Policy: 'bg-chart-blue',
   Partnerships: 'bg-primary',
@@ -57,22 +48,13 @@ export function TimelineCard({ item, index, isCleanMode }: TimelineCardProps) {
         
         {/* Content */}
         <div className="flex-1 min-w-0">
-          {/* Date + Category row */}
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs text-muted-foreground font-medium">
-              {formatDate(item.date)}
-            </span>
-            <span className="text-muted-foreground/40">•</span>
-            <span className={cn(
-              'text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-full border',
-              categoryColors[item.category]
-            )}>
-              {item.category}
-            </span>
-          </div>
+          {/* Date only */}
+          <span className="text-xs text-muted-foreground font-medium">
+            {formatDate(item.date)}
+          </span>
           
           {/* Title */}
-          <h3 className="text-base font-semibold text-foreground leading-snug group-hover:text-primary transition-colors">
+          <h3 className="text-base font-semibold text-foreground leading-snug group-hover:text-primary transition-colors mt-0.5">
             {item.title}
           </h3>
           
