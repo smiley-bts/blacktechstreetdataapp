@@ -117,13 +117,10 @@ export function TimelineCard({ item, index, isCleanMode }: TimelineCardProps) {
 
         {/* Image removed - photos are in gallery, videos/media in News section */}
 
-        {/* Title and description */}
-        <h3 className="text-lg md:text-xl font-display font-semibold text-foreground mb-2 leading-tight">
+        {/* Title */}
+        <h3 className="text-lg md:text-xl font-display font-semibold text-foreground mb-4 leading-tight">
           {item.title}
         </h3>
-        <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-          {item.description}
-        </p>
 
         {/* Tags */}
         <div className="flex flex-wrap gap-1.5 mb-4">
