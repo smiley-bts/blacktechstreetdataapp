@@ -49,7 +49,7 @@ export const timelineItems: TimelineItem[] = [
     description: 'BTS established a foundational relationship with Microsoft for long-term AI and cybersecurity collaboration.',
     category: 'Partnerships',
     tags: ['Microsoft', 'Greenwood'],
-    galleryEventId: 'microsoft-visit',
+    galleryEventId: 'microsoft-announce',
   },
   {
     id: 'defcon-seedai-2023',
@@ -59,6 +59,7 @@ export const timelineItems: TimelineItem[] = [
     description: 'Public red team of AI models with 75 participants, partnered with White House Office of Science and Technology Policy.',
     category: 'Research',
     tags: ['DEF CON', 'SeedAI', 'Red Team'],
+    galleryEventId: 'defcon-seed-ai',
   },
   {
     id: 'ai-executive-order-2023',
@@ -68,6 +69,7 @@ export const timelineItems: TimelineItem[] = [
     description: 'Biden Administration signs executive order on responsible AI development.',
     category: 'Policy',
     tags: ['Executive Order', 'Biden Administration'],
+    galleryEventId: 'ai-executive-order',
   },
   {
     id: 'democratic-caucus-2023',
@@ -87,6 +89,7 @@ export const timelineItems: TimelineItem[] = [
     description: 'AI & Civil Rights interview; testified before Senate HELP Committee on AI and the future of work.',
     category: 'Policy',
     tags: ['Senate', 'Civil Rights', 'C-SPAN'],
+    galleryEventId: 'senate-testimony',
   },
   {
     id: 'hack-the-future-2024',
@@ -96,6 +99,7 @@ export const timelineItems: TimelineItem[] = [
     description: 'Community-based AI challenge areas across entrepreneurship, economic development, justice, and education.',
     category: 'Events',
     tags: ['Hackathon', 'Community'],
+    galleryEventId: 'hack-the-future',
   },
   {
     id: 'cyber-director-visit-2024',
@@ -105,6 +109,7 @@ export const timelineItems: TimelineItem[] = [
     description: 'Hosted the White House National Cyber Director during Juneteenth.',
     category: 'Policy',
     tags: ['Juneteenth', 'Cybersecurity'],
+    galleryEventId: 'white-house-cyber',
   },
   {
     id: 'tech-hubs-2024',
