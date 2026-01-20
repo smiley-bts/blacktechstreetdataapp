@@ -171,7 +171,7 @@ export function TimelineGallery({ initialEventFilter }: TimelineGalleryProps) {
         className="text-center mb-10"
       >
         <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-3">
-          Photo Gallery
+          <span className="text-primary">Photo</span> Gallery
         </h2>
 
         {/* Event filter tabs */}
