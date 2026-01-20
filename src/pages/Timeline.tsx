@@ -1,20 +1,15 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { Filter } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { useTheme } from 'next-themes';
 import { timelineItems, TimelineCategory } from '@/data/timeline';
 import { TimelineCard } from '@/components/timeline/TimelineCard';
-import { TimelineScrubber } from '@/components/timeline/TimelineScrubber';
 import { TimelineProgress } from '@/components/timeline/TimelineProgress';
-import { FilterSheet } from '@/components/timeline/FilterSheet';
-import { VisualModeToggle } from '@/components/timeline/VisualModeToggle';
 import { TechBackground } from '@/components/timeline/TechBackground';
 import { MicrosoftLabSection } from '@/components/timeline/MicrosoftLabSection';
 import { TimelineHero } from '@/components/timeline/TimelineHero';
 import { TimelineAboutSection } from '@/components/timeline/TimelineAboutSection';
 import { TimelineGallery } from '@/components/timeline/TimelineGallery';
-import { TimelineVerticalLine } from '@/components/timeline/TimelineVerticalLine';
 import { ImpactSnapshot } from '@/components/timeline/ImpactSnapshot';
 import { TeamSection } from '@/components/timeline/TeamSection';
 import { TestimonialsSection } from '@/components/timeline/TestimonialsSection';
@@ -27,11 +22,7 @@ export default function Timeline() {
   const prefersReducedMotion = useReducedMotion();
   const { setTheme, theme } = useTheme();
   
-  const [isCleanMode, setIsCleanMode] = useState(prefersReducedMotion || false);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [selectedYears, setSelectedYears] = useState<number[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<TimelineCategory[]>([]);
-  const [activeItemId, setActiveItemId] = useState<string | null>(null);
+  const isCleanMode = prefersReducedMotion || false;
   const [previousTheme, setPreviousTheme] = useState<string | undefined>(undefined);
   const timelineStartRef = useRef<HTMLDivElement>(null);
   const timelineEndRef = useRef<HTMLDivElement>(null);
@@ -42,7 +33,6 @@ export default function Timeline() {
     setTheme('dark');
     
     return () => {
-      // Restore previous theme when leaving the page
       if (previousTheme && previousTheme !== 'dark') {
         setTheme(previousTheme);
       }
@@ -64,9 +54,9 @@ export default function Timeline() {
       meta.setAttribute('content', content);
     };
 
-    updateOrCreateMeta('description', 'Explore Black Tech Street\'s journey rebirthing Historic Black Wall Street as a world-class AI and emerging technology innovation economy in Greenwood, Tulsa.', true);
+    updateOrCreateMeta('description', 'Explore Black Tech Street\'s journey rebirthing Historic Black Wall Street as a world-class AI innovation economy in Greenwood, Tulsa.', true);
     updateOrCreateMeta('og:title', 'Black Tech Street | Timeline');
-    updateOrCreateMeta('og:description', 'Explore Black Tech Street\'s journey rebirthing Historic Black Wall Street as a world-class AI and emerging technology innovation economy.');
+    updateOrCreateMeta('og:description', 'Explore Black Tech Street\'s journey rebirthing Historic Black Wall Street as a world-class AI innovation economy.');
     updateOrCreateMeta('og:url', 'https://blacktechstreetdataapp.lovable.app/timeline');
     updateOrCreateMeta('og:image', 'https://blacktechstreetdataapp.lovable.app/images/bts-logo-white.png');
     updateOrCreateMeta('og:type', 'website');
@@ -87,46 +77,15 @@ export default function Timeline() {
     }
   }, [location.hash]);
 
-  // Track active item on scroll
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveItemId(entry.target.id);
-          }
-        });
-      },
-      { threshold: 0.5, rootMargin: '-20% 0px -20% 0px' }
-    );
-
-    timelineItems.forEach((item) => {
-      const el = document.getElementById(item.id);
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
-  // Filter items
-  const filteredItems = useMemo(() => {
-    return timelineItems.filter((item) => {
-      const yearMatch = selectedYears.length === 0 || selectedYears.includes(item.year);
-      const categoryMatch = selectedCategories.length === 0 || selectedCategories.includes(item.category);
-      return yearMatch && categoryMatch;
-    });
-  }, [selectedYears, selectedCategories]);
-
   // Group items by year with Microsoft Lab section insertion
   const groupedItems = useMemo(() => {
-    const groups: { year: number; items: typeof filteredItems; showMicrosoftLab?: boolean }[] = [];
+    const groups: { year: number; items: typeof timelineItems; showMicrosoftLab?: boolean }[] = [];
     let currentYear: number | null = null;
     
-    filteredItems
+    [...timelineItems]
       .sort((a, b) => a.date.localeCompare(b.date))
       .forEach((item) => {
         if (item.year !== currentYear) {
-          // Insert Microsoft Lab section between 2023 and 2024
           if (currentYear === 2023 && item.year >= 2024) {
             groups[groups.length - 1].showMicrosoftLab = true;
           }
@@ -138,25 +97,7 @@ export default function Timeline() {
       });
     
     return groups;
-  }, [filteredItems]);
-
-  const handleNavigate = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
-
-  const handleYearToggle = (year: number) => {
-    setSelectedYears((prev) =>
-      prev.includes(year) ? prev.filter((y) => y !== year) : [...prev, year]
-    );
-  };
-
-  const handleCategoryToggle = (category: TimelineCategory) => {
-    setSelectedCategories((prev) =>
-      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
-    );
-  };
-
-  const hasFilters = selectedYears.length > 0 || selectedCategories.length > 0;
+  }, []);
 
   return (
     <div className="relative min-h-screen bg-background text-foreground dark overflow-x-hidden">
@@ -193,42 +134,40 @@ export default function Timeline() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center py-16"
+            className="text-center py-12"
           >
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground">
-              Timeline
+            <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-2">
+              Our Journey
             </h2>
+            <p className="text-sm text-muted-foreground">
+              Key milestones in building Greenwood's AI future
+            </p>
           </motion.div>
         </div>
 
-        {/* Timeline section with vertical line */}
+        {/* Simplified Timeline - compact visual flow */}
         <div className="relative" ref={timelineStartRef}>
-          {/* Vertical progress line with dots */}
-          <TimelineVerticalLine 
-            items={filteredItems} 
-            timelineStartRef={timelineStartRef}
-            timelineEndRef={timelineEndRef}
-          />
-
-          {/* Year groups - offset for line */}
-          <div className="md:pl-12">
+          {/* Year groups */}
+          <div className="space-y-8">
             {groupedItems.map((group) => (
-              <div key={group.year} className="mb-12">
-                {/* Year header */}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  className="sticky top-20 z-20 mb-6"
-                >
-                  <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-card/95 backdrop-blur-xl border border-border/40 rounded-2xl shadow-xl shadow-black/10">
-                    <div className="w-2.5 h-2.5 rounded-full bg-gradient-to-br from-primary to-primary/60 animate-pulse shadow-lg shadow-primary/30" />
-                    <span className="text-xl font-display font-bold text-foreground tracking-wide">{group.year}</span>
-                  </div>
-                </motion.div>
+              <motion.div 
+                key={group.year}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                className="relative"
+              >
+                {/* Year marker */}
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-px flex-1 bg-gradient-to-r from-border to-transparent" />
+                  <span className="text-lg font-display font-bold text-primary">
+                    {group.year}
+                  </span>
+                  <div className="h-px flex-1 bg-gradient-to-l from-border to-transparent" />
+                </div>
 
-                {/* Timeline items */}
-                <div className="space-y-6">
+                {/* Timeline items - compact list */}
+                <div className="space-y-1">
                   {group.items.map((item, index) => (
                     <TimelineCard
                       key={item.id}
@@ -243,35 +182,19 @@ export default function Timeline() {
                 {group.showMicrosoftLab && (
                   <MicrosoftLabSection isCleanMode={isCleanMode} />
                 )}
-              </div>
+              </motion.div>
             ))}
           </div>
           
           <div ref={timelineEndRef} />
         </div>
 
-        {/* Empty state */}
-        {filteredItems.length === 0 && (
-          <div className="text-center py-20">
-            <p className="text-muted-foreground mb-4">No milestones match your filters.</p>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setSelectedYears([]);
-                setSelectedCategories([]);
-              }}
-            >
-              Clear Filters
-            </Button>
-          </div>
-        )}
-
         {/* Impact Snapshot */}
         <div id="impact-section">
           <ImpactSnapshot />
         </div>
 
-        {/* In the News */}
+        {/* Media */}
         <InTheNewsSection />
 
         {/* Testimonials */}
@@ -287,28 +210,6 @@ export default function Timeline() {
           </p>
         </footer>
       </main>
-
-      {/* Scrubber */}
-      <TimelineScrubber
-        items={filteredItems}
-        activeId={activeItemId}
-        onNavigate={handleNavigate}
-        isVisible={!isCleanMode}
-      />
-
-      {/* Filter sheet */}
-      <FilterSheet
-        isOpen={isFilterOpen}
-        onClose={() => setIsFilterOpen(false)}
-        selectedYears={selectedYears}
-        selectedCategories={selectedCategories}
-        onYearToggle={handleYearToggle}
-        onCategoryToggle={handleCategoryToggle}
-        onClearAll={() => {
-          setSelectedYears([]);
-          setSelectedCategories([]);
-        }}
-      />
     </div>
   );
 }
