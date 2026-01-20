@@ -33,10 +33,10 @@ export function TimelineAboutSection() {
         viewport={{ once: true }}
         className="text-center mb-12"
       >
-        <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-3">
-          About Black Tech Street
+        <h2 className="text-2xl md:text-3xl font-display font-bold">
+          <span className="text-primary">Our</span>{' '}
+          <span className="text-foreground">Story</span>
         </h2>
-        <p className="text-muted-foreground">Greenwood, Tulsa</p>
       </motion.div>
 
       <div className="grid gap-8 md:gap-10">

@@ -52,16 +52,6 @@ export function TimelineHero() {
         <div className="absolute inset-0 -m-8 rounded-3xl bg-primary/5 blur-2xl" />
       </motion.div>
 
-      {/* Headline */}
-      <motion.h1
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.1 }}
-        className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-center text-foreground mb-8"
-      >
-        Black Tech Street
-      </motion.h1>
-
       {/* Scroll CTA */}
       <motion.button
         initial={{ opacity: 0, y: 20 }}
