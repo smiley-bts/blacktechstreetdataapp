@@ -18,6 +18,7 @@ const sourceLogos: Record<string, { bg: string; icon: string }> = {
   'Yahoo Finance': { bg: 'bg-purple-600', icon: 'Y!' },
   'FOX23': { bg: 'bg-blue-600', icon: 'FOX' },
   'Tulsa World': { bg: 'bg-red-600', icon: 'TW' },
+  'LinkedIn': { bg: 'bg-[#0A66C2]', icon: 'in' },
 };
 
 export function MediaLinksSection({ links, isCleanMode = false }: MediaLinksSectionProps) {

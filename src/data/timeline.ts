@@ -140,6 +140,11 @@ export const timelineItems: TimelineItem[] = [
         source: 'Tulsa World',
         url: 'https://tulsaworld.com/news/local/business/article_e886152c-e0d9-4732-ad15-99c79c48a617.html',
       },
+      {
+        title: 'A Game-Changing Win for Black Wall Street',
+        source: 'LinkedIn',
+        url: 'https://www.linkedin.com/posts/experience-tulsa_a-game-changing-win-for-black-wall-street-activity-7369112114319323139-trVi',
+      },
     ],
   },
 ];
