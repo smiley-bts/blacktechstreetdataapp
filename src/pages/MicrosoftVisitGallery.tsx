@@ -531,7 +531,7 @@ export default function MicrosoftVisitGallery() {
 
       {/* Lightbox Dialog */}
       <Dialog open={selectedIndex !== null} onOpenChange={() => closeLightbox()}>
-        <DialogContent className="max-w-6xl w-[95vw] p-0 bg-black/98 border-none overflow-hidden">
+        <DialogContent className="max-w-6xl w-[98vw] md:w-[95vw] h-[100dvh] md:h-auto md:max-h-[95vh] p-0 bg-black/98 border-none overflow-hidden">
           <AnimatePresence mode="wait">
             {selectedIndex !== null && (
               <motion.div
@@ -540,26 +540,30 @@ export default function MicrosoftVisitGallery() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.3 }}
-                className="relative"
+                className="relative flex flex-col h-full"
               >
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute top-4 right-4 z-50 text-white hover:bg-white/20 rounded-full"
+                  className="absolute top-2 right-2 md:top-4 md:right-4 z-50 text-white hover:bg-white/20 rounded-full h-10 w-10 md:h-12 md:w-12"
                   onClick={closeLightbox}
                 >
-                  <X className="h-6 w-6" />
+                  <X className="h-5 w-5 md:h-6 md:w-6" />
                 </Button>
 
-                <div className="flex items-center justify-center min-h-[70vh] p-8 relative">
-                  <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+                <div className="flex-1 flex items-center justify-center min-h-0 p-2 md:p-8 relative">
+                  <motion.div 
+                    whileHover={{ scale: 1.1 }} 
+                    whileTap={{ scale: 0.95 }}
+                    className="absolute left-1 md:left-4 z-20"
+                  >
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="absolute left-4 text-white hover:bg-white/20 rounded-full h-12 w-12"
+                      className="text-white hover:bg-white/20 rounded-full h-10 w-10 md:h-12 md:w-12 bg-black/30 md:bg-transparent"
                       onClick={goToPrevious}
                     >
-                      <ChevronLeft className="h-8 w-8" />
+                      <ChevronLeft className="h-6 w-6 md:h-8 md:w-8" />
                     </Button>
                   </motion.div>
 
@@ -567,32 +571,37 @@ export default function MicrosoftVisitGallery() {
                     key={galleryImages[selectedIndex].src}
                     src={galleryImages[selectedIndex].src}
                     alt={galleryImages[selectedIndex].alt}
-                    className="max-w-full max-h-[75vh] object-contain rounded-lg shadow-2xl"
+                    className="max-w-[calc(100%-5rem)] md:max-w-full max-h-[60vh] md:max-h-[70vh] object-contain rounded-lg shadow-2xl"
                     initial={{ opacity: 0, x: 50 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -50 }}
                     transition={{ duration: 0.3 }}
                   />
 
-                  <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+                  <motion.div 
+                    whileHover={{ scale: 1.1 }} 
+                    whileTap={{ scale: 0.95 }}
+                    className="absolute right-1 md:right-4 z-20"
+                  >
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="absolute right-4 text-white hover:bg-white/20 rounded-full h-12 w-12"
+                      className="text-white hover:bg-white/20 rounded-full h-10 w-10 md:h-12 md:w-12 bg-black/30 md:bg-transparent"
                       onClick={goToNext}
                     >
-                      <ChevronRight className="h-8 w-8" />
+                      <ChevronRight className="h-6 w-6 md:h-8 md:w-8" />
                     </Button>
                   </motion.div>
                 </div>
 
                 <motion.div 
-                  className="flex items-center justify-between px-8 pb-6"
+                  className="flex flex-col md:flex-row items-center justify-between gap-3 px-3 md:px-8 pb-4 md:pb-6 pt-2"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <div className="flex gap-2 overflow-x-auto max-w-[50%] py-2">
+                  {/* Thumbnail strip - hidden on mobile */}
+                  <div className="hidden md:flex gap-2 overflow-x-auto max-w-[50%] py-2">
                     {galleryImages.map((img, idx) => (
                       <motion.button
                         key={idx}
@@ -610,18 +619,18 @@ export default function MicrosoftVisitGallery() {
                     ))}
                   </div>
 
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center justify-between w-full md:w-auto gap-4">
                     <span className="text-gray-400 text-sm font-medium">
                       {selectedIndex + 1} / {galleryImages.length}
                     </span>
                     <motion.button
                       onClick={() => handleDownload(galleryImages[selectedIndex].src)}
-                      className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium transition-colors"
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium transition-colors"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
                       <Download className="h-4 w-4" />
-                      Download
+                      <span className="hidden sm:inline">Download</span>
                     </motion.button>
                   </div>
                 </motion.div>
