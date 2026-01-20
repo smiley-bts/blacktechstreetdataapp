@@ -128,22 +128,8 @@ export default function Timeline() {
           <TimelineAboutSection />
         </div>
 
-        {/* Timeline heading */}
-        <div id="timeline-section">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center py-12"
-          >
-            <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-2">
-              Our Journey
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              Key milestones in building Greenwood's AI future
-            </p>
-          </motion.div>
-        </div>
+        {/* Timeline section marker */}
+        <div id="timeline-section" className="pt-8" />
 
         {/* Simplified Timeline - compact visual flow */}
         <div className="relative" ref={timelineStartRef}>
