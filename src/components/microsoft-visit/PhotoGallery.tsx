@@ -11,17 +11,56 @@ interface GalleryImage {
   caption: string;
 }
 
-// Placeholder images - replace with actual photos from the visit
 const galleryImages: GalleryImage[] = [
   {
-    src: "/images/microsoft-visit-og.jpg",
-    alt: "Microsoft Visit Welcome",
-    caption: "Microsoft AI & Security Team arrives at Black Tech Street"
+    src: "/images/gallery/01-chamber-group.png",
+    alt: "Chamber Meeting Group Photo",
+    caption: "Group photo at the Tulsa Regional Chamber meeting"
   },
   {
-    src: "/images/tulsa-skyline-banner.png",
-    alt: "Tulsa Skyline",
-    caption: "Tulsa skyline - host city for the Microsoft visit"
+    src: "/images/gallery/02-memorial-group.png",
+    alt: "1921 Race Massacre Memorial",
+    caption: "Visit to the 1921 Race Massacre Memorial"
+  },
+  {
+    src: "/images/gallery/03-memorial-wide.png",
+    alt: "Memorial Wide Shot",
+    caption: "Team gathered at the memorial site in Greenwood"
+  },
+  {
+    src: "/images/gallery/04-greenwood-walk.png",
+    alt: "Greenwood District Walk",
+    caption: "Walking through the Greenwood District"
+  },
+  {
+    src: "/images/gallery/05-bodega.png",
+    alt: "Black Wall Street Bodega",
+    caption: "Tour stop at the Black Wall Street Bodega"
+  },
+  {
+    src: "/images/gallery/06-underpass-tour.png",
+    alt: "Greenwood Underpass Tour",
+    caption: "Historical tour at the Black Wall Street underpass"
+  },
+  {
+    src: "/images/gallery/07-chamber-stairs.png",
+    alt: "Chamber Building Interior",
+    caption: "Inside the Tulsa Regional Chamber"
+  },
+  {
+    src: "/images/gallery/08-moton-building.png",
+    alt: "Moton Building Exterior",
+    caption: "Arrival at the historic Moton Building"
+  },
+  {
+    src: "/images/gallery/09-moton-group.png",
+    alt: "Moton Building Group Photo",
+    caption: "Group photo on the steps of the Moton Building"
+  },
+  {
+    src: "/images/gallery/10-black-wall-street-mural.png",
+    alt: "Black Wall Street Mural",
+    caption: "The iconic Black Wall Street mural in Greenwood"
   }
 ];
 
@@ -84,11 +123,6 @@ export default function PhotoGallery() {
         ))}
       </div>
 
-      {galleryImages.length === 2 && (
-        <p className="text-center text-gray-500 mt-4 text-sm italic">
-          More photos coming soon!
-        </p>
-      )}
 
       {/* Lightbox Dialog */}
       <Dialog open={selectedIndex !== null} onOpenChange={() => closeLightbox()}>
