@@ -122,18 +122,6 @@ export function TimelineCard({ item, index, isCleanMode }: TimelineCardProps) {
           {item.title}
         </h3>
 
-        {/* Tags */}
-        <div className="flex flex-wrap gap-1.5 mb-4">
-          {item.tags.map((tag) => (
-            <span
-              key={tag}
-              className="text-xs px-2 py-0.5 rounded-md bg-muted/50 text-muted-foreground"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-
         {/* View Photos Link */}
         {item.galleryEventId && (
           <a
