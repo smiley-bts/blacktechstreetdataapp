@@ -54,7 +54,7 @@ export const timelineItems: TimelineItem[] = [
     id: 'defcon-seedai-2023',
     date: '2023-08',
     year: 2023,
-    title: 'DEF CON 31 "SeedAI" Red Team',
+    title: 'DEF CON 31 SeedAI "Red Team"',
     description: 'Public red team of AI models with 75 participants, partnered with White House Office of Science and Technology Policy.',
     category: 'Research',
     tags: ['DEF CON', 'SeedAI', 'Red Team'],
