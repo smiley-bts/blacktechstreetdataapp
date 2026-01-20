@@ -115,20 +115,7 @@ export function TimelineCard({ item, index, isCleanMode }: TimelineCardProps) {
           </div>
         </div>
 
-        {/* YouTube Embed */}
-        {item.youtubeUrl && (
-          <div className="relative aspect-video mb-4 rounded-xl overflow-hidden bg-secondary/50 border border-border/30">
-            <iframe
-              src={`https://www.youtube.com/embed/${item.youtubeUrl.match(/(?:v=|\/)([\w-]{11})/)?.[1]}${item.youtubeUrl.includes('t=') ? `?start=${item.youtubeUrl.match(/t=(\d+)/)?.[1] || '0'}` : ''}`}
-              title={item.title}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="w-full h-full"
-            />
-          </div>
-        )}
-
-        {/* Image removed - photos are in gallery */}
+        {/* Image removed - photos are in gallery, videos/media in News section */}
 
         {/* Title and description */}
         <h3 className="text-lg md:text-xl font-display font-semibold text-foreground mb-2 leading-tight">
@@ -212,12 +199,7 @@ export function TimelineCard({ item, index, isCleanMode }: TimelineCardProps) {
           </>
         )}
 
-        {/* Media Links */}
-        {item.mediaLinks && item.mediaLinks.length > 0 && (
-          <div className="mt-4 pt-4 border-t border-border/30">
-            <MediaLinksSection links={item.mediaLinks} isCleanMode={isCleanMode} />
-          </div>
-        )}
+        {/* Media Links moved to In the News section */}
 
         {/* Links */}
         {item.links && item.links.length > 0 && (
