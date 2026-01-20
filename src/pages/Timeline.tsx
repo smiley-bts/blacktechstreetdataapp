@@ -123,12 +123,12 @@ export default function Timeline() {
   const hasFilters = selectedYears.length > 0 || selectedCategories.length > 0;
 
   return (
-    <div className="min-h-screen bg-background text-foreground dark">
+    <div className="relative min-h-screen bg-background text-foreground dark overflow-x-hidden">
+      {/* Tech background effects - positioned absolute to cover full page */}
+      <TechBackground isVisible={!isCleanMode} />
+
       {/* Progress bar */}
       <TimelineProgress />
-
-      {/* Tech background effects */}
-      <TechBackground isVisible={!isCleanMode} />
 
       {/* Fixed header */}
       <header className="fixed top-1 left-0 right-0 z-40 px-4 pt-4">
