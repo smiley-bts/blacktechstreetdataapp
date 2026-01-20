@@ -197,31 +197,35 @@ export function TimelineGallery({ initialEventFilter }: TimelineGalleryProps) {
       </motion.div>
 
       {/* Featured Hero Images - shown for 'all' or 'microsoft-visit' */}
+      {/* On mobile: stacked single column, same size as other photos */}
+      {/* On desktop: side by side */}
       {(activeEvent === 'all' || activeEvent === 'microsoft-visit') && (
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          {featuredImages.map((image) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+          {featuredImages.map((image, idx) => (
             <motion.div
               key={image.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
+              transition={{ delay: idx * 0.1 }}
               className="cursor-pointer group"
               onClick={() => setSelectedImage(image)}
+              style={{ order: idx }} // Ensure Microsoft first (idx 0), Moton second (idx 1)
             >
-              <div className="relative overflow-hidden rounded-2xl border-2 border-primary/30 shadow-2xl shadow-primary/10 aspect-[4/3] bg-muted/20">
+              <div className="relative overflow-hidden rounded-xl border border-border/30 bg-muted/20">
                 <img
                   src={image.src}
                   alt={image.alt}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   loading="eager"
                   decoding="async"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span className="text-sm text-white font-medium">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span className="text-xs text-white/90 font-medium truncate mr-2">
                     {image.alt}
                   </span>
-                  <ZoomIn className="h-5 w-5 text-white/80" />
+                  <ZoomIn className="h-4 w-4 text-white/80 shrink-0" />
                 </div>
               </div>
             </motion.div>
