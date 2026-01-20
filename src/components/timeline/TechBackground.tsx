@@ -1,5 +1,4 @@
-import { motion } from 'framer-motion';
-import { useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 interface TechBackgroundProps {
   isVisible: boolean;
@@ -21,19 +20,12 @@ function MatrixColumn({ index, totalColumns }: { index: number; totalColumns: nu
   const left = (index / totalColumns) * 100;
 
   return (
-    <motion.div
-      className="absolute top-0 flex flex-col items-center text-primary/40 font-mono text-xs select-none"
-      style={{ left: `${left}%` }}
-      initial={{ y: '-100%', opacity: 0 }}
-      animate={{ 
-        y: ['0%', '100vh'],
-        opacity: [0, 0.6, 0.6, 0]
-      }}
-      transition={{
-        duration,
-        delay,
-        repeat: Infinity,
-        ease: 'linear',
+    <div
+      className="absolute flex flex-col items-center text-primary/40 font-mono text-xs select-none animate-matrix-fall"
+      style={{ 
+        left: `${left}%`,
+        animationDuration: `${duration}s`,
+        animationDelay: `${delay}s`,
       }}
     >
       {chars.map((char, i) => (
@@ -48,21 +40,50 @@ function MatrixColumn({ index, totalColumns }: { index: number; totalColumns: nu
           {char}
         </span>
       ))}
-    </motion.div>
+    </div>
   );
 }
 
 export function TechBackground({ isVisible }: TechBackgroundProps) {
-  const columnCount = 30;
+  const [pageHeight, setPageHeight] = useState(0);
+  const columnCount = 40;
+  
+  useEffect(() => {
+    const updateHeight = () => {
+      setPageHeight(document.documentElement.scrollHeight);
+    };
+    
+    updateHeight();
+    window.addEventListener('resize', updateHeight);
+    
+    // Also update when content changes
+    const observer = new MutationObserver(updateHeight);
+    observer.observe(document.body, { childList: true, subtree: true });
+    
+    return () => {
+      window.removeEventListener('resize', updateHeight);
+      observer.disconnect();
+    };
+  }, []);
   
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-      {/* Matrix rain effect */}
+    <div 
+      className="absolute inset-0 pointer-events-none overflow-hidden z-0"
+      style={{ height: pageHeight || '100%', minHeight: '100vh' }}
+    >
+      {/* Matrix rain effect - multiple layers for full coverage */}
       <div className="absolute inset-0 opacity-30">
         {[...Array(columnCount)].map((_, i) => (
-          <MatrixColumn key={i} index={i} totalColumns={columnCount} />
+          <MatrixColumn key={`a-${i}`} index={i} totalColumns={columnCount} />
+        ))}
+      </div>
+      
+      {/* Second wave with different timing */}
+      <div className="absolute inset-0 opacity-20">
+        {[...Array(Math.floor(columnCount / 2))].map((_, i) => (
+          <MatrixColumn key={`b-${i}`} index={i * 2 + 0.5} totalColumns={columnCount} />
         ))}
       </div>
 
@@ -78,40 +99,12 @@ export function TechBackground({ isVisible }: TechBackgroundProps) {
         }}
       />
 
-      {/* Animated scan line */}
-      <motion.div
-        className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent"
-        animate={{
-          top: ['0%', '100%'],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: 'linear',
-        }}
-      />
-
-      {/* Floating particles */}
-      {[...Array(15)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-1 h-1 rounded-full bg-primary/30"
-          style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-          }}
-          animate={{
-            y: [0, -30, 0],
-            opacity: [0.2, 0.6, 0.2],
-          }}
-          transition={{
-            duration: 3 + Math.random() * 2,
-            repeat: Infinity,
-            delay: Math.random() * 2,
-            ease: 'easeInOut',
-          }}
-        />
-      ))}
+      {/* Gradient orbs - positioned throughout the page */}
+      <div className="absolute top-[10%] left-1/4 w-96 h-96 rounded-full bg-primary/5 blur-3xl" />
+      <div className="absolute top-[30%] right-1/4 w-96 h-96 rounded-full bg-accent/5 blur-3xl" />
+      <div className="absolute top-[50%] left-1/3 w-96 h-96 rounded-full bg-primary/5 blur-3xl" />
+      <div className="absolute top-[70%] right-1/3 w-96 h-96 rounded-full bg-accent/5 blur-3xl" />
+      <div className="absolute top-[90%] left-1/4 w-96 h-96 rounded-full bg-primary/5 blur-3xl" />
 
       {/* Corner circuits */}
       <svg className="absolute top-0 left-0 w-40 h-40 text-primary/10" viewBox="0 0 100 100">
@@ -125,10 +118,6 @@ export function TechBackground({ isVisible }: TechBackgroundProps) {
         <path d="M50 0 L50 30 L60 40" stroke="currentColor" strokeWidth="0.5" fill="none" />
         <circle cx="60" cy="40" r="2" fill="currentColor" />
       </svg>
-
-      {/* Gradient orbs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-primary/5 blur-3xl" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-accent/5 blur-3xl" />
     </div>
   );
 }

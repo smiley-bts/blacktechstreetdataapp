@@ -4,22 +4,32 @@ import { X, ZoomIn, Download } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 
-// Gallery images - placeholder for now, can be replaced with actual photos
+// Gallery images organized by event
 const galleryImages = [
-  { id: 1, src: '/images/gallery/01-chamber-group.png', alt: 'Chamber Group Meeting' },
-  { id: 2, src: '/images/gallery/02-memorial-group.png', alt: 'Memorial Group Photo' },
-  { id: 3, src: '/images/gallery/03-memorial-wide.png', alt: 'Memorial Wide Shot' },
-  { id: 4, src: '/images/gallery/04-greenwood-walk.png', alt: 'Greenwood Walking Tour' },
-  { id: 5, src: '/images/gallery/05-bodega.png', alt: 'Bodega Visit' },
-  { id: 6, src: '/images/gallery/06-underpass-tour.png', alt: 'Underpass Tour' },
-  { id: 7, src: '/images/gallery/07-chamber-stairs.png', alt: 'Chamber Stairs' },
-  { id: 8, src: '/images/gallery/08-moton-building.png', alt: 'Moton Building' },
-  { id: 9, src: '/images/gallery/09-moton-group.png', alt: 'Moton Group Photo' },
-  { id: 10, src: '/images/gallery/10-black-wall-street-mural.png', alt: 'Black Wall Street Mural' },
-  { id: 11, src: '/images/gallery/11-chamber-meeting.png', alt: 'Chamber Meeting' },
-  { id: 12, src: '/images/gallery/12-roundtable-discussion.jpg', alt: 'Roundtable Discussion' },
-  { id: 13, src: '/images/gallery/13-downtown-walk.jpg', alt: 'Downtown Walk' },
-  { id: 14, src: '/images/gallery/14-lobby-tour.jpg', alt: 'Lobby Tour' },
+  // ASPIRE AI Workshop - September 27, 2025
+  { id: 101, src: '/images/gallery/aspire-927-01.jpg', alt: 'ASPIRE GenAI Fluency Lab Presentation', event: 'ASPIRE Sep 2025' },
+  { id: 102, src: '/images/gallery/aspire-927-02.jpg', alt: 'Workshop Group Discussion', event: 'ASPIRE Sep 2025' },
+  { id: 103, src: '/images/gallery/aspire-927-03.jpg', alt: 'Workshop Attendee', event: 'ASPIRE Sep 2025' },
+  { id: 104, src: '/images/gallery/aspire-927-04.jpg', alt: 'Hands-on Learning Session', event: 'ASPIRE Sep 2025' },
+  { id: 105, src: '/images/gallery/aspire-927-05.jpg', alt: 'Collaborative Discussion', event: 'ASPIRE Sep 2025' },
+  { id: 106, src: '/images/gallery/aspire-927-06.jpg', alt: 'Peer Learning', event: 'ASPIRE Sep 2025' },
+  { id: 107, src: '/images/gallery/aspire-927-07.jpg', alt: 'Participant Q&A', event: 'ASPIRE Sep 2025' },
+  { id: 108, src: '/images/gallery/aspire-927-08.jpg', alt: 'Taking Notes', event: 'ASPIRE Sep 2025' },
+  // Microsoft Visit Photos
+  { id: 1, src: '/images/gallery/01-chamber-group.png', alt: 'Chamber Group Meeting', event: 'Microsoft Visit' },
+  { id: 2, src: '/images/gallery/02-memorial-group.png', alt: 'Memorial Group Photo', event: 'Microsoft Visit' },
+  { id: 3, src: '/images/gallery/03-memorial-wide.png', alt: 'Memorial Wide Shot', event: 'Microsoft Visit' },
+  { id: 4, src: '/images/gallery/04-greenwood-walk.png', alt: 'Greenwood Walking Tour', event: 'Microsoft Visit' },
+  { id: 5, src: '/images/gallery/05-bodega.png', alt: 'Bodega Visit', event: 'Microsoft Visit' },
+  { id: 6, src: '/images/gallery/06-underpass-tour.png', alt: 'Underpass Tour', event: 'Microsoft Visit' },
+  { id: 7, src: '/images/gallery/07-chamber-stairs.png', alt: 'Chamber Stairs', event: 'Microsoft Visit' },
+  { id: 8, src: '/images/gallery/08-moton-building.png', alt: 'Moton Building', event: 'Microsoft Visit' },
+  { id: 9, src: '/images/gallery/09-moton-group.png', alt: 'Moton Group Photo', event: 'Microsoft Visit' },
+  { id: 10, src: '/images/gallery/10-black-wall-street-mural.png', alt: 'Black Wall Street Mural', event: 'Microsoft Visit' },
+  { id: 11, src: '/images/gallery/11-chamber-meeting.png', alt: 'Chamber Meeting', event: 'Microsoft Visit' },
+  { id: 12, src: '/images/gallery/12-roundtable-discussion.jpg', alt: 'Roundtable Discussion', event: 'Microsoft Visit' },
+  { id: 13, src: '/images/gallery/13-downtown-walk.jpg', alt: 'Downtown Walk', event: 'Microsoft Visit' },
+  { id: 14, src: '/images/gallery/14-lobby-tour.jpg', alt: 'Lobby Tour', event: 'Microsoft Visit' },
 ];
 
 export function TimelineGallery() {
