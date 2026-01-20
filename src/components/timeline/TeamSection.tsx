@@ -71,8 +71,8 @@ export function TeamSection() {
             <div className="relative overflow-hidden rounded-2xl bg-card/60 backdrop-blur-sm border border-border/40 hover:border-primary/30 transition-all duration-300">
               <div className="flex flex-col md:flex-row gap-6 p-6">
                 {/* Image */}
-                <div className="flex-shrink-0">
-                  <div className="relative w-32 h-32 mx-auto md:mx-0 rounded-xl overflow-hidden bg-secondary border-2 border-primary/20 group-hover:border-primary/40 transition-colors">
+                <div className="flex-shrink-0 flex justify-center md:justify-start">
+                  <div className="relative w-[80%] aspect-square max-w-[280px] md:w-40 md:h-40 lg:w-44 lg:h-44 rounded-xl overflow-hidden bg-secondary border-2 border-primary/20 group-hover:border-primary/40 transition-colors">
                     {member.image ? (
                       <img
                         src={member.image}
