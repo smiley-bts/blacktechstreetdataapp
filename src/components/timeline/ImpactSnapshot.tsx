@@ -147,27 +147,6 @@ export function ImpactSnapshot() {
           delay={0.2}
         />
       </div>
-
-      {/* NPS Gauge */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.3 }}
-        className="flex flex-col items-center justify-center bg-card/60 backdrop-blur-sm border border-border/30 rounded-2xl p-8"
-      >
-        <div className="flex flex-col md:flex-row items-center gap-8">
-          <NPSGauge score={npsScore} />
-          <div className="text-center md:text-left max-w-sm">
-            <h3 className="text-lg font-display font-semibold text-foreground mb-2">
-              Participant Satisfaction
-            </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              An NPS of <span className="text-primary font-semibold">{npsScore}</span> indicates exceptional participant satisfaction. Scores above 50 are considered excellent, meaning the vast majority would recommend our programs to others.
-            </p>
-          </div>
-        </div>
-      </motion.div>
     </section>
   );
 }
