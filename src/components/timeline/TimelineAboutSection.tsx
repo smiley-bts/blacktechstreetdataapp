@@ -28,12 +28,34 @@ export function TimelineAboutSection() {
   return (
     <section className="py-16 border-b border-border/30">
       <div className="grid gap-8 md:gap-10">
-        {/* Mission */}
+        {/* Origin - First */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
+          className="flex items-start gap-5"
+        >
+          <IconBox icon={<Lightbulb className="h-5 w-5 text-primary" strokeWidth={1.5} />} />
+          <div>
+            <h3 className="text-xl md:text-2xl font-display font-bold mb-3 text-foreground">
+              Origin
+            </h3>
+            <p className="text-foreground font-medium mb-4 italic text-base md:text-lg border-l-2 border-primary pl-4">
+              "What could Black Wall Street have been, had it been supported and not destroyed?"
+            </p>
+            <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
+              Black Tech Street was founded on this question, and three core realities: tech can create intergenerational wealth in 7–10 years, it is the engine behind global innovation, and by 2030 the U.S. is projected to face a shortage of up to 4.3 million high-paying tech jobs.
+            </p>
+          </div>
+        </motion.div>
+
+        {/* Mission */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2 }}
           className="flex items-start gap-5"
         >
           <IconBox icon={<Target className="h-5 w-5 text-primary" strokeWidth={1.5} />} />
@@ -52,7 +74,7 @@ export function TimelineAboutSection() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.3 }}
           className="flex items-start gap-5"
         >
           <IconBox icon={<Eye className="h-5 w-5 text-primary" strokeWidth={1.5} />} />
@@ -71,7 +93,7 @@ export function TimelineAboutSection() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.3 }}
+          transition={{ delay: 0.4 }}
           className="flex items-start gap-5"
         >
           <IconBox icon={<Wrench className="h-5 w-5 text-primary" strokeWidth={1.5} />} />
@@ -92,7 +114,7 @@ export function TimelineAboutSection() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.35 }}
+          transition={{ delay: 0.5 }}
           className="flex items-start gap-5"
         >
           <IconBox icon={<Users className="h-5 w-5 text-primary" strokeWidth={1.5} />} />
@@ -103,40 +125,6 @@ export function TimelineAboutSection() {
             <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
               Black Tech Street serves local government, education institutions (K–12 through higher education), employers and business networks, entrepreneurs and startups, and community learners, including residents, career-switchers, and future-ready professionals.
             </p>
-          </div>
-        </motion.div>
-
-        {/* Origin */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.4 }}
-          className="flex items-start gap-5"
-        >
-          <IconBox icon={<Lightbulb className="h-5 w-5 text-primary" strokeWidth={1.5} />} />
-          <div>
-            <h3 className="text-xl md:text-2xl font-display font-bold mb-3 text-foreground">
-              Origin
-            </h3>
-            <p className="text-foreground font-medium mb-4 italic text-base md:text-lg border-l-2 border-primary pl-4">
-              "{aboutContent.origin.question}"
-            </p>
-            <p className="text-sm md:text-base text-muted-foreground mb-4">
-              Black Tech Street was founded on this question, and a three-pronged epiphany:
-            </p>
-            <ol className="space-y-4">
-              {aboutContent.origin.epiphanies.map((epiphany, i) => (
-                <li key={i} className="flex items-start gap-3">
-                  <span className="w-8 h-8 rounded-lg bg-secondary text-primary text-base font-bold flex items-center justify-center shrink-0 border border-primary/30">
-                    {i + 1}
-                  </span>
-                  <span className="text-muted-foreground text-base md:text-lg leading-relaxed">
-                    {epiphany}
-                  </span>
-                </li>
-              ))}
-            </ol>
           </div>
         </motion.div>
       </div>

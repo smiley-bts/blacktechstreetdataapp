@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 // Event categories for filtering
 export const galleryEvents = [
   { id: 'all', label: 'All Photos' },
+  { id: 'white-house-cyber', label: 'White House Cyber' },
   { id: 'aspire-dec-2025', label: 'ASPIRE Dec 2025' },
   { id: 'nvidia-sep-2025', label: 'NVIDIA Sep 2025' },
   { id: 'aspire-sep-2025', label: 'ASPIRE Sep 2025' },
@@ -14,7 +15,7 @@ export const galleryEvents = [
   { id: 'microsoft-visit', label: 'Microsoft Visit' },
 ] as const;
 
-export type GalleryEventId = typeof galleryEvents[number]['id'] | 'aspire-dec-2025';
+export type GalleryEventId = typeof galleryEvents[number]['id'];
 
 // Featured hero image
 const featuredImage = {
@@ -26,6 +27,9 @@ const featuredImage = {
 
 // Gallery images organized by event
 const galleryImages = [
+  // White House Touchpoint Cyber Roundtable
+  { id: 501, src: '/images/gallery/white-house-cyber-01.png', alt: 'Tyrance Billingsley at White House Cyber Roundtable', eventId: 'white-house-cyber' },
+  { id: 502, src: '/images/gallery/white-house-cyber-02.png', alt: 'National Cyber Director Office Discussion', eventId: 'white-house-cyber' },
   // ASPIRE AI Workshop - December 6, 2025
   { id: 401, src: '/images/gallery/aspire-dec6-01.jpg', alt: 'Tyrance Billingsley Presenting at Langston University', eventId: 'aspire-dec-2025' },
   { id: 402, src: '/images/gallery/aspire-dec6-02.jpg', alt: 'Workshop Participants Learning', eventId: 'aspire-dec-2025' },
