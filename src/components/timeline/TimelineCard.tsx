@@ -38,6 +38,8 @@ export function TimelineCard({ item, index, isCleanMode }: TimelineCardProps) {
   const rotateX = useTransform(y, [-100, 100], [5, -5]);
   const rotateY = useTransform(x, [-100, 100], [-5, 5]);
 
+  const hasImage = item.image && item.image !== '/placeholder.svg';
+
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (isCleanMode) return;
     const rect = e.currentTarget.getBoundingClientRect();
@@ -122,24 +124,15 @@ export function TimelineCard({ item, index, isCleanMode }: TimelineCardProps) {
           </Button>
         </div>
 
-        {/* Image placeholder */}
-        <div className="relative aspect-video mb-4 rounded-xl overflow-hidden bg-secondary/50 border border-border/30">
-          {item.image && item.image !== '/placeholder.svg' ? (
+        {/* Image - only show if there's an actual image */}
+        {hasImage && (
+          <div className="relative aspect-video mb-4 rounded-xl overflow-hidden bg-secondary/50 border border-border/30">
             <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
-          ) : (
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground">
-              <div className="w-12 h-12 rounded-xl bg-muted/50 flex items-center justify-center mb-2">
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <span className="text-xs">Upload photo</span>
-            </div>
-          )}
-          {!isCleanMode && (
-            <div className="absolute inset-0 bg-gradient-to-t from-card/80 via-transparent to-transparent" />
-          )}
-        </div>
+            {!isCleanMode && (
+              <div className="absolute inset-0 bg-gradient-to-t from-card/80 via-transparent to-transparent" />
+            )}
+          </div>
+        )}
 
         {/* Title and description */}
         <h3 className="text-lg md:text-xl font-display font-semibold text-foreground mb-2 leading-tight">
@@ -222,7 +215,7 @@ export function TimelineCard({ item, index, isCleanMode }: TimelineCardProps) {
         )}
 
         {/* Photo credit */}
-        {item.photoCredit && (
+        {item.photoCredit && hasImage && (
           <p className="text-xs text-muted-foreground/60 mt-3">
             Photo: {item.photoCredit}
           </p>
