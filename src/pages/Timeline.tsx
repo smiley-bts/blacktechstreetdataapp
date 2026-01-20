@@ -130,7 +130,7 @@ export default function Timeline() {
         </div>
 
         {/* Timeline heading */}
-        <div id="timeline-section" className="pt-12 pb-6">
+        <div id="timeline-section" className="pt-12 pb-6 text-center">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
