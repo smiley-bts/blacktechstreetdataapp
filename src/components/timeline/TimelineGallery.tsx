@@ -18,13 +18,21 @@ export const galleryEvents = [
 
 export type GalleryEventId = typeof galleryEvents[number]['id'];
 
-// Featured hero image
-const featuredImage = {
-  id: 0,
-  src: '/images/gallery/microsoft-bts-retreat-mockup.png',
-  alt: 'Microsoft & Black Tech Street Retreat Center Mockup',
-  eventId: 'microsoft-visit' as const,
-};
+// Featured hero images (side by side)
+const featuredImages = [
+  {
+    id: 0,
+    src: '/images/gallery/microsoft-bts-retreat-mockup.png',
+    alt: 'Microsoft & Black Tech Street Retreat Center Mockup',
+    eventId: 'microsoft-visit' as const,
+  },
+  {
+    id: 8,
+    src: '/images/gallery/08-moton-building.png',
+    alt: 'Moton Building',
+    eventId: 'microsoft-visit' as const,
+  },
+];
 
 // Gallery images organized by event
 const galleryImages = [
@@ -65,7 +73,7 @@ const galleryImages = [
   { id: 306, src: '/images/gallery/aspire-june-06.jpg', alt: 'Facilitator Leading Discussion', eventId: 'aspire-june-2025' },
   { id: 307, src: '/images/gallery/aspire-june-07.jpg', alt: 'Full Auditorium View', eventId: 'aspire-june-2025' },
   { id: 308, src: '/images/gallery/aspire-june-08.jpg', alt: 'Participants with Laptops', eventId: 'aspire-june-2025' },
-  // Microsoft Visit Photos
+  // Microsoft Visit Photos (excluding Moton Building which is in featured)
   { id: 1, src: '/images/gallery/01-chamber-group.png', alt: 'Chamber Group Meeting', eventId: 'microsoft-visit' },
   { id: 2, src: '/images/gallery/02-memorial-group.png', alt: 'Memorial Group Photo', eventId: 'microsoft-visit' },
   { id: 3, src: '/images/gallery/03-memorial-wide.png', alt: 'Memorial Wide Shot', eventId: 'microsoft-visit' },
@@ -73,7 +81,6 @@ const galleryImages = [
   { id: 5, src: '/images/gallery/05-bodega.png', alt: 'Bodega Visit', eventId: 'microsoft-visit' },
   { id: 6, src: '/images/gallery/06-underpass-tour.png', alt: 'Underpass Tour', eventId: 'microsoft-visit' },
   { id: 7, src: '/images/gallery/07-chamber-stairs.png', alt: 'Chamber Stairs', eventId: 'microsoft-visit' },
-  { id: 8, src: '/images/gallery/08-moton-building.png', alt: 'Moton Building', eventId: 'microsoft-visit' },
   { id: 9, src: '/images/gallery/09-moton-group.png', alt: 'Moton Group Photo', eventId: 'microsoft-visit' },
   { id: 10, src: '/images/gallery/10-black-wall-street-mural.png', alt: 'Black Wall Street Mural', eventId: 'microsoft-visit' },
   { id: 11, src: '/images/gallery/11-chamber-meeting.png', alt: 'Chamber Meeting', eventId: 'microsoft-visit' },
@@ -149,9 +156,9 @@ export function TimelineGallery({ initialEventFilter }: TimelineGalleryProps) {
               {event.label}
               <span className="ml-1.5 text-xs opacity-70">
                 ({event.id === 'all' 
-                  ? galleryImages.length + 1
+                  ? galleryImages.length + 2
                   : event.id === 'microsoft-visit' 
-                    ? galleryImages.filter(img => img.eventId === event.id).length + 1
+                    ? galleryImages.filter(img => img.eventId === event.id).length + 2
                     : galleryImages.filter(img => img.eventId === event.id).length})
               </span>
             </button>
@@ -159,30 +166,35 @@ export function TimelineGallery({ initialEventFilter }: TimelineGalleryProps) {
         </div>
       </motion.div>
 
-      {/* Featured Hero Image - shown for 'all' or 'microsoft-visit' */}
+      {/* Featured Hero Images - shown for 'all' or 'microsoft-visit' */}
       {(activeEvent === 'all' || activeEvent === 'microsoft-visit') && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mb-6 cursor-pointer group"
-          onClick={() => setSelectedImage(featuredImage)}
-        >
-          <div className="relative overflow-hidden rounded-2xl border-2 border-primary/30 shadow-2xl shadow-primary/10">
-            <img
-              src={featuredImage.src}
-              alt={featuredImage.alt}
-              className="w-full object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <span className="text-sm text-white font-medium">
-                {featuredImage.alt}
-              </span>
-              <ZoomIn className="h-5 w-5 text-white/80" />
-            </div>
-          </div>
-        </motion.div>
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          {featuredImages.map((image) => (
+            <motion.div
+              key={image.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="cursor-pointer group"
+              onClick={() => setSelectedImage(image)}
+            >
+              <div className="relative overflow-hidden rounded-2xl border-2 border-primary/30 shadow-2xl shadow-primary/10 aspect-[4/3]">
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span className="text-sm text-white font-medium">
+                    {image.alt}
+                  </span>
+                  <ZoomIn className="h-5 w-5 text-white/80" />
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       )}
 
       {/* Masonry grid */}
@@ -193,7 +205,7 @@ export function TimelineGallery({ initialEventFilter }: TimelineGalleryProps) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.3 }}
-          className="columns-2 md:columns-3 lg:columns-4 gap-3 space-y-3"
+          className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4"
         >
           {filteredImages.map((image, index) => (
             <motion.div
