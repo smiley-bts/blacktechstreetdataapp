@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 // Event categories for filtering
 export const galleryEvents = [
   { id: 'all', label: 'All Photos' },
+  { id: 'microsoft-announce', label: 'Microsoft Partnership (July 2023)' },
   { id: 'white-house-cyber', label: 'White House Cyber' },
   { id: 'aspire-dec-2025', label: 'ASPIRE Dec 2025' },
   { id: 'nvidia-sep-2025', label: 'NVIDIA Sep 2025' },
@@ -27,6 +28,10 @@ const featuredImage = {
 
 // Gallery images organized by event
 const galleryImages = [
+  // Microsoft Partnership Announcement - July 2023
+  { id: 601, src: '/images/gallery/microsoft-announce-01.png', alt: 'Microsoft Partnership Team Photo', eventId: 'microsoft-announce' },
+  { id: 602, src: '/images/gallery/microsoft-announce-02.png', alt: 'Community Announcement at Greenwood', eventId: 'microsoft-announce' },
+  { id: 603, src: '/images/gallery/microsoft-announce-03.png', alt: 'Microsoft Partnership Presentation', eventId: 'microsoft-announce' },
   // White House Touchpoint Cyber Roundtable
   { id: 501, src: '/images/gallery/white-house-cyber-01.png', alt: 'Tyrance Billingsley at White House Cyber Roundtable', eventId: 'white-house-cyber' },
   { id: 502, src: '/images/gallery/white-house-cyber-02.png', alt: 'National Cyber Director Office Discussion', eventId: 'white-house-cyber' },
