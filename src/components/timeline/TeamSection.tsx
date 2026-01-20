@@ -12,7 +12,7 @@ interface TeamMember {
 const teamMembers: TeamMember[] = [
   {
     name: "Tyrance Billingsley II",
-    title: "Founder & Executive Director",
+    title: "Founder & CEO",
     bio: "Tyrance Billingsley II is a Tulsa-born entrepreneur, technologist, and ecosystem builder. Under his leadership, Black Tech Street has brokered a citywide alliance with Microsoft to establish 21st-century Greenwood and secured federal Tech Hubs designation with an eight-figure award. Featured in Forbes, CNN Business, and Black Enterprise, Tyrance has testified before the U.S. Senate on AI and the Future of Work and attended the historic signing of the AI Executive Order at the White House.",
     image: "/images/team/tyrance-billingsley.png",
     linkedIn: "https://www.linkedin.com/in/tyrance-billingsley-ii-ab0683123/"
