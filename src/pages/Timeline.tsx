@@ -15,6 +15,7 @@ import { TimelineHero } from '@/components/timeline/TimelineHero';
 import { TimelineAboutSection } from '@/components/timeline/TimelineAboutSection';
 import { TimelineGallery } from '@/components/timeline/TimelineGallery';
 import { TimelineVerticalLine } from '@/components/timeline/TimelineVerticalLine';
+import { ImpactSnapshot } from '@/components/timeline/ImpactSnapshot';
 import { Button } from '@/components/ui/button';
 
 export default function Timeline() {
@@ -248,6 +249,9 @@ export default function Timeline() {
             </Button>
           </div>
         )}
+
+        {/* Impact Snapshot */}
+        <ImpactSnapshot />
 
         {/* Gallery */}
         <TimelineGallery />
