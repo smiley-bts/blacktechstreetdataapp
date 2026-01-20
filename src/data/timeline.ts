@@ -27,7 +27,7 @@ export interface TimelineItem {
   youtubeUrl?: string;
   photoCredit?: string;
   isFeatured?: boolean;
-  galleryEventId?: 'nvidia-sep-2025' | 'aspire-sep-2025' | 'aspire-june-2025' | 'aspire-dec-2025' | 'microsoft-visit';
+  galleryEventId?: 'nvidia-sep-2025' | 'aspire-sep-2025' | 'aspire-june-2025' | 'aspire-dec-2025' | 'microsoft-visit' | 'white-house-cyber' | 'hack-the-future' | 'senate-testimony' | 'ai-executive-order' | 'defcon-seed-ai' | 'microsoft-announce';
 }
 
 export const timelineItems: TimelineItem[] = [
@@ -39,6 +39,7 @@ export const timelineItems: TimelineItem[] = [
     description: 'Tyrance spoke as a panelist at the White House Office of the National Cyber Director convening.',
     category: 'Policy',
     tags: ['White House', 'Cybersecurity'],
+    galleryEventId: 'white-house-cyber',
   },
   {
     id: 'microsoft-partnership-2023',
@@ -82,7 +83,7 @@ export const timelineItems: TimelineItem[] = [
     id: 'senate-civil-rights-2023',
     date: '2023-12',
     year: 2023,
-    title: 'C-SPAN + Senate Testimony',
+    title: 'AI and the Future of Work: Moving Forward Together',
     description: 'AI & Civil Rights interview; testified before Senate HELP Committee on AI and the future of work.',
     category: 'Policy',
     tags: ['Senate', 'Civil Rights', 'C-SPAN'],
