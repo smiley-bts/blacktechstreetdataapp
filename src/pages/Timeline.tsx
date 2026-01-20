@@ -137,32 +137,6 @@ export default function Timeline() {
       {/* Progress bar */}
       <TimelineProgress />
 
-      {/* Fixed header */}
-      <header className="fixed top-2 left-0 right-0 z-40 px-4">
-        <div className="flex items-center justify-between max-w-3xl mx-auto bg-card/90 backdrop-blur-xl border border-border/40 rounded-2xl px-5 py-2.5 shadow-2xl shadow-black/20">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span className="text-sm font-display font-bold text-foreground tracking-wide">BTS</span>
-          </div>
-          
-          <VisualModeToggle isCleanMode={isCleanMode} onToggle={() => setIsCleanMode(!isCleanMode)} />
-          
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsFilterOpen(true)}
-            className="flex items-center gap-2 hover:bg-primary/10"
-          >
-            <Filter className="h-4 w-4" />
-            <span className="text-sm font-medium">Explore</span>
-            {hasFilters && (
-              <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">
-                {selectedYears.length + selectedCategories.length}
-              </span>
-            )}
-          </Button>
-        </div>
-      </header>
 
       {/* Hero */}
       <TimelineHero />
