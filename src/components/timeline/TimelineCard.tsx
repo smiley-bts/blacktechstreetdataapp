@@ -27,20 +27,24 @@ export function TimelineCard({ item, index, isCleanMode }: TimelineCardProps) {
       className="group"
     >
       <div className={cn(
-        'relative flex items-start gap-4 py-3 px-4 rounded-xl',
+        'relative flex items-start gap-3 py-3 px-4 rounded-xl',
         'transition-all duration-300',
         'hover:bg-card/60 hover:backdrop-blur-sm'
       )}>
-        {/* BTS brand dot */}
-        <div className="w-3 h-3 rounded-full mt-1.5 shrink-0 ring-2 ring-background bg-primary" />
+        {/* BTS brand dot with hover animation */}
+        <div className="relative mt-1.5 shrink-0">
+          <div className="w-2.5 h-2.5 rounded-full bg-primary ring-2 ring-background group-hover:scale-125 group-hover:ring-primary/30 transition-all duration-300" />
+          {/* Glow on hover */}
+          <div className="absolute inset-0 w-2.5 h-2.5 rounded-full bg-primary/50 blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        </div>
         
         {/* Content */}
         <div className="flex-1 min-w-0">
-          {/* Month - Title format */}
-          <h3 className="text-base font-semibold text-foreground leading-snug group-hover:text-primary transition-colors">
-            <span className="text-muted-foreground font-medium">{formatMonth(item.date)}</span>
-            <span className="text-muted-foreground/60 mx-1.5">—</span>
-            {item.title}
+          {/* Month — Title format with refined typography */}
+          <h3 className="text-sm md:text-base font-medium text-foreground leading-snug group-hover:text-primary transition-colors">
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{formatMonth(item.date)}</span>
+            <span className="text-muted-foreground/40 mx-2">—</span>
+            <span className="font-semibold">{item.title}</span>
           </h3>
           
           {/* View Photos Link - subtle */}

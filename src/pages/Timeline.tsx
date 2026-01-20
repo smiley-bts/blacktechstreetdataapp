@@ -15,6 +15,7 @@ import { TeamSection } from '@/components/timeline/TeamSection';
 import { TestimonialsSection } from '@/components/timeline/TestimonialsSection';
 import { TableOfContents } from '@/components/timeline/TableOfContents';
 import { InTheNewsSection } from '@/components/timeline/InTheNewsSection';
+import { BackToTopButton } from '@/components/timeline/BackToTopButton';
 import { Button } from '@/components/ui/button';
 
 export default function Timeline() {
@@ -196,6 +197,9 @@ export default function Timeline() {
           </p>
         </footer>
       </main>
+
+      {/* Floating back to top button */}
+      <BackToTopButton />
     </div>
   );
 }
