@@ -127,6 +127,11 @@ export const timelineItems: TimelineItem[] = [
     youtubeUrl: 'https://www.youtube.com/watch?v=Xks2RYWa6Gg&t=30s',
     mediaLinks: [
       {
+        title: 'NVIDIA Announces Collaboration with Black Tech Street',
+        source: 'LinkedIn',
+        url: 'https://www.linkedin.com/posts/nvidia_today-we-announced-a-new-collaboration-with-activity-7369136064881414145-quKD',
+      },
+      {
         title: 'Black Tech Street Collaborates with NVIDIA to Launch AI Partnership',
         source: 'Yahoo Finance',
         url: 'https://finance.yahoo.com/news/black-tech-street-collaborates-nvidia-180000254.html',
