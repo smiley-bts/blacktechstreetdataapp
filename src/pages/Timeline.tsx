@@ -185,11 +185,11 @@ export default function Timeline() {
           <ImpactSnapshot />
         </div>
 
+        {/* Community Voices / Testimonials */}
+        <TestimonialsSection />
+
         {/* Media */}
         <InTheNewsSection />
-
-        {/* Testimonials */}
-        <TestimonialsSection />
 
         {/* Gallery */}
         <TimelineGallery />
