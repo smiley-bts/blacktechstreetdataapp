@@ -508,7 +508,7 @@ export default function MicrosoftVisitGallery() {
                 </Button>
               </div>
               <p className="text-gray-400 text-sm mt-2">
-                Use this code to create a standalone Microsoft Visit itinerary page in a new Lovable project.
+                Use this code to create a standalone Microsoft Visit itinerary page.
               </p>
             </CardHeader>
             <CardContent className="p-0">
