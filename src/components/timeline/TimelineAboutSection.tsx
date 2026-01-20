@@ -1,6 +1,34 @@
 import { motion } from 'framer-motion';
-import { Target, Eye, Wrench, Lightbulb } from 'lucide-react';
+import { Cpu, Zap, Code2, Rocket } from 'lucide-react';
 import { aboutContent } from '@/data/timeline';
+import { cn } from '@/lib/utils';
+
+interface IconBoxProps {
+  icon: React.ReactNode;
+  colorClass: string;
+  glowClass: string;
+}
+
+function IconBox({ icon, colorClass, glowClass }: IconBoxProps) {
+  return (
+    <div className="relative group">
+      {/* Glow effect */}
+      <div className={cn(
+        "absolute inset-0 rounded-xl blur-lg opacity-50 group-hover:opacity-80 transition-opacity duration-300",
+        glowClass
+      )} />
+      {/* Icon container */}
+      <div className={cn(
+        "relative w-12 h-12 rounded-xl flex items-center justify-center shrink-0",
+        "bg-gradient-to-br border border-white/10",
+        "shadow-lg backdrop-blur-sm",
+        colorClass
+      )}>
+        {icon}
+      </div>
+    </div>
+  );
+}
 
 export function TimelineAboutSection() {
   return (
@@ -24,13 +52,15 @@ export function TimelineAboutSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
-          className="flex items-start gap-4"
+          className="flex items-start gap-5"
         >
-          <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center shrink-0">
-            <Target className="h-5 w-5 text-primary" />
-          </div>
+          <IconBox 
+            icon={<Cpu className="h-6 w-6 text-primary" strokeWidth={1.5} />}
+            colorClass="from-primary/20 to-primary/10"
+            glowClass="bg-primary/30"
+          />
           <div>
-            <h3 className="text-lg font-display font-semibold mb-2">Mission</h3>
+            <h3 className="text-lg font-display font-semibold mb-2 text-foreground">Mission</h3>
             <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
               {aboutContent.mission}
             </p>
@@ -43,13 +73,15 @@ export function TimelineAboutSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
-          className="flex items-start gap-4"
+          className="flex items-start gap-5"
         >
-          <div className="w-10 h-10 rounded-xl bg-chart-purple/20 flex items-center justify-center shrink-0">
-            <Eye className="h-5 w-5 text-chart-purple" />
-          </div>
+          <IconBox 
+            icon={<Zap className="h-6 w-6 text-chart-purple" strokeWidth={1.5} />}
+            colorClass="from-chart-purple/20 to-chart-purple/10"
+            glowClass="bg-chart-purple/30"
+          />
           <div>
-            <h3 className="text-lg font-display font-semibold mb-2">Vision</h3>
+            <h3 className="text-lg font-display font-semibold mb-2 text-foreground">Vision</h3>
             <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
               {aboutContent.vision}
             </p>
@@ -62,13 +94,15 @@ export function TimelineAboutSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.3 }}
-          className="flex items-start gap-4"
+          className="flex items-start gap-5"
         >
-          <div className="w-10 h-10 rounded-xl bg-chart-amber/20 flex items-center justify-center shrink-0">
-            <Wrench className="h-5 w-5 text-chart-amber" />
-          </div>
+          <IconBox 
+            icon={<Code2 className="h-6 w-6 text-chart-cyan" strokeWidth={1.5} />}
+            colorClass="from-chart-cyan/20 to-chart-cyan/10"
+            glowClass="bg-chart-cyan/30"
+          />
           <div>
-            <h3 className="text-lg font-display font-semibold mb-2">What We Do</h3>
+            <h3 className="text-lg font-display font-semibold mb-2 text-foreground">What We Do</h3>
             <div className="text-muted-foreground leading-relaxed text-sm md:text-base space-y-3">
               {aboutContent.whatWeDo.split('\n\n').map((paragraph, i) => (
                 <p key={i}>{paragraph}</p>
@@ -83,14 +117,16 @@ export function TimelineAboutSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.4 }}
-          className="flex items-start gap-4"
+          className="flex items-start gap-5"
         >
-          <div className="w-10 h-10 rounded-xl bg-chart-pink/20 flex items-center justify-center shrink-0">
-            <Lightbulb className="h-5 w-5 text-chart-pink" />
-          </div>
+          <IconBox 
+            icon={<Rocket className="h-6 w-6 text-chart-amber" strokeWidth={1.5} />}
+            colorClass="from-chart-amber/20 to-chart-amber/10"
+            glowClass="bg-chart-amber/30"
+          />
           <div>
-            <h3 className="text-lg font-display font-semibold mb-3">Origin</h3>
-            <p className="text-foreground font-medium mb-4 italic text-sm md:text-base">
+            <h3 className="text-lg font-display font-semibold mb-3 text-foreground">Origin</h3>
+            <p className="text-foreground font-medium mb-4 italic text-sm md:text-base border-l-2 border-primary/50 pl-4">
               "{aboutContent.origin.question}"
             </p>
             <p className="text-xs text-muted-foreground mb-4">
@@ -99,7 +135,7 @@ export function TimelineAboutSection() {
             <ol className="space-y-3">
               {aboutContent.origin.epiphanies.map((epiphany, i) => (
                 <li key={i} className="flex items-start gap-3">
-                  <span className="w-6 h-6 rounded-full bg-primary/20 text-primary text-sm font-semibold flex items-center justify-center shrink-0">
+                  <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-primary/30 to-primary/10 text-primary text-sm font-bold flex items-center justify-center shrink-0 border border-primary/20">
                     {i + 1}
                   </span>
                   <span className="text-muted-foreground text-sm leading-relaxed">
