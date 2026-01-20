@@ -445,3 +445,44 @@ select:focus {
   transform: scale(2);
   transition: transform 0s, opacity 0s;
 }
+
+/* Print styles for PDF export */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Hide non-printable elements */
+  .print\:hidden,
+  .fixed,
+  header,
+  nav,
+  footer {
+    display: none !important;
+  }
+  
+  /* Show printable component */
+  .hidden.print\:block {
+    display: block !important;
+  }
+  
+  /* Page break handling */
+  .page-break-inside-avoid {
+    page-break-inside: avoid;
+  }
+  
+  /* Ensure images print */
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+  }
+  
+  /* Print margins */
+  @page {
+    margin: 0.75in;
+    size: letter;
+  }
+}
