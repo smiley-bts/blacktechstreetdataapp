@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 // Events are listed newest to oldest in the UI tabs
 export const galleryEvents = [
   { id: 'all', label: 'All Photos', date: null },
+  { id: 'aspire-lead-dec-2025', label: 'ASPIRE: Lead (Dec 2025)', date: '2025-12-20' },
   { id: 'aspire-dec-2025', label: 'ASPIRE Dec 2025', date: '2025-12-06' },
   { id: 'nvidia-sep-2025', label: 'NVIDIA Sep 2025', date: '2025-09-03' },
   { id: 'aspire-sep-2025', label: 'ASPIRE Sep 2025', date: '2025-09-27' },
@@ -49,6 +50,9 @@ const featuredImages = [
 
 // Gallery images - will be sorted chronologically by event date (newest first)
 const galleryImagesUnsorted = [
+  // ASPIRE: Lead - December 2025
+  { id: 901, src: '/images/gallery/aspire-lead-01.jpg', alt: 'ASPIRE: Lead Certificate Recipients Group Photo', eventId: 'aspire-lead-dec-2025' },
+  { id: 902, src: '/images/gallery/aspire-lead-02.jpg', alt: 'ASPIRE: Lead Students Working on Laptops', eventId: 'aspire-lead-dec-2025' },
   // Senate HELP Committee Testimony - Feb 2024
   { id: 801, src: '/images/gallery/senate-help-testimony-cspan.png', alt: 'Tyrance Billingsley testifying before Senate HELP Committee on AI & the Future of Work', eventId: 'senate-testimony' },
   // AI Executive Order - October 2023

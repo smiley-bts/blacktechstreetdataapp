@@ -27,7 +27,7 @@ export interface TimelineItem {
   youtubeUrl?: string;
   photoCredit?: string;
   isFeatured?: boolean;
-  galleryEventId?: 'nvidia-sep-2025' | 'aspire-sep-2025' | 'aspire-june-2025' | 'aspire-dec-2025' | 'microsoft-visit' | 'white-house-cyber' | 'hack-the-future' | 'senate-testimony' | 'ai-executive-order' | 'defcon-seed-ai' | 'microsoft-announce';
+  galleryEventId?: 'nvidia-sep-2025' | 'aspire-sep-2025' | 'aspire-june-2025' | 'aspire-dec-2025' | 'aspire-lead-dec-2025' | 'microsoft-visit' | 'white-house-cyber' | 'hack-the-future' | 'senate-testimony' | 'ai-executive-order' | 'defcon-seed-ai' | 'microsoft-announce';
 }
 
 export const timelineItems: TimelineItem[] = [
@@ -201,6 +201,17 @@ export const timelineItems: TimelineItem[] = [
     category: 'Events',
     tags: ['ASPIRE', 'Langston University', 'AI Workshop'],
     galleryEventId: 'aspire-dec-2025',
+  },
+  {
+    id: 'aspire-lead-dec-2025',
+    date: '2025-12-20',
+    year: 2025,
+    title: 'ASPIRE: Lead',
+    description: 'Youth-focused AI leadership program with certificate recipients from the LEAD organization.',
+    longDescription: 'ASPIRE: Lead brought together young leaders from the LEAD organization for an intensive AI fluency workshop. Students earned certificates demonstrating their GenAI competencies and understanding of responsible AI practices, preparing the next generation of tech leaders in Greenwood.',
+    category: 'Events',
+    tags: ['ASPIRE', 'LEAD', 'Youth', 'AI Workshop'],
+    galleryEventId: 'aspire-lead-dec-2025',
   },
 ];
 
