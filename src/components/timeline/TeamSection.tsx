@@ -18,9 +18,11 @@ const teamMembers: TeamMember[] = [
     linkedIn: "https://www.linkedin.com/in/tyrance-billingsley-ii-ab0683123/"
   },
   {
-    name: "Team Member",
-    title: "Title",
-    bio: "Bio coming soon.",
+    name: "Josephine Nelms",
+    title: "Chief Operating Officer",
+    bio: "Josephine Nelms leads the operational strategy, partnerships and organizational systems that power Black Tech Street's mission. With more than 15 years of experience in operations, HR and organizational leadership, she previously served as Director of Operations at Atento Capital and spent a decade with Girl Scouts of Eastern Oklahoma. A Tulsa native and University of Tulsa graduate, her leadership has earned recognition including the Atent-Awesome Leadership Award (2023) and Youth at Heart Alumnus Achievement Award (2019).",
+    image: "/images/team/josephine-nelms.png",
+    linkedIn: "https://www.linkedin.com/in/josephine-nelms-108b87173/"
   },
   {
     name: "Team Member",
