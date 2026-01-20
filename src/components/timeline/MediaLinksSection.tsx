@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ExternalLink, Newspaper, PlayCircle } from 'lucide-react';
+import { ExternalLink, Newspaper } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface MediaLink {
@@ -13,26 +13,35 @@ interface MediaLinksSectionProps {
   isCleanMode?: boolean;
 }
 
-const sourceStyles: Record<string, { gradient: string; accent: string; logo: string }> = {
+const sourceStyles: Record<string, { 
+  gradient: string; 
+  accent: string; 
+  logo: string;
+  thumbnail: string;
+}> = {
   'Yahoo Finance': { 
-    gradient: 'from-purple-900/80 via-purple-800/60 to-purple-900/80',
+    gradient: 'from-purple-600 to-purple-800',
     accent: 'text-purple-400 border-purple-500/30',
-    logo: 'Yahoo Finance'
+    logo: 'Yahoo Finance',
+    thumbnail: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&h=200&fit=crop&auto=format'
   },
   'FOX23': { 
-    gradient: 'from-blue-900/80 via-blue-800/60 to-blue-900/80',
+    gradient: 'from-blue-600 to-blue-800',
     accent: 'text-blue-400 border-blue-500/30',
-    logo: 'FOX 23'
+    logo: 'FOX 23 News',
+    thumbnail: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400&h=200&fit=crop&auto=format'
   },
   'Tulsa World': { 
-    gradient: 'from-red-900/80 via-red-800/60 to-red-900/80',
+    gradient: 'from-red-600 to-red-800',
     accent: 'text-red-400 border-red-500/30',
-    logo: 'Tulsa World'
+    logo: 'Tulsa World',
+    thumbnail: 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=400&h=200&fit=crop&auto=format'
   },
   'LinkedIn': { 
-    gradient: 'from-[#0A66C2]/80 via-[#004182]/60 to-[#0A66C2]/80',
-    accent: 'text-[#0A66C2] border-[#0A66C2]/30',
-    logo: 'LinkedIn'
+    gradient: 'from-[#0A66C2] to-[#004182]',
+    accent: 'text-[#70b5f9] border-[#0A66C2]/30',
+    logo: 'LinkedIn',
+    thumbnail: 'https://images.unsplash.com/photo-1611944212129-29977ae1398c?w=400&h=200&fit=crop&auto=format'
   },
 };
 
@@ -44,12 +53,13 @@ export function MediaLinksSection({ links, isCleanMode = false }: MediaLinksSect
         <span>Media Coverage</span>
       </div>
       
-      <div className="grid gap-3">
+      <div className="grid gap-4 sm:grid-cols-2">
         {links.map((link, index) => {
           const style = sourceStyles[link.source] || { 
-            gradient: 'from-primary/80 via-primary/60 to-primary/80',
+            gradient: 'from-primary to-primary/80',
             accent: 'text-primary border-primary/30',
-            logo: link.source
+            logo: link.source,
+            thumbnail: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400&h=200&fit=crop&auto=format'
           };
           
           return (
@@ -58,52 +68,56 @@ export function MediaLinksSection({ links, isCleanMode = false }: MediaLinksSect
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: index * 0.08 }}
+              transition={{ duration: 0.4, delay: index * 0.1 }}
               className="group block"
             >
               <div className={cn(
                 'relative overflow-hidden rounded-xl border border-border/40',
-                'bg-card/60 backdrop-blur-sm',
-                'hover:border-primary/40 transition-all duration-300',
-                'hover:shadow-lg hover:shadow-black/20'
+                'bg-card/80 backdrop-blur-sm',
+                'hover:border-primary/50 transition-all duration-300',
+                'hover:shadow-xl hover:shadow-black/30 hover:-translate-y-1'
               )}>
-                {/* Gradient header bar */}
-                <div className={cn(
-                  'h-2 w-full bg-gradient-to-r',
-                  style.gradient
-                )} />
-                
-                {/* Content */}
-                <div className="p-4">
-                  {/* Source badge */}
-                  <div className="flex items-center justify-between mb-3">
+                {/* Thumbnail */}
+                <div className="relative h-28 overflow-hidden">
+                  <img 
+                    src={style.thumbnail} 
+                    alt=""
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  {/* Gradient overlay */}
+                  <div className={cn(
+                    'absolute inset-0 bg-gradient-to-t opacity-80',
+                    style.gradient
+                  )} />
+                  {/* Source badge overlay */}
+                  <div className="absolute top-3 left-3">
                     <span className={cn(
-                      'text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md',
-                      'bg-secondary/80 border',
-                      style.accent
+                      'text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md',
+                      'bg-black/40 backdrop-blur-sm text-white border border-white/20'
                     )}>
                       {style.logo}
                     </span>
-                    <ExternalLink className="h-3.5 w-3.5 text-muted-foreground/50 group-hover:text-primary transition-colors" />
                   </div>
-                  
-                  {/* Title */}
-                  <h4 className="text-sm font-medium text-foreground leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                  {/* External link icon */}
+                  <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="w-7 h-7 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                      <ExternalLink className="h-3.5 w-3.5 text-white" />
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Content */}
+                <div className="p-4">
+                  <h4 className="text-sm font-medium text-foreground leading-snug group-hover:text-primary transition-colors line-clamp-2 min-h-[2.5rem]">
                     {link.title}
                   </h4>
-                  
-                  {/* URL preview */}
-                  <p className="text-[10px] text-muted-foreground/60 mt-2 truncate">
+                  <p className="text-[10px] text-muted-foreground/60 mt-2 truncate flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
                     {new URL(link.url).hostname.replace('www.', '')}
                   </p>
                 </div>
-                
-                {/* Hover overlay */}
-                {!isCleanMode && (
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-                )}
               </div>
             </motion.a>
           );
