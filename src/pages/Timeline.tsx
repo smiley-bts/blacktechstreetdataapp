@@ -19,6 +19,7 @@ import { ImpactSnapshot } from '@/components/timeline/ImpactSnapshot';
 import { TeamSection } from '@/components/timeline/TeamSection';
 import { TestimonialsSection } from '@/components/timeline/TestimonialsSection';
 import { TableOfContents } from '@/components/timeline/TableOfContents';
+import { InTheNewsSection } from '@/components/timeline/InTheNewsSection';
 import { Button } from '@/components/ui/button';
 
 export default function Timeline() {
@@ -242,6 +243,9 @@ export default function Timeline() {
         <div id="impact-section">
           <ImpactSnapshot />
         </div>
+
+        {/* In the News */}
+        <InTheNewsSection />
 
         {/* Testimonials */}
         <TestimonialsSection />

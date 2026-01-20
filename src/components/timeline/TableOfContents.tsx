@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Users, Scroll, Calendar, MessageSquareQuote, Image, Building } from 'lucide-react';
+import { Users, Scroll, Calendar, MessageSquareQuote, Image, Building, Newspaper } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const sections = [
@@ -7,6 +7,7 @@ const sections = [
   { id: 'about-section', label: 'Story', icon: Scroll },
   { id: 'timeline-section', label: 'Timeline', icon: Calendar },
   { id: 'impact-section', label: 'Impact', icon: Building },
+  { id: 'news-section', label: 'News', icon: Newspaper },
   { id: 'testimonials', label: 'Voices', icon: MessageSquareQuote },
   { id: 'photo-gallery', label: 'Gallery', icon: Image },
 ];
