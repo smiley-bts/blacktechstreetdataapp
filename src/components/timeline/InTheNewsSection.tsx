@@ -108,7 +108,7 @@ export function InTheNewsSection() {
         className="text-center mb-10"
       >
         <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground">
-          In the News
+          Media
         </h2>
       </motion.div>
       

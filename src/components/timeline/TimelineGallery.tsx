@@ -7,6 +7,8 @@ import { cn } from '@/lib/utils';
 // Event categories for filtering
 export const galleryEvents = [
   { id: 'all', label: 'All Photos' },
+  { id: 'senate-testimony', label: 'Senate HELP Committee' },
+  { id: 'ai-executive-order', label: 'AI Executive Order (Oct 2023)' },
   { id: 'defcon-seed-ai', label: 'DEF-CON 31 & SEED AI (Aug 2023)' },
   { id: 'microsoft-announce', label: 'Microsoft Partnership (July 2023)' },
   { id: 'white-house-cyber', label: 'White House Cyber' },
@@ -37,6 +39,10 @@ const featuredImages = [
 
 // Gallery images organized by event
 const galleryImages = [
+  // Senate HELP Committee Testimony
+  { id: 801, src: '/images/gallery/senate-help-testimony-cspan.png', alt: 'Tyrance Billingsley testifying before Senate HELP Committee on AI & the Future of Work', eventId: 'senate-testimony' },
+  // AI Executive Order - October 2023
+  { id: 751, src: '/images/gallery/ai-executive-order-oct2023.png', alt: 'Signing of the AI Executive Order with Biden Administration', eventId: 'ai-executive-order' },
   // DEF-CON 31 & SEED AI - August 2023
   { id: 701, src: '/images/gallery/defcon-seed-ai-aug2023.png', alt: 'Responsible AI: DEF-CON 31 & SEED AI Group Photo', eventId: 'defcon-seed-ai' },
   // Microsoft Partnership Announcement - July 2023
