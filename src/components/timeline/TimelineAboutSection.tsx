@@ -48,15 +48,15 @@ export function TimelineAboutSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, ease: 'easeOut' }}
-                className="inline text-foreground"
+                className="inline text-primary font-bold"
               >
                 "What could Black Wall Street have been, had it been supported and not destroyed?"
               </motion.strong>{' '}
               BTS was built on three core realities:{' '}
-              <strong className="text-foreground">tech can create intergenerational wealth in 7–10 years</strong>, it is the{' '}
-              <strong className="text-foreground">engine behind global innovation</strong>, and by{' '}
-              <strong className="text-foreground">2030</strong> the U.S. is projected to face a shortage of up to{' '}
-              <strong className="text-foreground">4.3 million high-paying tech jobs</strong>.
+              <strong className="text-primary">tech can create intergenerational wealth in 7–10 years</strong>, it is the{' '}
+              <strong className="text-primary">engine behind global innovation</strong>, and by{' '}
+              <strong className="text-primary">2030</strong> the U.S. is projected to face a shortage of up to{' '}
+              <strong className="text-primary">4.3 million high-paying tech jobs</strong>.
             </p>
           </div>
         </motion.div>
