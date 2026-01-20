@@ -38,7 +38,6 @@ export const timelineItems: TimelineItem[] = [
     description: 'Tyrance was a panelist speaker at a convening of leaders in the cyber industry hosted by the White House Office of the National Cyber Director.',
     category: 'Policy',
     tags: ['White House', 'Cybersecurity', 'National'],
-    image: '/placeholder.svg',
   },
   {
     id: 'microsoft-partnership-2023',
@@ -48,7 +47,7 @@ export const timelineItems: TimelineItem[] = [
     description: 'BTS established a foundational relationship with Microsoft to anchor long-term AI and cybersecurity collaboration.',
     category: 'Partnerships',
     tags: ['Microsoft', 'Greenwood', 'Innovation'],
-    image: '/placeholder.svg',
+    image: '/images/gallery/08-moton-building.png',
   },
   {
     id: 'defcon-seedai-2023',
@@ -58,7 +57,6 @@ export const timelineItems: TimelineItem[] = [
     description: 'BTS partnered with SeedAI and the White House Office of Science and Technology Policy to bring 75 people to participate in the largest public red team of AI models at the time.',
     category: 'Research',
     tags: ['DEF CON', 'SeedAI', 'Red Team', 'Responsible AI'],
-    image: '/placeholder.svg',
   },
   {
     id: 'ai-executive-order-2023',
@@ -68,7 +66,6 @@ export const timelineItems: TimelineItem[] = [
     description: 'BTS aligned with national momentum around responsible AI following the signing of the AI Executive Order.',
     category: 'Policy',
     tags: ['Responsible AI', 'National Policy'],
-    image: '/placeholder.svg',
   },
   {
     id: 'senate-civil-rights-2023',
@@ -78,27 +75,6 @@ export const timelineItems: TimelineItem[] = [
     description: 'Tyrance testified in front of the Senate HELP Committee about AI and the future of work, and interviewed with the Democratic caucus on AI and civil rights.',
     category: 'Policy',
     tags: ['Senate', 'Civil Rights', 'AI'],
-    image: '/placeholder.svg',
-  },
-  {
-    id: 'hack-the-future-2024',
-    date: '2024-02',
-    year: 2024,
-    title: 'Hack the Future, Greenwood',
-    description: 'Co-hosted with SeedAI and the White House Science and Technology Policy, featuring use-case challenges across six focus areas including entrepreneurship, community and economic development, spirituality and religion, social and criminal justice, creative expression, and education.',
-    category: 'Events',
-    tags: ['Hackathon', 'Greenwood', 'Community'],
-    image: '/placeholder.svg',
-  },
-  {
-    id: 'cyber-director-visit-2024',
-    date: '2024-06',
-    year: 2024,
-    title: 'Hosted White House National Cyber Director',
-    description: 'BTS hosted the White House National Cyber Director during Juneteenth to discuss cybersecurity and community-centered innovation.',
-    category: 'Policy',
-    tags: ['Juneteenth', 'Cybersecurity', 'National'],
-    image: '/placeholder.svg',
   },
   {
     id: 'tech-hubs-2024',
@@ -108,7 +84,34 @@ export const timelineItems: TimelineItem[] = [
     description: 'Served on the steering committee that won both the federal tech hubs designation and a 51 million dollar grant, as one of only two cities awarded both.',
     category: 'Infrastructure',
     tags: ['Tech Hubs', 'Federal', 'Funding'],
-    image: '/placeholder.svg',
+  },
+  {
+    id: 'hack-the-future-2024',
+    date: '2024-02',
+    year: 2024,
+    title: 'Hack the Future, Greenwood',
+    description: 'Co-hosted with SeedAI and the White House Science and Technology Policy, featuring use-case challenges across six focus areas including entrepreneurship, community and economic development, spirituality and religion, social and criminal justice, creative expression, and education.',
+    category: 'Events',
+    tags: ['Hackathon', 'Greenwood', 'Community'],
+  },
+  {
+    id: 'cyber-director-visit-2024',
+    date: '2024-06',
+    year: 2024,
+    title: 'Hosted White House National Cyber Director',
+    description: 'BTS hosted the White House National Cyber Director during Juneteenth to discuss cybersecurity and community-centered innovation.',
+    category: 'Policy',
+    tags: ['Juneteenth', 'Cybersecurity', 'National'],
+  },
+  {
+    id: 'microsoft-visit-2024',
+    date: '2024-08',
+    year: 2024,
+    title: 'Microsoft Executive Visit to Greenwood',
+    description: 'Microsoft leadership visited Greenwood to tour historic sites and the Moton building, strengthening the partnership between BTS and Microsoft.',
+    category: 'Partnerships',
+    tags: ['Microsoft', 'Greenwood', 'Visit'],
+    image: '/images/gallery/01-chamber-group.png',
   },
   {
     id: 'gace-aspire-2025',
@@ -118,7 +121,7 @@ export const timelineItems: TimelineItem[] = [
     description: 'Greenwood AI Center of Excellence (G-ACE) became the national model for AI integration, governance, and adaptation at scale, powered by ASPIRE\'s Education, Innovation with Community, and Research pillars.',
     category: 'Infrastructure',
     tags: ['G-ACE', 'ASPIRE', 'Tulsa', 'AI Governance'],
-    image: '/placeholder.svg',
+    image: '/images/gallery/aspire-june-02.jpg',
     longDescription: `**Federal Recognition and Funding**
 - $51M Federal Tech Hub designation
 - $10.6M BTS sub-award for G-ACE establishment
@@ -144,6 +147,16 @@ The winner of the AI race will be the country that successfully integrates AI ac
 - **E**: Education and AI Fluency
 - **I**: Innovation with Community
 - **R**: Research and Societal Strategy (MIT, NYU, OU, TU)`,
+  },
+  {
+    id: 'aspire-june-2025',
+    date: '2025-06',
+    year: 2025,
+    title: 'ASPIRE AI Workshop - June 2025',
+    description: 'Community members gathered for a full-day AI fluency workshop, learning practical applications of generative AI and building projects with hands-on guidance from BTS facilitators.',
+    category: 'Events',
+    tags: ['ASPIRE', 'AI Fluency', 'Workshop', 'Community'],
+    image: '/images/gallery/aspire-june-03.jpg',
   },
   {
     id: 'nvidia-partnership-2025',
@@ -173,6 +186,16 @@ The winner of the AI race will be the country that successfully integrates AI ac
         url: 'https://tulsaworld.com/news/local/business/article_e886152c-e0d9-4732-ad15-99c79c48a617.html',
       },
     ],
+  },
+  {
+    id: 'aspire-sept-2025',
+    date: '2025-09-27',
+    year: 2025,
+    title: 'ASPIRE GenAI Fluency Lab - September 2025',
+    description: 'Over 100 participants joined the GenAI Fluency Lab to explore AI tools, build practical skills, and connect with the growing tech community in Greenwood.',
+    category: 'Events',
+    tags: ['ASPIRE', 'GenAI', 'Workshop', 'Tulsa'],
+    image: '/images/gallery/aspire-927-01.jpg',
   },
 ];
 
