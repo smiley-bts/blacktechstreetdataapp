@@ -10,20 +10,11 @@ interface TimelineCardProps {
   isCleanMode: boolean;
 }
 
-const categoryDots: Record<string, string> = {
-  Policy: 'bg-chart-blue',
-  Partnerships: 'bg-primary',
-  Community: 'bg-chart-pink',
-  Research: 'bg-chart-purple',
-  Events: 'bg-chart-amber',
-  Infrastructure: 'bg-chart-cyan',
-};
-
 export function TimelineCard({ item, index, isCleanMode }: TimelineCardProps) {
-  const formatDate = (dateStr: string) => {
-    const [year, month] = dateStr.split('-');
+  const formatMonth = (dateStr: string) => {
+    const [, month] = dateStr.split('-');
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return month ? `${monthNames[parseInt(month) - 1]} ${year}` : year;
+    return month ? monthNames[parseInt(month) - 1] : '';
   };
 
   return (
@@ -40,21 +31,15 @@ export function TimelineCard({ item, index, isCleanMode }: TimelineCardProps) {
         'transition-all duration-300',
         'hover:bg-card/60 hover:backdrop-blur-sm'
       )}>
-        {/* Category dot */}
-        <div className={cn(
-          'w-3 h-3 rounded-full mt-1.5 shrink-0 ring-2 ring-background',
-          categoryDots[item.category]
-        )} />
+        {/* BTS brand dot */}
+        <div className="w-3 h-3 rounded-full mt-1.5 shrink-0 ring-2 ring-background bg-primary" />
         
         {/* Content */}
         <div className="flex-1 min-w-0">
-          {/* Date only */}
-          <span className="text-xs text-muted-foreground font-medium">
-            {formatDate(item.date)}
-          </span>
-          
-          {/* Title */}
-          <h3 className="text-base font-semibold text-foreground leading-snug group-hover:text-primary transition-colors mt-0.5">
+          {/* Month - Title format */}
+          <h3 className="text-base font-semibold text-foreground leading-snug group-hover:text-primary transition-colors">
+            <span className="text-muted-foreground font-medium">{formatMonth(item.date)}</span>
+            <span className="text-muted-foreground/60 mx-1.5">—</span>
             {item.title}
           </h3>
           
