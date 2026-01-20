@@ -18,6 +18,7 @@ import { TimelineVerticalLine } from '@/components/timeline/TimelineVerticalLine
 import { ImpactSnapshot } from '@/components/timeline/ImpactSnapshot';
 import { TeamSection } from '@/components/timeline/TeamSection';
 import { TestimonialsSection } from '@/components/timeline/TestimonialsSection';
+import { TableOfContents } from '@/components/timeline/TableOfContents';
 import { Button } from '@/components/ui/button';
 
 export default function Timeline() {
@@ -166,29 +167,37 @@ export default function Timeline() {
       {/* Hero */}
       <TimelineHero />
 
+      {/* Table of Contents */}
+      <div className="relative z-10 px-5 max-w-2xl mx-auto">
+        <TableOfContents />
+      </div>
+
       {/* Main content */}
       <main className="relative z-10 px-5 pb-20 max-w-2xl mx-auto">
         {/* Team Section */}
-        <TeamSection />
+        <div id="team-section">
+          <TeamSection />
+        </div>
 
         {/* About Section */}
-        <TimelineAboutSection />
+        <div id="about-section">
+          <TimelineAboutSection />
+        </div>
 
         {/* Timeline heading */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center py-16"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4">
-            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-            <span className="text-xs font-medium text-primary uppercase tracking-wider">Timeline</span>
-          </div>
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground">
-            Our Journey
-          </h2>
-        </motion.div>
+        <div id="timeline-section">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center py-16"
+          >
+            <h2 className="text-3xl md:text-4xl font-display font-bold">
+              <span className="text-primary">Our</span>{' '}
+              <span className="text-foreground">Journey</span>
+            </h2>
+          </motion.div>
+        </div>
 
         {/* Timeline section with vertical line */}
         <div className="relative" ref={timelineStartRef}>
@@ -256,7 +265,9 @@ export default function Timeline() {
         )}
 
         {/* Impact Snapshot */}
-        <ImpactSnapshot />
+        <div id="impact-section">
+          <ImpactSnapshot />
+        </div>
 
         {/* Testimonials */}
         <TestimonialsSection />
