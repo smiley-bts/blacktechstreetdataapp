@@ -123,7 +123,7 @@ export function TimelineAboutSection() {
               Who We Serve
             </h3>
             <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
-              Black Tech Street serves local government, education institutions (K–12 through higher education), employers and business networks, entrepreneurs and startups, and community learners, including residents, career-switchers, and future-ready professionals.
+              Black Tech Street serves local government, Educational Institutions, employers and business networks, entrepreneurs and startups, and community learners, including residents, career-switchers, and future-ready professionals.
             </p>
           </div>
         </motion.div>
