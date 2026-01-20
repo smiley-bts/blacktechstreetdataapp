@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { MediaLinksSection } from './MediaLinksSection';
 
 interface TimelineCardProps {
   item: TimelineItem;
@@ -194,6 +195,13 @@ export function TimelineCard({ item, index, isCleanMode }: TimelineCardProps) {
               </div>
             </motion.div>
           </>
+        )}
+
+        {/* Media Links */}
+        {item.mediaLinks && item.mediaLinks.length > 0 && (
+          <div className="mt-4 pt-4 border-t border-border/30">
+            <MediaLinksSection links={item.mediaLinks} isCleanMode={isCleanMode} />
+          </div>
         )}
 
         {/* Links */}

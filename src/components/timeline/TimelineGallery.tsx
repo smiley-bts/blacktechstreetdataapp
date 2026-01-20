@@ -6,6 +6,11 @@ import { cn } from '@/lib/utils';
 
 // Gallery images organized by event
 const galleryImages = [
+  // NVIDIA Partnership Announcement - September 3, 2025
+  { id: 201, src: '/images/gallery/nvidia-sept3-01.jpg', alt: 'NVIDIA Partnership Announcement', event: 'NVIDIA Sep 2025' },
+  { id: 202, src: '/images/gallery/nvidia-sept3-02.jpg', alt: 'Community Leaders at NVIDIA Event', event: 'NVIDIA Sep 2025' },
+  { id: 203, src: '/images/gallery/nvidia-sept3-03.jpg', alt: 'Partnership Team Photo', event: 'NVIDIA Sep 2025' },
+  { id: 204, src: '/images/gallery/nvidia-sept3-04.jpg', alt: 'NVIDIA Event Attendees at Greenwood', event: 'NVIDIA Sep 2025' },
   // ASPIRE AI Workshop - September 27, 2025
   { id: 101, src: '/images/gallery/aspire-927-01.jpg', alt: 'ASPIRE GenAI Fluency Lab Presentation', event: 'ASPIRE Sep 2025' },
   { id: 102, src: '/images/gallery/aspire-927-02.jpg', alt: 'Workshop Group Discussion', event: 'ASPIRE Sep 2025' },
