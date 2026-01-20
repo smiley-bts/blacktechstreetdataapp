@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion';
-import { ChevronDown, ExternalLink } from 'lucide-react';
-import btsLogo from '@/assets/logos/bts-square-logo.png';
-import { Button } from '@/components/ui/button';
+import { ChevronDown } from 'lucide-react';
+import btsLogoB from '@/assets/logos/bts-b-logo.png';
 
 export function TimelineHero() {
   const scrollToTimeline = () => {
@@ -10,9 +9,6 @@ export function TimelineHero() {
 
   return (
     <section className="relative min-h-[85vh] flex flex-col items-center justify-center px-5 pb-12 pt-20 overflow-hidden">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/8 via-transparent to-transparent" />
-      
       {/* Floating particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(6)].map((_, i) => (
@@ -37,30 +33,48 @@ export function TimelineHero() {
         ))}
       </div>
       
-      {/* Logo */}
+      {/* Logo and Text - Horizontal Layout */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-        className="relative mb-8"
-      >
-        <div className="w-36 h-36 md:w-44 md:h-44 rounded-2xl overflow-hidden border-2 border-primary/30 shadow-2xl shadow-primary/20">
-          <img src={btsLogo} alt="Black Tech Street" className="w-full h-full object-contain" />
-        </div>
-        {/* Glow rings */}
-        <div className="absolute inset-0 -m-4 rounded-3xl bg-primary/15 blur-xl" />
-        <div className="absolute inset-0 -m-8 rounded-3xl bg-primary/5 blur-2xl" />
-      </motion.div>
-
-      {/* Scroll CTA */}
-      <motion.button
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.3 }}
+        transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+        className="flex flex-col md:flex-row items-center gap-6 md:gap-8 mb-12"
+      >
+        {/* B Logo */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="w-24 h-24 md:w-28 md:h-28 flex-shrink-0"
+        >
+          <img 
+            src={btsLogoB} 
+            alt="Black Tech Street" 
+            className="w-full h-full object-contain"
+          />
+        </motion.div>
+
+        {/* Text */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="text-center md:text-left"
+        >
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-foreground tracking-tight">
+            Black Tech Street
+          </h1>
+        </motion.div>
+      </motion.div>
+
+      {/* Scroll indicator */}
+      <motion.button
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6, delay: 0.5 }}
         onClick={scrollToTimeline}
         className="group flex flex-col items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
       >
-        <span className="text-sm font-medium">Explore</span>
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
