@@ -522,9 +522,10 @@ export default function MicrosoftVisitGallery() {
         </motion.section>
 
         {/* Footer */}
-        <footer className="mt-16 text-center text-sm text-gray-500 border-t border-gray-200 pt-10">
+        <footer className="mt-16 text-center text-sm text-gray-500 border-t border-gray-200 pt-10 pb-6">
           <p>Microsoft AI & Security Team Visit • January 16, 2026</p>
           <p>Hosted by <span className="text-emerald-600 font-medium">Black Tech Street</span></p>
+          <p className="mt-4 text-xs text-gray-400">Coded Up Fresh In The Kitchen By Chef Smiley 😊</p>
         </footer>
       </main>
 
