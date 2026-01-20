@@ -119,7 +119,7 @@ export function ImpactSnapshot() {
           <span className="text-xs font-medium text-primary uppercase tracking-wider">June–December 2025</span>
         </div>
         <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground">
-          Impact Snapshot
+          <span className="text-primary">Impact</span> Snapshot
         </h2>
       </motion.div>
 
