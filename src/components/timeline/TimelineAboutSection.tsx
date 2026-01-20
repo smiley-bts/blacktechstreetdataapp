@@ -38,11 +38,10 @@ export function TimelineAboutSection() {
         >
           <IconBox icon={<Target className="h-5 w-5 text-primary" strokeWidth={1.5} />} />
           <div>
-            <h3 className="text-lg md:text-xl font-display font-bold mb-2">
-              <span className="text-primary">Our</span>{' '}
-              <span className="text-foreground">Mission</span>
+            <h3 className="text-xl md:text-2xl font-display font-bold mb-3 text-foreground">
+              Mission
             </h3>
-            <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
+            <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
               {aboutContent.mission}
             </p>
           </div>
@@ -58,11 +57,10 @@ export function TimelineAboutSection() {
         >
           <IconBox icon={<Eye className="h-5 w-5 text-primary" strokeWidth={1.5} />} />
           <div>
-            <h3 className="text-lg md:text-xl font-display font-bold mb-2">
-              <span className="text-primary">Our</span>{' '}
-              <span className="text-foreground">Vision</span>
+            <h3 className="text-xl md:text-2xl font-display font-bold mb-3 text-foreground">
+              Vision
             </h3>
-            <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
+            <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
               {aboutContent.vision}
             </p>
           </div>
@@ -78,11 +76,10 @@ export function TimelineAboutSection() {
         >
           <IconBox icon={<Wrench className="h-5 w-5 text-primary" strokeWidth={1.5} />} />
           <div>
-            <h3 className="text-lg md:text-xl font-display font-bold mb-2">
-              <span className="text-primary">What</span>{' '}
-              <span className="text-foreground">We Do</span>
+            <h3 className="text-xl md:text-2xl font-display font-bold mb-3 text-foreground">
+              Approach
             </h3>
-            <div className="text-muted-foreground leading-relaxed text-sm md:text-base space-y-3">
+            <div className="text-muted-foreground leading-relaxed text-base md:text-lg space-y-4">
               {aboutContent.whatWeDo.split('\n\n').map((paragraph, i) => (
                 <p key={i}>{paragraph}</p>
               ))}
@@ -100,23 +97,22 @@ export function TimelineAboutSection() {
         >
           <IconBox icon={<Lightbulb className="h-5 w-5 text-primary" strokeWidth={1.5} />} />
           <div>
-            <h3 className="text-lg md:text-xl font-display font-bold mb-3">
-              <span className="text-primary">Our</span>{' '}
-              <span className="text-foreground">Origin</span>
+            <h3 className="text-xl md:text-2xl font-display font-bold mb-3 text-foreground">
+              Origin
             </h3>
-            <p className="text-foreground font-medium mb-4 italic text-sm md:text-base border-l-2 border-primary pl-4">
+            <p className="text-foreground font-medium mb-4 italic text-base md:text-lg border-l-2 border-primary pl-4">
               "{aboutContent.origin.question}"
             </p>
-            <p className="text-xs text-muted-foreground mb-4">
+            <p className="text-sm md:text-base text-muted-foreground mb-4">
               Black Tech Street was founded on this question, and a three-pronged epiphany:
             </p>
-            <ol className="space-y-3">
+            <ol className="space-y-4">
               {aboutContent.origin.epiphanies.map((epiphany, i) => (
                 <li key={i} className="flex items-start gap-3">
-                  <span className="w-7 h-7 rounded-lg bg-secondary text-primary text-sm font-bold flex items-center justify-center shrink-0 border border-primary/30">
+                  <span className="w-8 h-8 rounded-lg bg-secondary text-primary text-base font-bold flex items-center justify-center shrink-0 border border-primary/30">
                     {i + 1}
                   </span>
-                  <span className="text-muted-foreground text-sm leading-relaxed">
+                  <span className="text-muted-foreground text-base md:text-lg leading-relaxed">
                     {epiphany}
                   </span>
                 </li>
