@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,9 +17,12 @@ import {
   BookOpen,
   Landmark,
   GraduationCap,
-  Heart
+  Heart,
+  FileDown
 } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import PrintableRecap from "@/components/microsoft-visit/PrintableRecap";
+import PhotoGallery from "@/components/microsoft-visit/PhotoGallery";
 
 import btsBLogo from "@/assets/logos/bts-b-logo.png";
 
@@ -200,6 +203,8 @@ const staggerContainer = {
 };
 
 export default function MicrosoftVisitRecap() {
+  const printRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     document.documentElement.classList.remove('dark');
     document.documentElement.classList.add('light');
@@ -225,6 +230,10 @@ export default function MicrosoftVisitRecap() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const handleExportPDF = () => {
+    window.print();
   };
 
   return (
@@ -272,12 +281,20 @@ export default function MicrosoftVisitRecap() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3, duration: 0.4 }}
-            className="mb-4"
+            className="mb-4 flex items-center gap-3"
           >
             <Badge className="bg-emerald-500 text-white border-emerald-400 hover:bg-emerald-600 text-sm md:text-base px-4 py-1.5">
               <BookOpen className="h-3.5 w-3.5 md:h-4 md:w-4 mr-2" />
               Insights & Transcripts
             </Badge>
+            <Button
+              onClick={handleExportPDF}
+              size="sm"
+              className="bg-white/20 backdrop-blur-sm text-white border border-white/30 hover:bg-white/30 print:hidden"
+            >
+              <FileDown className="h-4 w-4 mr-2" />
+              Export PDF
+            </Button>
           </motion.div>
           
           <motion.div 
@@ -569,9 +586,12 @@ export default function MicrosoftVisitRecap() {
           </div>
         </motion.section>
 
+        {/* Photo Gallery */}
+        <PhotoGallery />
+
         {/* Back Link */}
         <motion.div 
-          className="text-center"
+          className="text-center print:hidden"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -585,6 +605,24 @@ export default function MicrosoftVisitRecap() {
           </Button>
         </motion.div>
       </main>
+
+      {/* Printable version for PDF export */}
+      <PrintableRecap 
+        ref={printRef}
+        meetingInsights={meetingInsights.map(m => ({
+          title: m.title,
+          focus: m.focus,
+          themes: m.themes,
+          insights: m.insights,
+          signal: m.signal
+        }))}
+        crossCuttingThemes={crossCuttingThemes.map(t => ({
+          title: t.title,
+          description: t.description
+        }))}
+        risks={risks}
+        opportunities={opportunities}
+      />
     </div>
   );
 }
