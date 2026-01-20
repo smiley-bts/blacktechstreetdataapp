@@ -49,6 +49,34 @@ export default function Timeline() {
     };
   }, []);
 
+  // Set SEO meta tags
+  useEffect(() => {
+    document.title = 'Black Tech Street | Timeline';
+    
+    const updateOrCreateMeta = (property: string, content: string, isName = false) => {
+      const attr = isName ? 'name' : 'property';
+      let meta = document.querySelector(`meta[${attr}="${property}"]`);
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute(attr, property);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', content);
+    };
+
+    updateOrCreateMeta('description', 'Explore Black Tech Street\'s journey rebirthing Historic Black Wall Street as a world-class AI and emerging technology innovation economy in Greenwood, Tulsa.', true);
+    updateOrCreateMeta('og:title', 'Black Tech Street | Timeline');
+    updateOrCreateMeta('og:description', 'Explore Black Tech Street\'s journey rebirthing Historic Black Wall Street as a world-class AI and emerging technology innovation economy.');
+    updateOrCreateMeta('og:url', 'https://blacktechstreetdataapp.lovable.app/timeline');
+    updateOrCreateMeta('og:image', 'https://blacktechstreetdataapp.lovable.app/images/bts-logo-white.png');
+    updateOrCreateMeta('og:type', 'website');
+    
+    updateOrCreateMeta('twitter:card', 'summary_large_image', true);
+    updateOrCreateMeta('twitter:title', 'Black Tech Street | Timeline', true);
+    updateOrCreateMeta('twitter:description', 'Explore Black Tech Street\'s journey rebirthing Historic Black Wall Street as a world-class innovation economy.', true);
+    updateOrCreateMeta('twitter:image', 'https://blacktechstreetdataapp.lovable.app/images/bts-logo-white.png', true);
+  }, []);
+
   // Handle hash navigation
   useEffect(() => {
     if (location.hash) {
@@ -167,9 +195,8 @@ export default function Timeline() {
             viewport={{ once: true }}
             className="text-center py-16"
           >
-            <h2 className="text-3xl md:text-4xl font-display font-bold">
-              <span className="text-primary">Our</span>{' '}
-              <span className="text-foreground">Journey</span>
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground">
+              Timeline
             </h2>
           </motion.div>
         </div>
