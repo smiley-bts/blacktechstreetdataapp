@@ -41,11 +41,8 @@ export function TimelineAboutSection() {
             <h3 className="text-xl md:text-2xl font-display font-bold mb-3 text-foreground">
               Origin
             </h3>
-            <p className="text-foreground font-medium mb-4 italic text-base md:text-lg border-l-2 border-primary pl-4">
-              "What could Black Wall Street have been, had it been supported and not destroyed?"
-            </p>
             <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
-              Black Tech Street was founded on this question, and three core realities: tech can create intergenerational wealth in 7–10 years, it is the engine behind global innovation, and by 2030 the U.S. is projected to face a shortage of up to 4.3 million high-paying tech jobs.
+              Black Tech Street was founded on one question: "<strong className="text-foreground">What could Black Wall Street have been, had it been supported and not destroyed?</strong>" BTS was built on three core realities: <strong className="text-foreground">tech can create intergenerational wealth in 7–10 years</strong>, it is the <strong className="text-foreground">engine behind global innovation</strong>, and by <strong className="text-foreground">2030</strong> the U.S. is projected to face a shortage of up to <strong className="text-foreground">4.3 million high-paying tech jobs</strong>.
             </p>
           </div>
         </motion.div>
