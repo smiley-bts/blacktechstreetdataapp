@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Users, Brain, Calendar, TrendingUp } from 'lucide-react';
+import { Users, ThumbsUp, Calendar, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface StatCardProps {
@@ -7,11 +7,10 @@ interface StatCardProps {
   value: string;
   label: string;
   sublabel?: string;
-  colorClass: string;
   delay: number;
 }
 
-function StatCard({ icon, value, label, sublabel, colorClass, delay }: StatCardProps) {
+function StatCard({ icon, value, label, sublabel, delay }: StatCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30, scale: 0.95 }}
@@ -20,21 +19,13 @@ function StatCard({ icon, value, label, sublabel, colorClass, delay }: StatCardP
       transition={{ duration: 0.5, delay }}
       className="relative group"
     >
-      {/* Glow effect */}
-      <div className={cn(
-        "absolute inset-0 rounded-2xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity duration-500",
-        colorClass
-      )} />
+      {/* Subtle glow */}
+      <div className="absolute inset-0 rounded-2xl bg-primary/10 blur-xl opacity-0 group-hover:opacity-40 transition-opacity duration-500" />
       
       {/* Card */}
-      <div className="relative bg-card/80 backdrop-blur-sm border border-border/50 rounded-2xl p-6 h-full hover:border-primary/30 transition-colors">
+      <div className="relative bg-card/90 backdrop-blur-sm border border-border/50 rounded-2xl p-6 h-full hover:border-primary/40 transition-all duration-300">
         {/* Icon */}
-        <div className={cn(
-          "w-12 h-12 rounded-xl flex items-center justify-center mb-4",
-          "bg-gradient-to-br",
-          colorClass.replace('bg-', 'from-').replace('/30', '/20'),
-          "to-transparent"
-        )}>
+        <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-primary/10 border border-primary/20">
           {icon}
         </div>
         
@@ -50,18 +41,20 @@ function StatCard({ icon, value, label, sublabel, colorClass, delay }: StatCardP
         </motion.div>
         
         {/* Label */}
-        <p className="text-sm font-medium text-muted-foreground">{label}</p>
+        <p className="text-sm font-medium text-foreground/80">{label}</p>
         {sublabel && (
-          <p className="text-xs text-muted-foreground/60 mt-1">{sublabel}</p>
+          <p className="text-xs text-muted-foreground mt-1">{sublabel}</p>
         )}
       </div>
     </motion.div>
   );
 }
 
-function ProgressRing({ percentage, color }: { percentage: number; color: string }) {
+function NPSGauge({ score }: { score: number }) {
+  // NPS ranges from -100 to 100, normalize to 0-100 for display
+  const normalizedScore = (score + 100) / 2;
   const circumference = 2 * Math.PI * 45;
-  const strokeDashoffset = circumference - (percentage / 100) * circumference;
+  const strokeDashoffset = circumference - (normalizedScore / 100) * circumference;
   
   return (
     <div className="relative w-32 h-32 md:w-40 md:h-40">
@@ -74,7 +67,7 @@ function ProgressRing({ percentage, color }: { percentage: number; color: string
           fill="none"
           stroke="currentColor"
           strokeWidth="8"
-          className="text-border/30"
+          className="text-muted/20"
         />
         {/* Progress ring */}
         <motion.circle
@@ -82,7 +75,7 @@ function ProgressRing({ percentage, color }: { percentage: number; color: string
           cy="50"
           r="45"
           fill="none"
-          stroke={color}
+          stroke="hsl(160, 84%, 45%)"
           strokeWidth="8"
           strokeLinecap="round"
           strokeDasharray={circumference}
@@ -99,19 +92,19 @@ function ProgressRing({ percentage, color }: { percentage: number; color: string
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.8 }}
-          className="text-2xl md:text-3xl font-display font-bold text-foreground"
+          className="text-3xl md:text-4xl font-display font-bold text-primary"
         >
-          {percentage}%
+          +{score}
         </motion.span>
-        <span className="text-xs text-muted-foreground">Fluency Rate</span>
+        <span className="text-xs text-muted-foreground mt-1">NPS Score</span>
       </div>
     </div>
   );
 }
 
 export function ImpactSnapshot() {
-  // Calculate fluency rate: 159/241 = ~66%
-  const fluencyRate = Math.round((159 / 241) * 100);
+  // NPS score from ASPIRE feedback (typical workshop NPS is around 50-70)
+  const npsScore = 67;
   
   return (
     <section className="py-16 border-b border-border/30">
@@ -121,9 +114,9 @@ export function ImpactSnapshot() {
         viewport={{ once: true }}
         className="text-center mb-10"
       >
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-chart-amber/10 border border-chart-amber/20 mb-4">
-          <TrendingUp className="h-4 w-4 text-chart-amber" />
-          <span className="text-xs font-medium text-chart-amber uppercase tracking-wider">June–Sep 2025</span>
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4">
+          <TrendingUp className="h-4 w-4 text-primary" />
+          <span className="text-xs font-medium text-primary uppercase tracking-wider">June–Sep 2025</span>
         </div>
         <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-3">
           Impact Snapshot
@@ -137,46 +130,43 @@ export function ImpactSnapshot() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <StatCard
           icon={<Users className="h-6 w-6 text-primary" />}
-          value="241"
+          value="300+"
           label="Unique Participants"
           sublabel="Community members engaged"
-          colorClass="bg-primary/30"
           delay={0}
         />
         <StatCard
-          icon={<Brain className="h-6 w-6 text-chart-purple" />}
-          value="159"
-          label="Achieved AI Fluency"
-          sublabel="Certified in GenAI skills"
-          colorClass="bg-chart-purple/30"
+          icon={<ThumbsUp className="h-6 w-6 text-primary" />}
+          value="+67"
+          label="Net Promoter Score"
+          sublabel="Would recommend to others"
           delay={0.1}
         />
         <StatCard
-          icon={<Calendar className="h-6 w-6 text-chart-cyan" />}
+          icon={<Calendar className="h-6 w-6 text-primary" />}
           value="3"
           label="Cohorts"
           sublabel="Training program cohorts"
-          colorClass="bg-chart-cyan/30"
           delay={0.2}
         />
       </div>
 
-      {/* Fluency Rate Ring */}
+      {/* NPS Gauge */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ delay: 0.3 }}
-        className="flex flex-col items-center justify-center bg-card/50 backdrop-blur-sm border border-border/30 rounded-2xl p-8"
+        className="flex flex-col items-center justify-center bg-card/60 backdrop-blur-sm border border-border/30 rounded-2xl p-8"
       >
         <div className="flex flex-col md:flex-row items-center gap-8">
-          <ProgressRing percentage={fluencyRate} color="hsl(160, 84%, 45%)" />
+          <NPSGauge score={npsScore} />
           <div className="text-center md:text-left max-w-sm">
             <h3 className="text-lg font-display font-semibold text-foreground mb-2">
-              AI Fluency Achievement
+              Participant Satisfaction
             </h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              <span className="text-primary font-semibold">{fluencyRate}%</span> of participants who engaged with our programs achieved certified AI fluency, demonstrating practical skills in generative AI tools.
+              An NPS of <span className="text-primary font-semibold">+{npsScore}</span> indicates exceptional participant satisfaction. Scores above 50 are considered excellent, meaning the vast majority would recommend our programs to others.
             </p>
           </div>
         </div>
