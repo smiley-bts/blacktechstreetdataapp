@@ -94,7 +94,7 @@ function NPSGauge({ score }: { score: number }) {
           transition={{ delay: 0.8 }}
           className="text-3xl md:text-4xl font-display font-bold text-primary"
         >
-          +{score}
+          {score}
         </motion.span>
         <span className="text-xs text-muted-foreground mt-1">NPS Score</span>
       </div>
@@ -116,37 +116,34 @@ export function ImpactSnapshot() {
       >
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4">
           <TrendingUp className="h-4 w-4 text-primary" />
-          <span className="text-xs font-medium text-primary uppercase tracking-wider">June–Sep 2025</span>
+          <span className="text-xs font-medium text-primary uppercase tracking-wider">June–December 2025</span>
         </div>
-        <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-3">
+        <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground">
           Impact Snapshot
         </h2>
-        <p className="text-muted-foreground max-w-md mx-auto text-sm">
-          Measurable outcomes from ASPIRE programming
-        </p>
       </motion.div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <StatCard
-          icon={<Users className="h-6 w-6 text-primary" />}
-          value="300+"
-          label="Unique Participants"
-          sublabel="Community members engaged"
-          delay={0}
-        />
-        <StatCard
-          icon={<ThumbsUp className="h-6 w-6 text-primary" />}
-          value="+91"
-          label="Net Promoter Score"
-          sublabel="Would recommend to others"
-          delay={0.1}
-        />
-        <StatCard
           icon={<Calendar className="h-6 w-6 text-primary" />}
           value="3"
           label="Cohorts"
           sublabel="Training program cohorts"
+          delay={0}
+        />
+        <StatCard
+          icon={<Users className="h-6 w-6 text-primary" />}
+          value="300+"
+          label="Unique Participants"
+          sublabel="Community members engaged"
+          delay={0.1}
+        />
+        <StatCard
+          icon={<ThumbsUp className="h-6 w-6 text-primary" />}
+          value="91"
+          label="Net Promoter Score"
+          sublabel="Would recommend to others"
           delay={0.2}
         />
       </div>
@@ -166,7 +163,7 @@ export function ImpactSnapshot() {
               Participant Satisfaction
             </h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              An NPS of <span className="text-primary font-semibold">+{npsScore}</span> indicates exceptional participant satisfaction. Scores above 50 are considered excellent, meaning the vast majority would recommend our programs to others.
+              An NPS of <span className="text-primary font-semibold">{npsScore}</span> indicates exceptional participant satisfaction. Scores above 50 are considered excellent, meaning the vast majority would recommend our programs to others.
             </p>
           </div>
         </div>
