@@ -129,8 +129,17 @@ export default function Timeline() {
           <TimelineAboutSection />
         </div>
 
-        {/* Timeline section marker */}
-        <div id="timeline-section" className="pt-8" />
+        {/* Timeline heading */}
+        <div id="timeline-section" className="pt-12 pb-6">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-2xl md:text-3xl font-display font-bold text-foreground"
+          >
+            Timeline
+          </motion.h2>
+        </div>
 
         {/* Simplified Timeline - compact visual flow */}
         <div className="relative" ref={timelineStartRef}>
