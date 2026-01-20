@@ -123,13 +123,13 @@ export function ImpactSnapshot() {
       >
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-chart-amber/10 border border-chart-amber/20 mb-4">
           <TrendingUp className="h-4 w-4 text-chart-amber" />
-          <span className="text-xs font-medium text-chart-amber uppercase tracking-wider">Jan–Sep 2025</span>
+          <span className="text-xs font-medium text-chart-amber uppercase tracking-wider">June–Sep 2025</span>
         </div>
         <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-3">
           Impact Snapshot
         </h2>
         <p className="text-muted-foreground max-w-md mx-auto text-sm">
-          Measurable outcomes from our first three quarters of programming
+          Measurable outcomes from ASPIRE programming
         </p>
       </motion.div>
 
@@ -153,9 +153,9 @@ export function ImpactSnapshot() {
         />
         <StatCard
           icon={<Calendar className="h-6 w-6 text-chart-cyan" />}
-          value="5"
-          label="Events Delivered"
-          sublabel="Workshops & training sessions"
+          value="3"
+          label="Cohorts"
+          sublabel="Training program cohorts"
           colorClass="bg-chart-cyan/30"
           delay={0.2}
         />
