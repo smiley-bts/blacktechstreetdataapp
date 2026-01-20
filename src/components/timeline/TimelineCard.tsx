@@ -125,8 +125,21 @@ export function TimelineCard({ item, index, isCleanMode }: TimelineCardProps) {
           </Button>
         </div>
 
-        {/* Image - only show if there's an actual image */}
-        {hasImage && (
+        {/* YouTube Embed */}
+        {item.youtubeUrl && (
+          <div className="relative aspect-video mb-4 rounded-xl overflow-hidden bg-secondary/50 border border-border/30">
+            <iframe
+              src={`https://www.youtube.com/embed/${item.youtubeUrl.match(/(?:v=|\/)([\w-]{11})/)?.[1]}${item.youtubeUrl.includes('t=') ? `?start=${item.youtubeUrl.match(/t=(\d+)/)?.[1] || '0'}` : ''}`}
+              title={item.title}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full h-full"
+            />
+          </div>
+        )}
+
+        {/* Image - only show if there's an actual image and no YouTube video */}
+        {hasImage && !item.youtubeUrl && (
           <div className="relative aspect-video mb-4 rounded-xl overflow-hidden bg-secondary/50 border border-border/30">
             <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
             {!isCleanMode && (

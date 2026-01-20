@@ -24,6 +24,7 @@ export interface TimelineItem {
   longDescription?: string;
   links?: { label: string; url: string }[];
   mediaLinks?: MediaLink[];
+  youtubeUrl?: string;
   photoCredit?: string;
   isFeatured?: boolean;
 }
@@ -154,6 +155,7 @@ The winner of the AI race will be the country that successfully integrates AI ac
     tags: ['NVIDIA', 'GPUs', 'Inception', 'Education', 'Greenwood'],
     image: '/images/gallery/nvidia-sept3-01.jpg',
     isFeatured: true,
+    youtubeUrl: 'https://www.youtube.com/watch?v=Xks2RYWa6Gg&t=30s',
     mediaLinks: [
       {
         title: 'Black Tech Street Collaborates with NVIDIA to Launch AI Partnership',
