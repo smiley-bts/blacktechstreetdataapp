@@ -8,7 +8,7 @@ export function TimelineHero() {
   };
 
   return (
-    <section className="relative min-h-[85vh] flex flex-col items-center justify-center px-5 pb-12 pt-20 overflow-hidden">
+    <section className="relative min-h-[50vh] flex flex-col items-center justify-center px-5 pb-6 pt-16 overflow-hidden">
       {/* Floating particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(6)].map((_, i) => (
@@ -38,7 +38,7 @@ export function TimelineHero() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-        className="flex flex-col md:flex-row items-center gap-6 md:gap-8 mb-12"
+        className="flex flex-col md:flex-row items-center gap-4 md:gap-6 mb-6"
       >
         {/* B Logo */}
         <motion.div
