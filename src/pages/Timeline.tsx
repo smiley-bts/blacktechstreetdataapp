@@ -16,6 +16,7 @@ import { TimelineAboutSection } from '@/components/timeline/TimelineAboutSection
 import { TimelineGallery } from '@/components/timeline/TimelineGallery';
 import { TimelineVerticalLine } from '@/components/timeline/TimelineVerticalLine';
 import { ImpactSnapshot } from '@/components/timeline/ImpactSnapshot';
+import { TeamSection } from '@/components/timeline/TeamSection';
 import { Button } from '@/components/ui/button';
 
 export default function Timeline() {
@@ -166,6 +167,9 @@ export default function Timeline() {
 
       {/* Main content */}
       <main className="relative z-10 px-5 pb-20 max-w-2xl mx-auto">
+        {/* Team Section */}
+        <TeamSection />
+
         {/* About Section */}
         <TimelineAboutSection />
 
