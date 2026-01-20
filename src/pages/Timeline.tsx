@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Filter } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
+import { useTheme } from 'next-themes';
 import { timelineItems, TimelineCategory } from '@/data/timeline';
 import { TimelineCard } from '@/components/timeline/TimelineCard';
 import { TimelineScrubber } from '@/components/timeline/TimelineScrubber';
@@ -18,12 +19,27 @@ import { Button } from '@/components/ui/button';
 export default function Timeline() {
   const location = useLocation();
   const prefersReducedMotion = useReducedMotion();
+  const { setTheme, theme } = useTheme();
   
   const [isCleanMode, setIsCleanMode] = useState(prefersReducedMotion || false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedYears, setSelectedYears] = useState<number[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<TimelineCategory[]>([]);
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
+  const [previousTheme, setPreviousTheme] = useState<string | undefined>(undefined);
+
+  // Force dark theme on this page
+  useEffect(() => {
+    setPreviousTheme(theme);
+    setTheme('dark');
+    
+    return () => {
+      // Restore previous theme when leaving the page
+      if (previousTheme && previousTheme !== 'dark') {
+        setTheme(previousTheme);
+      }
+    };
+  }, []);
 
   // Handle hash navigation
   useEffect(() => {
