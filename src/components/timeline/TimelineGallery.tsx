@@ -16,6 +16,14 @@ export const galleryEvents = [
 
 export type GalleryEventId = typeof galleryEvents[number]['id'] | 'aspire-dec-2025';
 
+// Featured hero image
+const featuredImage = {
+  id: 0,
+  src: '/images/gallery/microsoft-bts-retreat-mockup.png',
+  alt: 'Microsoft & Black Tech Street Retreat Center Mockup',
+  eventId: 'microsoft-visit' as const,
+};
+
 // Gallery images organized by event
 const galleryImages = [
   // ASPIRE AI Workshop - December 6, 2025
@@ -115,9 +123,6 @@ export function TimelineGallery({ initialEventFilter }: TimelineGalleryProps) {
         <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-3">
           Photo Gallery
         </h2>
-        <p className="text-muted-foreground max-w-md mx-auto mb-6">
-          Moments captured from our journey building the future of Greenwood.
-        </p>
 
         {/* Event filter tabs */}
         <div className="flex flex-wrap justify-center gap-2">
@@ -135,13 +140,41 @@ export function TimelineGallery({ initialEventFilter }: TimelineGalleryProps) {
               {event.label}
               <span className="ml-1.5 text-xs opacity-70">
                 ({event.id === 'all' 
-                  ? galleryImages.length 
-                  : galleryImages.filter(img => img.eventId === event.id).length})
+                  ? galleryImages.length + 1
+                  : event.id === 'microsoft-visit' 
+                    ? galleryImages.filter(img => img.eventId === event.id).length + 1
+                    : galleryImages.filter(img => img.eventId === event.id).length})
               </span>
             </button>
           ))}
         </div>
       </motion.div>
+
+      {/* Featured Hero Image - shown for 'all' or 'microsoft-visit' */}
+      {(activeEvent === 'all' || activeEvent === 'microsoft-visit') && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mb-6 cursor-pointer group"
+          onClick={() => setSelectedImage(featuredImage)}
+        >
+          <div className="relative overflow-hidden rounded-2xl border-2 border-primary/30 shadow-2xl shadow-primary/10">
+            <img
+              src={featuredImage.src}
+              alt={featuredImage.alt}
+              className="w-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <span className="text-sm text-white font-medium">
+                {featuredImage.alt}
+              </span>
+              <ZoomIn className="h-5 w-5 text-white/80" />
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* Masonry grid */}
       <AnimatePresence mode="wait">
