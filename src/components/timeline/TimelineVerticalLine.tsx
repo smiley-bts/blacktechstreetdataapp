@@ -104,76 +104,142 @@ export function TimelineVerticalLine({ items, timelineStartRef, timelineEndRef }
   };
 
   return (
-    <div 
-      ref={lineContainerRef}
-      className="absolute left-4 md:left-8 top-0 bottom-0 w-px z-10 hidden md:block"
-    >
-      {/* Background line */}
-      <div className="absolute inset-0 w-px bg-border/30" />
-      
-      {/* Animated progress line */}
-      <motion.div 
-        className="absolute top-0 left-0 w-px bg-gradient-to-b from-primary via-primary to-primary/50 origin-top"
-        style={{ 
-          scaleY,
-          height: '100%',
-        }}
-      />
-      
-      {/* Glow effect on progress line */}
-      <motion.div 
-        className="absolute top-0 left-[-1px] w-[3px] bg-primary/30 blur-sm origin-top"
-        style={{ 
-          scaleY,
-          height: '100%',
-        }}
-      />
+    <>
+      {/* Desktop vertical line */}
+      <div 
+        ref={lineContainerRef}
+        className="absolute left-4 md:left-8 top-0 bottom-0 w-px z-10 hidden md:block"
+      >
+        {/* Background line */}
+        <div className="absolute inset-0 w-px bg-border/30" />
+        
+        {/* Animated progress line */}
+        <motion.div 
+          className="absolute top-0 left-0 w-px bg-gradient-to-b from-primary via-primary to-primary/50 origin-top"
+          style={{ 
+            scaleY,
+            height: '100%',
+          }}
+        />
+        
+        {/* Glow effect on progress line */}
+        <motion.div 
+          className="absolute top-0 left-[-1px] w-[3px] bg-primary/30 blur-sm origin-top"
+          style={{ 
+            scaleY,
+            height: '100%',
+          }}
+        />
 
-      {/* Milestone dots */}
-      {items.map((item, index) => (
-        <button
-          key={item.id}
-          onClick={() => handleDotClick(item.id)}
-          className="absolute left-1/2 -translate-x-1/2 group z-20"
-          style={{ top: `${dotPositions[index] * 100}%` }}
-          aria-label={`Jump to ${item.title}`}
+        {/* Milestone dots */}
+        {items.map((item, index) => (
+          <button
+            key={item.id}
+            onClick={() => handleDotClick(item.id)}
+            className="absolute left-1/2 -translate-x-1/2 group z-20"
+            style={{ top: `${dotPositions[index] * 100}%` }}
+            aria-label={`Jump to ${item.title}`}
+          >
+            {/* Outer ring on active */}
+            <motion.div
+              className={cn(
+                'absolute inset-0 -m-2 rounded-full',
+                activeIndex === index ? 'bg-primary/20' : 'bg-transparent'
+              )}
+              animate={{
+                scale: activeIndex === index ? [1, 1.5, 1] : 1,
+                opacity: activeIndex === index ? [0.5, 0, 0.5] : 0,
+              }}
+              transition={{
+                duration: 2,
+                repeat: activeIndex === index ? Infinity : 0,
+                ease: 'easeInOut',
+              }}
+            />
+            
+            {/* Main dot */}
+            <motion.div
+              className={cn(
+                'w-3 h-3 rounded-full border-2 transition-all duration-300',
+                activeIndex === index
+                  ? `${categoryColors[item.category]} border-primary shadow-lg shadow-primary/50`
+                  : 'bg-card border-border/50 group-hover:border-primary/50 group-hover:bg-muted'
+              )}
+              whileHover={{ scale: 1.3 }}
+              whileTap={{ scale: 0.9 }}
+            />
+            
+            {/* Tooltip */}
+            <div className="absolute left-6 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-card border border-border rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-30">
+              <p className="text-xs font-medium text-foreground">{item.title}</p>
+              <p className="text-[10px] text-muted-foreground">{item.year}</p>
+            </div>
+          </button>
+        ))}
+      </div>
+
+      {/* Mobile floating timeline indicator */}
+      <div className="fixed bottom-20 right-4 z-50 md:hidden">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="relative"
         >
-          {/* Outer ring on active */}
-          <motion.div
-            className={cn(
-              'absolute inset-0 -m-2 rounded-full',
-              activeIndex === index ? 'bg-primary/20' : 'bg-transparent'
+          {/* Background pill */}
+          <div className="bg-card/95 backdrop-blur-xl border border-border/50 rounded-2xl shadow-2xl shadow-black/30 p-2">
+            {/* Progress track */}
+            <div className="relative w-8 h-32 bg-muted/30 rounded-full overflow-hidden">
+              {/* Progress fill */}
+              <motion.div
+                className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-primary to-primary/60 rounded-full"
+                style={{ 
+                  height: scrollYProgress,
+                  scaleY: scrollYProgress,
+                  originY: 1,
+                }}
+              />
+              
+              {/* Dots for each item */}
+              <div className="absolute inset-0 flex flex-col justify-between py-2">
+                {items.map((item, index) => (
+                  <button
+                    key={item.id}
+                    onClick={() => handleDotClick(item.id)}
+                    className="relative flex items-center justify-center"
+                    aria-label={`Jump to ${item.title}`}
+                  >
+                    <motion.div
+                      className={cn(
+                        'w-2.5 h-2.5 rounded-full transition-all duration-300',
+                        activeIndex === index
+                          ? `${categoryColors[item.category]} shadow-lg shadow-primary/50 ring-2 ring-primary/30`
+                          : 'bg-muted-foreground/30'
+                      )}
+                      animate={{
+                        scale: activeIndex === index ? 1.3 : 1,
+                      }}
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            {/* Current item indicator */}
+            {activeIndex >= 0 && items[activeIndex] && (
+              <motion.div
+                key={activeIndex}
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-2 text-center"
+              >
+                <p className="text-[10px] font-bold text-primary">
+                  {items[activeIndex].year}
+                </p>
+              </motion.div>
             )}
-            animate={{
-              scale: activeIndex === index ? [1, 1.5, 1] : 1,
-              opacity: activeIndex === index ? [0.5, 0, 0.5] : 0,
-            }}
-            transition={{
-              duration: 2,
-              repeat: activeIndex === index ? Infinity : 0,
-              ease: 'easeInOut',
-            }}
-          />
-          
-          {/* Main dot */}
-          <motion.div
-            className={cn(
-              'w-3 h-3 rounded-full border-2 transition-all duration-300',
-              activeIndex === index
-                ? `${categoryColors[item.category]} border-primary shadow-lg shadow-primary/50`
-                : 'bg-card border-border/50 group-hover:border-primary/50 group-hover:bg-muted'
-            )}
-            whileHover={{ scale: 1.3 }}
-            whileTap={{ scale: 0.9 }}
-          />
-          
-          {/* Tooltip */}
-          <div className="absolute left-6 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-card border border-border rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-30">
-            <p className="text-xs font-medium text-foreground">{item.title}</p>
-            <p className="text-[10px] text-muted-foreground">{item.year}</p>
           </div>
-        </button>
-      ))}
-    </div>
+        </motion.div>
+      </div>
+    </>
   );
 }

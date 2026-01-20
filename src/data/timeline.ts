@@ -27,7 +27,7 @@ export interface TimelineItem {
   youtubeUrl?: string;
   photoCredit?: string;
   isFeatured?: boolean;
-  galleryEventId?: 'nvidia-sep-2025' | 'aspire-sep-2025' | 'aspire-june-2025' | 'microsoft-visit';
+  galleryEventId?: 'nvidia-sep-2025' | 'aspire-sep-2025' | 'aspire-june-2025' | 'aspire-dec-2025' | 'microsoft-visit';
 }
 
 export const timelineItems: TimelineItem[] = [
@@ -147,6 +147,16 @@ export const timelineItems: TimelineItem[] = [
         url: 'https://www.linkedin.com/posts/experience-tulsa_a-game-changing-win-for-black-wall-street-activity-7369112114319323139-trVi',
       },
     ],
+  },
+  {
+    id: 'aspire-langston-dec-2025',
+    date: '2025-12-06',
+    year: 2025,
+    title: 'ASPIRE AI Workshop at Langston University',
+    description: 'GenAI Fluency & Responsibility Lab hosted at Langston University with 40+ participants earning certificates.',
+    category: 'Events',
+    tags: ['ASPIRE', 'Langston University', 'AI Workshop'],
+    galleryEventId: 'aspire-dec-2025',
   },
 ];
 
