@@ -111,9 +111,6 @@ export function TimelineCard({ item, index, isCleanMode }: TimelineCardProps) {
             <span className="text-sm font-medium text-primary bg-primary/10 px-3 py-1 rounded-full">
               {formatDate(item.date)}
             </span>
-            <Badge variant="outline" className={cn('text-xs', categoryColors[item.category])}>
-              {item.category}
-            </Badge>
           </div>
           <Button
             variant="ghost"
