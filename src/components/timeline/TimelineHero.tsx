@@ -62,25 +62,6 @@ export function TimelineHero() {
         Black Tech Street
       </motion.h1>
 
-      {/* Website Button */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-        className="mb-10"
-      >
-        <Button
-          asChild
-          size="lg"
-          className="gap-2"
-        >
-          <a href="https://www.blacktechstreet.com" target="_blank" rel="noopener noreferrer">
-            Visit Our Website
-            <ExternalLink className="h-4 w-4" />
-          </a>
-        </Button>
-      </motion.div>
-
       {/* Scroll CTA */}
       <motion.button
         initial={{ opacity: 0, y: 20 }}
