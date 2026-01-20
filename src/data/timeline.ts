@@ -69,6 +69,16 @@ export const timelineItems: TimelineItem[] = [
     tags: ['Executive Order', 'Biden Administration'],
   },
   {
+    id: 'democratic-caucus-2023',
+    date: '2023-12',
+    year: 2023,
+    title: 'AI & Civil Rights Democratic Caucus Interview',
+    description: 'Tyrance interviewed on the Democratic Caucus on AI and civil rights.',
+    category: 'Policy',
+    tags: ['Democratic Caucus', 'Civil Rights', 'AI'],
+    image: '/images/gallery/democratic-caucus-interview-dec2023.png',
+  },
+  {
     id: 'senate-civil-rights-2023',
     date: '2023-12',
     year: 2023,
