@@ -14,7 +14,7 @@ export const galleryEvents = [
   { id: 'microsoft-visit', label: 'Microsoft Visit' },
 ] as const;
 
-export type GalleryEventId = typeof galleryEvents[number]['id'];
+export type GalleryEventId = typeof galleryEvents[number]['id'] | 'aspire-dec-2025';
 
 // Gallery images organized by event
 const galleryImages = [
