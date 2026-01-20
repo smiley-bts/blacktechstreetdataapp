@@ -6,7 +6,7 @@ import { timelineItems, TimelineCategory } from '@/data/timeline';
 import { TimelineCard } from '@/components/timeline/TimelineCard';
 import { TimelineProgress } from '@/components/timeline/TimelineProgress';
 import { TechBackground } from '@/components/timeline/TechBackground';
-import { MicrosoftLabSection } from '@/components/timeline/MicrosoftLabSection';
+
 import { TimelineHero } from '@/components/timeline/TimelineHero';
 import { TimelineAboutSection } from '@/components/timeline/TimelineAboutSection';
 import { TimelineGallery } from '@/components/timeline/TimelineGallery';
@@ -164,11 +164,6 @@ export default function Timeline() {
                     />
                   ))}
                 </div>
-
-                {/* Microsoft Lab section */}
-                {group.showMicrosoftLab && (
-                  <MicrosoftLabSection isCleanMode={isCleanMode} />
-                )}
               </motion.div>
             ))}
           </div>
