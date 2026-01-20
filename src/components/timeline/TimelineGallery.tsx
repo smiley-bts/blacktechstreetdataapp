@@ -13,7 +13,8 @@ export const galleryEvents = [
   { id: 'aspire-sep-2025', label: 'ASPIRE Sep 2025', date: '2025-09-27' },
   { id: 'aspire-june-2025', label: 'ASPIRE June 2025', date: '2025-06-01' },
   { id: 'microsoft-visit', label: 'Microsoft Visit', date: '2025-01-15' },
-  { id: 'white-house-cyber', label: 'White House Cyber', date: '2024-06-01' },
+  { id: 'white-house-cyber', label: 'White House Cyber (June 2024)', date: '2024-06-19' },
+  { id: 'hack-the-future', label: 'Hack The Future (Feb 2024)', date: '2024-02-15' },
   { id: 'senate-testimony', label: 'Senate HELP Committee', date: '2024-02-01' },
   { id: 'ai-executive-order', label: 'AI Executive Order (Oct 2023)', date: '2023-10-30' },
   { id: 'defcon-seed-ai', label: 'DEF-CON 31 & SEED AI (Aug 2023)', date: '2023-08-01' },
@@ -58,9 +59,13 @@ const galleryImagesUnsorted = [
   { id: 601, src: '/images/gallery/microsoft-announce-01.png', alt: 'Microsoft Partnership Team Photo', eventId: 'microsoft-announce' },
   { id: 602, src: '/images/gallery/microsoft-announce-02.png', alt: 'Community Announcement at Greenwood', eventId: 'microsoft-announce' },
   { id: 603, src: '/images/gallery/microsoft-announce-03.png', alt: 'Microsoft Partnership Presentation', eventId: 'microsoft-announce' },
-  // White House Touchpoint Cyber Roundtable - 2024
+  // White House National Cyber Director Visit - Juneteenth June 2024
   { id: 501, src: '/images/gallery/white-house-cyber-01.png', alt: 'Tyrance Billingsley at White House Cyber Roundtable', eventId: 'white-house-cyber' },
   { id: 502, src: '/images/gallery/white-house-cyber-02.png', alt: 'National Cyber Director Office Discussion', eventId: 'white-house-cyber' },
+  { id: 503, src: '/images/gallery/white-house-cyber-03.png', alt: 'National Cyber Director Speaking at BTS Juneteenth Event', eventId: 'white-house-cyber' },
+  { id: 504, src: '/images/gallery/white-house-cyber-04.png', alt: 'White House Cyber Director Community Group Photo', eventId: 'white-house-cyber' },
+  // Hack The Future Greenwood - February 2024
+  { id: 850, src: '/images/gallery/hack-the-future-feb2024.png', alt: 'Hack The Future @ Greenwood with Black Tech Street & SEED AI', eventId: 'hack-the-future' },
   // ASPIRE AI Workshop - December 6, 2025
   { id: 401, src: '/images/gallery/aspire-dec6-01.jpg', alt: 'Tyrance Billingsley Presenting at Langston University', eventId: 'aspire-dec-2025' },
   { id: 402, src: '/images/gallery/aspire-dec6-02.jpg', alt: 'Workshop Participants Learning', eventId: 'aspire-dec-2025' },
