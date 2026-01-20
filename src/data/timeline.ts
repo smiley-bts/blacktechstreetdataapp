@@ -169,7 +169,7 @@ export const microsoftLabSection = {
 
 export const aboutContent = {
   mission: 'Rebirthing Historic Black Wall Street as a world class innovation economy rooted in AI, Cybersecurity, and Other Emerging Technologies.',
-  vision: 'Transforming Greenwood and Tulsa into the model for AI powered societies and economies of the future. Helping the United States win the AI Race and thrive in the AI Age.',
+  vision: 'Transforming Greenwood and the Greater Tulsa Region (GTR) into the model for AI powered societies and economies of the future. Helping the United States win the AI Race and thrive in the AI Age.',
   whatWeDo: `We architect and secure emerging technology focused talent, economic and industry development opportunities for Greenwood and the Greater Tulsa Region.
 
 We create strategies to make 21st century Greenwood a global leader in our defined technology areas, and we partner with companies, organizations, or institutions to create and secure investment, talent, and programming to bring that vision to fruition.`,
