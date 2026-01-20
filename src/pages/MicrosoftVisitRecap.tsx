@@ -36,6 +36,22 @@ interface MeetingInsight {
 
 const meetingInsights: MeetingInsight[] = [
   {
+    title: "City Hall Meeting",
+    icon: <Building2 className="h-6 w-6 text-amber-500" />,
+    focus: "Direct communication channel and mayoral engagement",
+    themes: [
+      "Opening direct line of communication between Microsoft and Mayor's Office",
+      "Building institutional relationship at city leadership level",
+      "Aligning city priorities with tech ecosystem development"
+    ],
+    insights: [
+      "Opportunity to establish ongoing dialogue between MSFT and city leadership",
+      "Mayor's Office interested in understanding tech ecosystem impact",
+      "City-level support critical for long-term infrastructure and policy alignment"
+    ],
+    signal: "Direct access to the Mayor's Office creates a unique opportunity for policy-level partnership and visibility."
+  },
+  {
     title: "Moton Community Meeting",
     icon: <Heart className="h-6 w-6 text-rose-500" />,
     focus: "Community trust, ethics, history, and responsible deployment",
@@ -84,7 +100,8 @@ const meetingInsights: MeetingInsight[] = [
     insights: [
       "Microsoft researchers emphasized operationalizing models, not just studying them",
       "Interest in shared labs and early startup exposure for students",
-      "Universities seen as force multipliers if aligned early"
+      "Universities seen as force multipliers if aligned early",
+      "Need for more tangible examples of how companies have leveraged the Lab for specific use cases"
     ],
     signal: "This group is primed for formal research-to-application pathways, especially tied to ASPIRE and lab pilots."
   },
@@ -101,7 +118,8 @@ const meetingInsights: MeetingInsight[] = [
     insights: [
       "Microsoft wants startups \"close early\" to product and security teams",
       "Emphasis on incentives, access, and distribution",
-      "Strong alignment with the lab as a scaling asset"
+      "Strong alignment with the lab as a scaling asset",
+      "Be on standby for funneling startups through the pipeline"
     ],
     signal: "The lab can become a preferred on-ramp for startups into Microsoft ecosystems if structured intentionally."
   }
