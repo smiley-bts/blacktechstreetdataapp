@@ -49,12 +49,9 @@ export function TeamSection() {
         viewport={{ once: true }}
         className="text-center mb-12"
       >
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4">
-          <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-          <span className="text-xs font-medium text-primary uppercase tracking-wider">Leadership</span>
-        </div>
-        <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground">
-          Meet the Team
+        <h2 className="text-3xl md:text-4xl font-display font-bold">
+          <span className="text-primary">Our</span>{' '}
+          <span className="text-foreground">Team</span>
         </h2>
       </motion.div>
 
