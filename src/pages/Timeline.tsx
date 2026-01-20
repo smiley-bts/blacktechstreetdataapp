@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { Filter, Info } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Filter } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import { timelineItems, TimelineCategory } from '@/data/timeline';
 import { TimelineCard } from '@/components/timeline/TimelineCard';
 import { TimelineScrubber } from '@/components/timeline/TimelineScrubber';
@@ -11,6 +11,8 @@ import { VisualModeToggle } from '@/components/timeline/VisualModeToggle';
 import { TechBackground } from '@/components/timeline/TechBackground';
 import { MicrosoftLabSection } from '@/components/timeline/MicrosoftLabSection';
 import { TimelineHero } from '@/components/timeline/TimelineHero';
+import { TimelineAboutSection } from '@/components/timeline/TimelineAboutSection';
+import { TimelineGallery } from '@/components/timeline/TimelineGallery';
 import { Button } from '@/components/ui/button';
 
 export default function Timeline() {
@@ -105,7 +107,7 @@ export default function Timeline() {
   const hasFilters = selectedYears.length > 0 || selectedCategories.length > 0;
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground dark">
       {/* Progress bar */}
       <TimelineProgress />
 
@@ -115,10 +117,7 @@ export default function Timeline() {
       {/* Fixed header */}
       <header className="fixed top-1 left-0 right-0 z-40 px-4 pt-4">
         <div className="flex items-center justify-between max-w-3xl mx-auto bg-card/80 backdrop-blur-md border border-border/50 rounded-2xl px-4 py-2 shadow-lg">
-          <Link to="/timeline-about" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-            <Info className="h-4 w-4" />
-            <span className="text-sm font-medium">About</span>
-          </Link>
+          <div className="text-sm font-display font-semibold text-foreground">BTS</div>
           
           <VisualModeToggle isCleanMode={isCleanMode} onToggle={() => setIsCleanMode(!isCleanMode)} />
           
@@ -142,8 +141,26 @@ export default function Timeline() {
       {/* Hero */}
       <TimelineHero />
 
-      {/* Timeline content */}
+      {/* Main content */}
       <main className="relative z-10 px-5 pb-20 max-w-2xl mx-auto">
+        {/* About Section */}
+        <TimelineAboutSection />
+
+        {/* Timeline heading */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center py-16"
+        >
+          <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-3">
+            Our Journey
+          </h2>
+          <p className="text-muted-foreground max-w-md mx-auto">
+            Key milestones in building the future of tech in Greenwood.
+          </p>
+        </motion.div>
+
         {/* Year groups */}
         {groupedItems.map((group) => (
           <div key={group.year} className="mb-12">
@@ -194,6 +211,16 @@ export default function Timeline() {
             </Button>
           </div>
         )}
+
+        {/* Gallery */}
+        <TimelineGallery />
+
+        {/* Footer */}
+        <footer className="text-center pt-12 border-t border-border/30">
+          <p className="text-xs text-muted-foreground">
+            © {new Date().getFullYear()} Black Tech Street. All rights reserved.
+          </p>
+        </footer>
       </main>
 
       {/* Scrubber */}
