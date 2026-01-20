@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Filter } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
@@ -14,6 +14,7 @@ import { MicrosoftLabSection } from '@/components/timeline/MicrosoftLabSection';
 import { TimelineHero } from '@/components/timeline/TimelineHero';
 import { TimelineAboutSection } from '@/components/timeline/TimelineAboutSection';
 import { TimelineGallery } from '@/components/timeline/TimelineGallery';
+import { TimelineVerticalLine } from '@/components/timeline/TimelineVerticalLine';
 import { Button } from '@/components/ui/button';
 
 export default function Timeline() {
@@ -27,6 +28,8 @@ export default function Timeline() {
   const [selectedCategories, setSelectedCategories] = useState<TimelineCategory[]>([]);
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
   const [previousTheme, setPreviousTheme] = useState<string | undefined>(undefined);
+  const timelineStartRef = useRef<HTMLDivElement>(null);
+  const timelineEndRef = useRef<HTMLDivElement>(null);
 
   // Force dark theme on this page
   useEffect(() => {
@@ -177,40 +180,54 @@ export default function Timeline() {
           </p>
         </motion.div>
 
-        {/* Year groups */}
-        {groupedItems.map((group) => (
-          <div key={group.year} className="mb-12">
-            {/* Year header */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="sticky top-20 z-20 mb-6"
-            >
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-card/90 backdrop-blur-md border border-border/50 rounded-full shadow-lg">
-                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                <span className="text-lg font-display font-bold text-foreground">{group.year}</span>
+        {/* Timeline section with vertical line */}
+        <div className="relative" ref={timelineStartRef}>
+          {/* Vertical progress line with dots */}
+          <TimelineVerticalLine 
+            items={filteredItems} 
+            timelineStartRef={timelineStartRef}
+            timelineEndRef={timelineEndRef}
+          />
+
+          {/* Year groups - offset for line */}
+          <div className="md:pl-12">
+            {groupedItems.map((group) => (
+              <div key={group.year} className="mb-12">
+                {/* Year header */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  className="sticky top-20 z-20 mb-6"
+                >
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-card/90 backdrop-blur-md border border-border/50 rounded-full shadow-lg">
+                    <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                    <span className="text-lg font-display font-bold text-foreground">{group.year}</span>
+                  </div>
+                </motion.div>
+
+                {/* Timeline items */}
+                <div className="space-y-6">
+                  {group.items.map((item, index) => (
+                    <TimelineCard
+                      key={item.id}
+                      item={item}
+                      index={index}
+                      isCleanMode={isCleanMode}
+                    />
+                  ))}
+                </div>
+
+                {/* Microsoft Lab section */}
+                {group.showMicrosoftLab && (
+                  <MicrosoftLabSection isCleanMode={isCleanMode} />
+                )}
               </div>
-            </motion.div>
-
-            {/* Timeline items */}
-            <div className="space-y-6">
-              {group.items.map((item, index) => (
-                <TimelineCard
-                  key={item.id}
-                  item={item}
-                  index={index}
-                  isCleanMode={isCleanMode}
-                />
-              ))}
-            </div>
-
-            {/* Microsoft Lab section */}
-            {group.showMicrosoftLab && (
-              <MicrosoftLabSection isCleanMode={isCleanMode} />
-            )}
+            ))}
           </div>
-        ))}
+          
+          <div ref={timelineEndRef} />
+        </div>
 
         {/* Empty state */}
         {filteredItems.length === 0 && (

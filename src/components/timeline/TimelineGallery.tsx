@@ -15,6 +15,7 @@ const galleryImages = [
   { id: 106, src: '/images/gallery/aspire-927-06.jpg', alt: 'Peer Learning', event: 'ASPIRE Sep 2025' },
   { id: 107, src: '/images/gallery/aspire-927-07.jpg', alt: 'Participant Q&A', event: 'ASPIRE Sep 2025' },
   { id: 108, src: '/images/gallery/aspire-927-08.jpg', alt: 'Taking Notes', event: 'ASPIRE Sep 2025' },
+  { id: 109, src: '/images/gallery/aspire-927-09.jpg', alt: 'AI Learning Exercise', event: 'ASPIRE Sep 2025' },
   // Microsoft Visit Photos
   { id: 1, src: '/images/gallery/01-chamber-group.png', alt: 'Chamber Group Meeting', event: 'Microsoft Visit' },
   { id: 2, src: '/images/gallery/02-memorial-group.png', alt: 'Memorial Group Photo', event: 'Microsoft Visit' },
