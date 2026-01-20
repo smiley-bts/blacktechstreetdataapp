@@ -76,8 +76,8 @@ export function TimelineAboutSection() {
         >
           <IconBox icon={<Wrench className="h-5 w-5 text-primary" strokeWidth={1.5} />} />
           <div>
-            <h3 className="text-xl md:text-2xl font-display font-bold mb-3 text-foreground">
-              Approach
+            <h3 className="text-xl md:text-2xl font-display font-bold mb-3 text-foreground uppercase tracking-wide">
+              What We Do
             </h3>
             <div className="text-muted-foreground leading-relaxed text-base md:text-lg space-y-4">
               {aboutContent.whatWeDo.split('\n\n').map((paragraph, i) => (
