@@ -27,18 +27,6 @@ function IconBox({ icon }: IconBoxProps) {
 export function TimelineAboutSection() {
   return (
     <section className="py-16 border-b border-border/30">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="text-center mb-12"
-      >
-        <h2 className="text-2xl md:text-3xl font-display font-bold">
-          <span className="text-primary">Our</span>{' '}
-          <span className="text-foreground">Story</span>
-        </h2>
-      </motion.div>
-
       <div className="grid gap-8 md:gap-10">
         {/* Mission */}
         <motion.div
@@ -50,7 +38,10 @@ export function TimelineAboutSection() {
         >
           <IconBox icon={<Target className="h-5 w-5 text-primary" strokeWidth={1.5} />} />
           <div>
-            <h3 className="text-lg font-display font-semibold mb-2 text-foreground">Mission</h3>
+            <h3 className="text-lg md:text-xl font-display font-bold mb-2">
+              <span className="text-primary">Our</span>{' '}
+              <span className="text-foreground">Mission</span>
+            </h3>
             <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
               {aboutContent.mission}
             </p>
@@ -67,7 +58,10 @@ export function TimelineAboutSection() {
         >
           <IconBox icon={<Eye className="h-5 w-5 text-primary" strokeWidth={1.5} />} />
           <div>
-            <h3 className="text-lg font-display font-semibold mb-2 text-foreground">Vision</h3>
+            <h3 className="text-lg md:text-xl font-display font-bold mb-2">
+              <span className="text-primary">Our</span>{' '}
+              <span className="text-foreground">Vision</span>
+            </h3>
             <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
               {aboutContent.vision}
             </p>
@@ -84,7 +78,10 @@ export function TimelineAboutSection() {
         >
           <IconBox icon={<Wrench className="h-5 w-5 text-primary" strokeWidth={1.5} />} />
           <div>
-            <h3 className="text-lg font-display font-semibold mb-2 text-foreground">What We Do</h3>
+            <h3 className="text-lg md:text-xl font-display font-bold mb-2">
+              <span className="text-primary">What</span>{' '}
+              <span className="text-foreground">We Do</span>
+            </h3>
             <div className="text-muted-foreground leading-relaxed text-sm md:text-base space-y-3">
               {aboutContent.whatWeDo.split('\n\n').map((paragraph, i) => (
                 <p key={i}>{paragraph}</p>
@@ -103,7 +100,10 @@ export function TimelineAboutSection() {
         >
           <IconBox icon={<Lightbulb className="h-5 w-5 text-primary" strokeWidth={1.5} />} />
           <div>
-            <h3 className="text-lg font-display font-semibold mb-3 text-foreground">Origin</h3>
+            <h3 className="text-lg md:text-xl font-display font-bold mb-3">
+              <span className="text-primary">Our</span>{' '}
+              <span className="text-foreground">Origin</span>
+            </h3>
             <p className="text-foreground font-medium mb-4 italic text-sm md:text-base border-l-2 border-primary pl-4">
               "{aboutContent.origin.question}"
             </p>
