@@ -191,28 +191,6 @@ export const timelineItems: TimelineItem[] = [
       },
     ],
   },
-  {
-    id: 'aspire-langston-dec-2025',
-    date: '2025-12-06',
-    year: 2025,
-    title: 'ASPIRE AI Workshop at Langston University',
-    description: 'GenAI Fluency & Responsibility Lab hosted at Langston University with 40+ participants earning certificates.',
-    longDescription: 'The ASPIRE (AI Fluency, Innovation & Research Engine) program hosted a GenAI Fluency & Responsibility Lab at Langston University. ASPIRE\'s goals include engaging 500+ community members, hosting 2-4 large marquee events per year and 4-8+ educational events per year, with outcomes of 25-50 individuals AI fluent/certified per quarter by Year 3.',
-    category: 'Events',
-    tags: ['ASPIRE', 'Langston University', 'AI Workshop'],
-    galleryEventId: 'aspire-dec-2025',
-  },
-  {
-    id: 'aspire-lead-dec-2025',
-    date: '2025-12-20',
-    year: 2025,
-    title: 'ASPIRE: Lead',
-    description: 'Youth-focused AI leadership program with certificate recipients from the LEAD organization.',
-    longDescription: 'ASPIRE: Lead brought together young leaders from the LEAD organization for an intensive AI fluency workshop. Students earned certificates demonstrating their GenAI competencies and understanding of responsible AI practices, preparing the next generation of tech leaders in Greenwood.',
-    category: 'Events',
-    tags: ['ASPIRE', 'LEAD', 'Youth', 'AI Workshop'],
-    galleryEventId: 'aspire-lead-dec-2025',
-  },
 ];
 
 export const microsoftLabSection = {
