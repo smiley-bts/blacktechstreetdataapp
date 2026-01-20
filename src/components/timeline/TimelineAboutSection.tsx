@@ -43,9 +43,22 @@ export function TimelineAboutSection() {
             </h3>
             <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
               Black Tech Street was founded on one question:{' '}
-              <strong className="text-foreground">
-                “What could Black Wall Street have been, had it been supported and not destroyed?”
-              </strong>{' '}
+              <motion.strong
+                initial={{ opacity: 0.6, y: 5 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, ease: 'easeOut' }}
+                className="inline text-foreground relative"
+              >
+                "What could Black Wall Street have been, had it been supported and not destroyed?"
+                <motion.span
+                  initial={{ scaleX: 0 }}
+                  whileInView={{ scaleX: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
+                  className="absolute -bottom-0.5 left-0 right-0 h-[2px] bg-primary/50 origin-left"
+                />
+              </motion.strong>{' '}
               BTS was built on three core realities:{' '}
               <strong className="text-foreground">tech can create intergenerational wealth in 7–10 years</strong>, it is the{' '}
               <strong className="text-foreground">engine behind global innovation</strong>, and by{' '}
