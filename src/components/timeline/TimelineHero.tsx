@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
-import { ChevronDown, Sparkles } from 'lucide-react';
+import { ChevronDown, ExternalLink } from 'lucide-react';
 import btsLogo from '@/assets/logos/bts-square-logo.png';
+import { Button } from '@/components/ui/button';
 
 export function TimelineHero() {
   const scrollToTimeline = () => {
@@ -43,12 +44,12 @@ export function TimelineHero() {
         transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
         className="relative mb-8"
       >
-        <div className="w-24 h-24 md:w-28 md:h-28 rounded-2xl overflow-hidden border-2 border-primary/30 shadow-2xl shadow-primary/20">
+        <div className="w-36 h-36 md:w-44 md:h-44 rounded-2xl overflow-hidden border-2 border-primary/30 shadow-2xl shadow-primary/20">
           <img src={btsLogo} alt="Black Tech Street" className="w-full h-full object-contain" />
         </div>
         {/* Glow rings */}
-        <div className="absolute inset-0 -m-3 rounded-3xl bg-primary/15 blur-xl" />
-        <div className="absolute inset-0 -m-6 rounded-3xl bg-primary/5 blur-2xl" />
+        <div className="absolute inset-0 -m-4 rounded-3xl bg-primary/15 blur-xl" />
+        <div className="absolute inset-0 -m-8 rounded-3xl bg-primary/5 blur-2xl" />
       </motion.div>
 
       {/* Headline */}
@@ -56,35 +57,39 @@ export function TimelineHero() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.1 }}
-        className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-center max-w-4xl mb-5"
+        className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-center text-foreground mb-8"
       >
-        <span className="text-gradient-primary">Building the Future</span>
-        <br />
-        <span className="text-foreground">of Greenwood</span>
+        Black Tech Street
       </motion.h1>
 
-      {/* Subtext */}
-      <motion.p
+      {/* Website Button */}
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        className="text-base md:text-lg text-muted-foreground text-center max-w-2xl mb-10 px-4 leading-relaxed"
+        className="mb-10"
       >
-        From the first White House roundtable to national AI leadership, explore Black Tech Street's journey reshaping tech innovation in America.
-      </motion.p>
+        <Button
+          asChild
+          size="lg"
+          className="gap-2"
+        >
+          <a href="https://www.blacktechstreet.com" target="_blank" rel="noopener noreferrer">
+            Visit Our Website
+            <ExternalLink className="h-4 w-4" />
+          </a>
+        </Button>
+      </motion.div>
 
-      {/* CTA */}
+      {/* Scroll CTA */}
       <motion.button
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.3 }}
         onClick={scrollToTimeline}
-        className="group flex flex-col items-center gap-3 text-primary hover:text-primary/80 transition-colors"
+        className="group flex flex-col items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
       >
-        <span className="flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-full bg-primary/10 border border-primary/20 group-hover:bg-primary/15 transition-colors">
-          <Sparkles className="h-4 w-4" />
-          Explore the Timeline
-        </span>
+        <span className="text-sm font-medium">Explore</span>
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
