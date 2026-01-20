@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 // Event categories for filtering
 export const galleryEvents = [
   { id: 'all', label: 'All Photos' },
+  { id: 'defcon-seed-ai', label: 'DEF-CON 31 & SEED AI (Aug 2023)' },
   { id: 'microsoft-announce', label: 'Microsoft Partnership (July 2023)' },
   { id: 'white-house-cyber', label: 'White House Cyber' },
   { id: 'aspire-dec-2025', label: 'ASPIRE Dec 2025' },
@@ -36,6 +37,8 @@ const featuredImages = [
 
 // Gallery images organized by event
 const galleryImages = [
+  // DEF-CON 31 & SEED AI - August 2023
+  { id: 701, src: '/images/gallery/defcon-seed-ai-aug2023.png', alt: 'Responsible AI: DEF-CON 31 & SEED AI Group Photo', eventId: 'defcon-seed-ai' },
   // Microsoft Partnership Announcement - July 2023
   { id: 601, src: '/images/gallery/microsoft-announce-01.png', alt: 'Microsoft Partnership Team Photo', eventId: 'microsoft-announce' },
   { id: 602, src: '/images/gallery/microsoft-announce-02.png', alt: 'Community Announcement at Greenwood', eventId: 'microsoft-announce' },
@@ -178,11 +181,13 @@ export function TimelineGallery({ initialEventFilter }: TimelineGalleryProps) {
               className="cursor-pointer group"
               onClick={() => setSelectedImage(image)}
             >
-              <div className="relative overflow-hidden rounded-2xl border-2 border-primary/30 shadow-2xl shadow-primary/10 aspect-[4/3]">
+              <div className="relative overflow-hidden rounded-2xl border-2 border-primary/30 shadow-2xl shadow-primary/10 aspect-[4/3] bg-muted/20">
                 <img
                   src={image.src}
                   alt={image.alt}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  loading="eager"
+                  decoding="async"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -216,12 +221,18 @@ export function TimelineGallery({ initialEventFilter }: TimelineGalleryProps) {
               className="break-inside-avoid group relative cursor-pointer"
               onClick={() => setSelectedImage(image)}
             >
-              <div className="relative overflow-hidden rounded-xl border border-border/30">
+              <div className="relative overflow-hidden rounded-xl border border-border/30 bg-muted/20">
                 <img
                   src={image.src}
                   alt={image.alt}
                   className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   loading="lazy"
+                  decoding="async"
+                  style={{ minHeight: '150px' }}
+                  onLoad={(e) => {
+                    const target = e.currentTarget;
+                    target.style.minHeight = 'auto';
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300">
