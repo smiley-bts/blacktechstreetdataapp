@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 // Event categories for filtering
 export const galleryEvents = [
   { id: 'all', label: 'All Photos' },
+  { id: 'aspire-dec-2025', label: 'ASPIRE Dec 2025' },
   { id: 'nvidia-sep-2025', label: 'NVIDIA Sep 2025' },
   { id: 'aspire-sep-2025', label: 'ASPIRE Sep 2025' },
   { id: 'aspire-june-2025', label: 'ASPIRE June 2025' },
@@ -17,6 +18,12 @@ export type GalleryEventId = typeof galleryEvents[number]['id'];
 
 // Gallery images organized by event
 const galleryImages = [
+  // ASPIRE AI Workshop - December 6, 2025
+  { id: 401, src: '/images/gallery/aspire-dec6-01.jpg', alt: 'Tyrance Billingsley Presenting at Langston University', eventId: 'aspire-dec-2025' },
+  { id: 402, src: '/images/gallery/aspire-dec6-02.jpg', alt: 'Workshop Participants Learning', eventId: 'aspire-dec-2025' },
+  { id: 403, src: '/images/gallery/aspire-dec6-03.jpg', alt: 'Lovable Design Prompt Review', eventId: 'aspire-dec-2025' },
+  { id: 404, src: '/images/gallery/aspire-dec6-04.jpg', alt: 'ASPIRE Certificate Recipients', eventId: 'aspire-dec-2025' },
+  { id: 405, src: '/images/gallery/aspire-dec6-05.jpg', alt: 'ASPIRE GenAI Fluency Lab Group Photo', eventId: 'aspire-dec-2025' },
   // NVIDIA Partnership Announcement - September 3, 2025
   { id: 201, src: '/images/gallery/nvidia-sept3-01.jpg', alt: 'NVIDIA Partnership Announcement', eventId: 'nvidia-sep-2025' },
   { id: 202, src: '/images/gallery/nvidia-sept3-02.jpg', alt: 'Community Leaders at NVIDIA Event', eventId: 'nvidia-sep-2025' },

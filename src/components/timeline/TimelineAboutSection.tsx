@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Target, Eye, Wrench, Lightbulb } from 'lucide-react';
+import { Target, Eye, Wrench, Lightbulb, Users } from 'lucide-react';
 import { aboutContent } from '@/data/timeline';
 import { cn } from '@/lib/utils';
 
@@ -76,7 +76,7 @@ export function TimelineAboutSection() {
         >
           <IconBox icon={<Wrench className="h-5 w-5 text-primary" strokeWidth={1.5} />} />
           <div>
-            <h3 className="text-xl md:text-2xl font-display font-bold mb-3 text-foreground uppercase tracking-wide">
+            <h3 className="text-xl md:text-2xl font-display font-bold mb-3 text-foreground">
               What We Do
             </h3>
             <div className="text-muted-foreground leading-relaxed text-base md:text-lg space-y-4">
@@ -84,6 +84,25 @@ export function TimelineAboutSection() {
                 <p key={i}>{paragraph}</p>
               ))}
             </div>
+          </div>
+        </motion.div>
+
+        {/* Who We Serve */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.35 }}
+          className="flex items-start gap-5"
+        >
+          <IconBox icon={<Users className="h-5 w-5 text-primary" strokeWidth={1.5} />} />
+          <div>
+            <h3 className="text-xl md:text-2xl font-display font-bold mb-3 text-foreground">
+              Who We Serve
+            </h3>
+            <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
+              Black Tech Street serves local government, education institutions (K–12 through higher education), employers and business networks, entrepreneurs and startups, and community learners, including residents, career-switchers, and future-ready professionals.
+            </p>
           </div>
         </motion.div>
 
