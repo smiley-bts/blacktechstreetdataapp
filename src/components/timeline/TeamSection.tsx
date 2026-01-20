@@ -25,9 +25,11 @@ const teamMembers: TeamMember[] = [
     linkedIn: "https://www.linkedin.com/in/josephine-nelms-108b87173/"
   },
   {
-    name: "Team Member",
-    title: "Title",
-    bio: "Bio coming soon.",
+    name: "Allen Collins",
+    title: "Community & Logistics Manager",
+    bio: "Allen Collins transforms BTS initiatives into high-impact experiences that strengthen Tulsa's innovation ecosystem. He oversees program execution, community engagements, and manages logistics while cultivating relationships with local partners. Previously, Allen held marketing and operations roles with City Year Tulsa, Hunger Free Oklahoma, and inTulsa. Active in civic leadership, he participated in Leadership Tulsa New Voices Class 12 and the TYPros Get On Board Internship.",
+    image: "/images/team/allen-collins.png",
+    linkedIn: "https://www.linkedin.com/in/allen-collins/"
   },
   {
     name: "Team Member",
