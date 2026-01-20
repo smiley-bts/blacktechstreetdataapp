@@ -113,14 +113,6 @@ export function TimelineCard({ item, index, isCleanMode }: TimelineCardProps) {
               {formatDate(item.date)}
             </span>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleShare}
-            className="h-8 w-8 text-muted-foreground hover:text-primary shrink-0"
-          >
-            <Share2 className="h-4 w-4" />
-          </Button>
         </div>
 
         {/* YouTube Embed */}
