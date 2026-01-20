@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { 
-  Download, 
   Users, 
   Building2, 
   Lightbulb, 
@@ -26,13 +25,6 @@ import PhotoGallery from "@/components/microsoft-visit/PhotoGallery";
 
 import btsBLogo from "@/assets/logos/bts-b-logo.png";
 
-interface TranscriptFile {
-  name: string;
-  filename: string;
-  icon: React.ReactNode;
-  description: string;
-}
-
 interface MeetingInsight {
   title: string;
   icon: React.ReactNode;
@@ -41,33 +33,6 @@ interface MeetingInsight {
   insights: string[];
   signal: string;
 }
-
-const transcripts: TranscriptFile[] = [
-  {
-    name: "Moton Community Meeting",
-    filename: "moton-community-transcript.txt",
-    icon: <Heart className="h-5 w-5" />,
-    description: "Community roundtable with Greenwood elders and local leaders"
-  },
-  {
-    name: "Tulsa Chamber Meeting",
-    filename: "tulsa-chamber-transcript.txt",
-    icon: <Building2 className="h-5 w-5" />,
-    description: "Economic development discussion with Tulsa Regional Chamber"
-  },
-  {
-    name: "Higher Education Consortium",
-    filename: "higher-ed-consortium-transcript.txt",
-    icon: <GraduationCap className="h-5 w-5" />,
-    description: "Briefing with Tulsa Higher Education Consortium partners"
-  },
-  {
-    name: "Gradient Team Meeting",
-    filename: "gradient-team-transcript.txt",
-    icon: <Rocket className="h-5 w-5" />,
-    description: "Discussion with Gradient startup ecosystem team"
-  }
-];
 
 const meetingInsights: MeetingInsight[] = [
   {
@@ -223,15 +188,6 @@ export default function MicrosoftVisitRecap() {
     };
   }, []);
 
-  const handleDownload = (filename: string) => {
-    const link = document.createElement('a');
-    link.href = `/transcripts/${filename}`;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   const handleExportPDF = () => {
     window.print();
   };
@@ -378,54 +334,6 @@ export default function MicrosoftVisitRecap() {
               </div>
             </CardContent>
           </Card>
-        </motion.section>
-
-        {/* Downloadable Transcripts */}
-        <motion.section 
-          className="mb-16"
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-        >
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <Download className="h-6 w-6 text-emerald-600" />
-            Meeting Transcripts
-          </h2>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {transcripts.map((transcript, index) => (
-              <motion.div
-                key={transcript.filename}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Card className="bg-white/80 backdrop-blur-sm border-gray-200 hover:shadow-lg transition-all duration-300 hover:border-emerald-300">
-                  <CardContent className="p-5">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="text-emerald-600">{transcript.icon}</span>
-                          <h3 className="font-semibold text-gray-900">{transcript.name}</h3>
-                        </div>
-                        <p className="text-sm text-gray-500">{transcript.description}</p>
-                      </div>
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        className="shrink-0 border-emerald-300 text-emerald-700 hover:bg-emerald-50"
-                        onClick={() => handleDownload(transcript.filename)}
-                      >
-                        <Download className="h-4 w-4 mr-1" />
-                        Download
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
         </motion.section>
 
         {/* Meeting Breakdown */}
