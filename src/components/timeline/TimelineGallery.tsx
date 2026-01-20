@@ -4,24 +4,33 @@ import { X, ZoomIn, Download } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 
-// Event categories for filtering
+// Event categories for filtering with dates for chronological sorting
+// Events are listed newest to oldest in the UI tabs
 export const galleryEvents = [
-  { id: 'all', label: 'All Photos' },
-  { id: 'senate-testimony', label: 'Senate HELP Committee' },
-  { id: 'ai-executive-order', label: 'AI Executive Order (Oct 2023)' },
-  { id: 'defcon-seed-ai', label: 'DEF-CON 31 & SEED AI (Aug 2023)' },
-  { id: 'microsoft-announce', label: 'Microsoft Partnership (July 2023)' },
-  { id: 'white-house-cyber', label: 'White House Cyber' },
-  { id: 'aspire-dec-2025', label: 'ASPIRE Dec 2025' },
-  { id: 'nvidia-sep-2025', label: 'NVIDIA Sep 2025' },
-  { id: 'aspire-sep-2025', label: 'ASPIRE Sep 2025' },
-  { id: 'aspire-june-2025', label: 'ASPIRE June 2025' },
-  { id: 'microsoft-visit', label: 'Microsoft Visit' },
+  { id: 'all', label: 'All Photos', date: null },
+  { id: 'aspire-dec-2025', label: 'ASPIRE Dec 2025', date: '2025-12-06' },
+  { id: 'nvidia-sep-2025', label: 'NVIDIA Sep 2025', date: '2025-09-03' },
+  { id: 'aspire-sep-2025', label: 'ASPIRE Sep 2025', date: '2025-09-27' },
+  { id: 'aspire-june-2025', label: 'ASPIRE June 2025', date: '2025-06-01' },
+  { id: 'microsoft-visit', label: 'Microsoft Visit', date: '2025-01-15' },
+  { id: 'white-house-cyber', label: 'White House Cyber', date: '2024-06-01' },
+  { id: 'senate-testimony', label: 'Senate HELP Committee', date: '2024-02-01' },
+  { id: 'ai-executive-order', label: 'AI Executive Order (Oct 2023)', date: '2023-10-30' },
+  { id: 'defcon-seed-ai', label: 'DEF-CON 31 & SEED AI (Aug 2023)', date: '2023-08-01' },
+  { id: 'microsoft-announce', label: 'Microsoft Partnership (July 2023)', date: '2023-07-01' },
 ] as const;
 
 export type GalleryEventId = typeof galleryEvents[number]['id'];
 
-// Featured hero images (side by side)
+// Map eventId to date for sorting
+const eventDateMap: Record<string, string> = {};
+galleryEvents.forEach(event => {
+  if (event.date) {
+    eventDateMap[event.id] = event.date;
+  }
+});
+
+// Featured hero images (side by side) - always shown first
 const featuredImages = [
   {
     id: 0,
@@ -37,9 +46,9 @@ const featuredImages = [
   },
 ];
 
-// Gallery images organized by event
-const galleryImages = [
-  // Senate HELP Committee Testimony
+// Gallery images - will be sorted chronologically by event date (newest first)
+const galleryImagesUnsorted = [
+  // Senate HELP Committee Testimony - Feb 2024
   { id: 801, src: '/images/gallery/senate-help-testimony-cspan.png', alt: 'Tyrance Billingsley testifying before Senate HELP Committee on AI & the Future of Work', eventId: 'senate-testimony' },
   // AI Executive Order - October 2023
   { id: 751, src: '/images/gallery/ai-executive-order-oct2023.png', alt: 'Signing of the AI Executive Order with Biden Administration', eventId: 'ai-executive-order' },
@@ -49,7 +58,7 @@ const galleryImages = [
   { id: 601, src: '/images/gallery/microsoft-announce-01.png', alt: 'Microsoft Partnership Team Photo', eventId: 'microsoft-announce' },
   { id: 602, src: '/images/gallery/microsoft-announce-02.png', alt: 'Community Announcement at Greenwood', eventId: 'microsoft-announce' },
   { id: 603, src: '/images/gallery/microsoft-announce-03.png', alt: 'Microsoft Partnership Presentation', eventId: 'microsoft-announce' },
-  // White House Touchpoint Cyber Roundtable
+  // White House Touchpoint Cyber Roundtable - 2024
   { id: 501, src: '/images/gallery/white-house-cyber-01.png', alt: 'Tyrance Billingsley at White House Cyber Roundtable', eventId: 'white-house-cyber' },
   { id: 502, src: '/images/gallery/white-house-cyber-02.png', alt: 'National Cyber Director Office Discussion', eventId: 'white-house-cyber' },
   // ASPIRE AI Workshop - December 6, 2025
@@ -82,7 +91,7 @@ const galleryImages = [
   { id: 306, src: '/images/gallery/aspire-june-06.jpg', alt: 'Facilitator Leading Discussion', eventId: 'aspire-june-2025' },
   { id: 307, src: '/images/gallery/aspire-june-07.jpg', alt: 'Full Auditorium View', eventId: 'aspire-june-2025' },
   { id: 308, src: '/images/gallery/aspire-june-08.jpg', alt: 'Participants with Laptops', eventId: 'aspire-june-2025' },
-  // Microsoft Visit Photos (excluding Moton Building which is in featured)
+  // Microsoft Visit Photos - Jan 2025 (excluding Moton Building which is in featured)
   { id: 1, src: '/images/gallery/01-chamber-group.png', alt: 'Chamber Group Meeting', eventId: 'microsoft-visit' },
   { id: 2, src: '/images/gallery/02-memorial-group.png', alt: 'Memorial Group Photo', eventId: 'microsoft-visit' },
   { id: 3, src: '/images/gallery/03-memorial-wide.png', alt: 'Memorial Wide Shot', eventId: 'microsoft-visit' },
@@ -97,6 +106,13 @@ const galleryImages = [
   { id: 13, src: '/images/gallery/13-downtown-walk.jpg', alt: 'Downtown Walk', eventId: 'microsoft-visit' },
   { id: 14, src: '/images/gallery/14-lobby-tour.jpg', alt: 'Lobby Tour', eventId: 'microsoft-visit' },
 ];
+
+// Sort images chronologically by event date (newest first)
+const galleryImages = [...galleryImagesUnsorted].sort((a, b) => {
+  const dateA = eventDateMap[a.eventId] || '1900-01-01';
+  const dateB = eventDateMap[b.eventId] || '1900-01-01';
+  return dateB.localeCompare(dateA); // Newest first
+});
 
 interface TimelineGalleryProps {
   initialEventFilter?: GalleryEventId;
