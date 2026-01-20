@@ -27,6 +27,7 @@ export interface TimelineItem {
   youtubeUrl?: string;
   photoCredit?: string;
   isFeatured?: boolean;
+  galleryEventId?: 'nvidia-sep-2025' | 'aspire-sep-2025' | 'aspire-june-2025' | 'microsoft-visit';
 }
 
 export const timelineItems: TimelineItem[] = [
@@ -47,7 +48,7 @@ export const timelineItems: TimelineItem[] = [
     description: 'BTS established a foundational relationship with Microsoft for long-term AI and cybersecurity collaboration.',
     category: 'Partnerships',
     tags: ['Microsoft', 'Greenwood'],
-    image: '/images/gallery/08-moton-building.png',
+    galleryEventId: 'microsoft-visit',
   },
   {
     id: 'defcon-seedai-2023',
@@ -111,7 +112,7 @@ export const timelineItems: TimelineItem[] = [
     description: 'Greenwood AI Center of Excellence established with $10.6M BTS sub-award.',
     category: 'Infrastructure',
     tags: ['G-ACE', '$10.6M'],
-    image: '/images/gallery/aspire-june-02.jpg',
+    galleryEventId: 'aspire-june-2025',
   },
   {
     id: 'nvidia-partnership-2025',
@@ -121,8 +122,8 @@ export const timelineItems: TimelineItem[] = [
     description: 'Partnership launched to scale training, compute access, and innovation in Greenwood.',
     category: 'Partnerships',
     tags: ['NVIDIA', 'Training', 'Compute'],
-    image: '/images/gallery/nvidia-sept3-01.jpg',
     isFeatured: true,
+    galleryEventId: 'nvidia-sep-2025',
     youtubeUrl: 'https://www.youtube.com/watch?v=Xks2RYWa6Gg&t=30s',
     mediaLinks: [
       {
