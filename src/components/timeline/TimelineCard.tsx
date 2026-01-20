@@ -98,20 +98,6 @@ export function TimelineCard({ item, index, isCleanMode }: TimelineCardProps) {
                   {item.longDescription || item.description}
                 </p>
                 
-                {/* Tags */}
-                {item.tags && item.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 mt-3">
-                    {item.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-2 py-0.5 text-xs rounded-full bg-primary/10 text-primary/80 border border-primary/20"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                
                 {/* View Photos Link - shown when expanded */}
                 {item.galleryEventId && (
                   <motion.a
