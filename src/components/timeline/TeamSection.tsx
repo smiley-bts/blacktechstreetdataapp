@@ -32,9 +32,11 @@ const teamMembers: TeamMember[] = [
     linkedIn: "https://www.linkedin.com/in/allen-collins/"
   },
   {
-    name: "Team Member",
-    title: "Title",
-    bio: "Bio coming soon.",
+    name: "Smiley Elmore III",
+    title: "Communications Manager",
+    bio: "Smiley Elmore III leads all organizational communications, marketing, and brand execution across digital, email, and public platforms. He directs communications for major BTS programs including the ASPIRE AI Fluency Program, the NVIDIA collaboration, and partnerships with Tulsa Innovation Labs and Microsoft. Before joining Black Tech Street, Smiley founded Eminent Media, a digital agency specializing in branding, web development, AI automation, and lead-generation systems.",
+    image: "/images/team/smiley-elmore.png",
+    linkedIn: "https://www.linkedin.com/in/smiley-elmore-iii/"
   }
 ];
 
