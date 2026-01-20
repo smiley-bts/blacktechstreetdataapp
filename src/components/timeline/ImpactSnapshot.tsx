@@ -103,8 +103,8 @@ function NPSGauge({ score }: { score: number }) {
 }
 
 export function ImpactSnapshot() {
-  // NPS score from ASPIRE feedback (typical workshop NPS is around 50-70)
-  const npsScore = 67;
+  // NPS score from ASPIRE feedback
+  const npsScore = 91;
   
   return (
     <section className="py-16 border-b border-border/30">
@@ -137,7 +137,7 @@ export function ImpactSnapshot() {
         />
         <StatCard
           icon={<ThumbsUp className="h-6 w-6 text-primary" />}
-          value="+67"
+          value="+91"
           label="Net Promoter Score"
           sublabel="Would recommend to others"
           delay={0.1}

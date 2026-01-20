@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
-import { Share2, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
+import { Share2, ChevronDown, ChevronUp, ExternalLink, Camera } from 'lucide-react';
 import { TimelineItem } from '@/data/timeline';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { MediaLinksSection } from './MediaLinksSection';
+import { galleryEvents } from './TimelineGallery';
 
 interface TimelineCardProps {
   item: TimelineItem;
@@ -135,15 +136,7 @@ export function TimelineCard({ item, index, isCleanMode }: TimelineCardProps) {
           </div>
         )}
 
-        {/* Image - only show if there's an actual image and no YouTube video */}
-        {hasImage && !item.youtubeUrl && (
-          <div className="relative aspect-video mb-4 rounded-xl overflow-hidden bg-secondary/50 border border-border/30">
-            <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
-            {!isCleanMode && (
-              <div className="absolute inset-0 bg-gradient-to-t from-card/80 via-transparent to-transparent" />
-            )}
-          </div>
-        )}
+        {/* Image removed - photos are in gallery */}
 
         {/* Title and description */}
         <h3 className="text-lg md:text-xl font-display font-semibold text-foreground mb-2 leading-tight">
@@ -164,6 +157,26 @@ export function TimelineCard({ item, index, isCleanMode }: TimelineCardProps) {
             </span>
           ))}
         </div>
+
+        {/* View Photos Link */}
+        {item.galleryEventId && (
+          <a
+            href={`#photo-gallery`}
+            onClick={(e) => {
+              e.preventDefault();
+              const gallery = document.getElementById('photo-gallery');
+              if (gallery) {
+                gallery.scrollIntoView({ behavior: 'smooth' });
+                // Dispatch custom event to set the filter
+                window.dispatchEvent(new CustomEvent('setGalleryFilter', { detail: item.galleryEventId }));
+              }
+            }}
+            className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors mb-4"
+          >
+            <Camera className="h-4 w-4" />
+            <span>View Photos ({galleryEvents.find(e => e.id === item.galleryEventId)?.label})</span>
+          </a>
+        )}
 
         {/* Expandable details */}
         {item.longDescription && (

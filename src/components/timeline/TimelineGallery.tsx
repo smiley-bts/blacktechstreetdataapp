@@ -1,54 +1,84 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ZoomIn, Download } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 
+// Event categories for filtering
+export const galleryEvents = [
+  { id: 'all', label: 'All Photos' },
+  { id: 'nvidia-sep-2025', label: 'NVIDIA Sep 2025' },
+  { id: 'aspire-sep-2025', label: 'ASPIRE Sep 2025' },
+  { id: 'aspire-june-2025', label: 'ASPIRE June 2025' },
+  { id: 'microsoft-visit', label: 'Microsoft Visit' },
+] as const;
+
+export type GalleryEventId = typeof galleryEvents[number]['id'];
+
 // Gallery images organized by event
 const galleryImages = [
   // NVIDIA Partnership Announcement - September 3, 2025
-  { id: 201, src: '/images/gallery/nvidia-sept3-01.jpg', alt: 'NVIDIA Partnership Announcement', event: 'NVIDIA Sep 2025' },
-  { id: 202, src: '/images/gallery/nvidia-sept3-02.jpg', alt: 'Community Leaders at NVIDIA Event', event: 'NVIDIA Sep 2025' },
-  { id: 203, src: '/images/gallery/nvidia-sept3-03.jpg', alt: 'Partnership Team Photo', event: 'NVIDIA Sep 2025' },
-  { id: 204, src: '/images/gallery/nvidia-sept3-04.jpg', alt: 'NVIDIA Event Attendees at Greenwood', event: 'NVIDIA Sep 2025' },
+  { id: 201, src: '/images/gallery/nvidia-sept3-01.jpg', alt: 'NVIDIA Partnership Announcement', eventId: 'nvidia-sep-2025' },
+  { id: 202, src: '/images/gallery/nvidia-sept3-02.jpg', alt: 'Community Leaders at NVIDIA Event', eventId: 'nvidia-sep-2025' },
+  { id: 203, src: '/images/gallery/nvidia-sept3-03.jpg', alt: 'Partnership Team Photo', eventId: 'nvidia-sep-2025' },
+  { id: 204, src: '/images/gallery/nvidia-sept3-04.jpg', alt: 'NVIDIA Event Attendees at Greenwood', eventId: 'nvidia-sep-2025' },
   // ASPIRE AI Workshop - September 27, 2025
-  { id: 101, src: '/images/gallery/aspire-927-01.jpg', alt: 'ASPIRE GenAI Fluency Lab Presentation', event: 'ASPIRE Sep 2025' },
-  { id: 102, src: '/images/gallery/aspire-927-02.jpg', alt: 'Workshop Group Discussion', event: 'ASPIRE Sep 2025' },
-  { id: 103, src: '/images/gallery/aspire-927-03.jpg', alt: 'Workshop Attendee', event: 'ASPIRE Sep 2025' },
-  { id: 104, src: '/images/gallery/aspire-927-04.jpg', alt: 'Hands-on Learning Session', event: 'ASPIRE Sep 2025' },
-  { id: 105, src: '/images/gallery/aspire-927-05.jpg', alt: 'Collaborative Discussion', event: 'ASPIRE Sep 2025' },
-  { id: 106, src: '/images/gallery/aspire-927-06.jpg', alt: 'Peer Learning', event: 'ASPIRE Sep 2025' },
-  { id: 107, src: '/images/gallery/aspire-927-07.jpg', alt: 'Participant Q&A', event: 'ASPIRE Sep 2025' },
-  { id: 108, src: '/images/gallery/aspire-927-08.jpg', alt: 'Taking Notes', event: 'ASPIRE Sep 2025' },
-  { id: 109, src: '/images/gallery/aspire-927-09.jpg', alt: 'AI Learning Exercise', event: 'ASPIRE Sep 2025' },
+  { id: 101, src: '/images/gallery/aspire-927-01.jpg', alt: 'ASPIRE GenAI Fluency Lab Presentation', eventId: 'aspire-sep-2025' },
+  { id: 102, src: '/images/gallery/aspire-927-02.jpg', alt: 'Workshop Group Discussion', eventId: 'aspire-sep-2025' },
+  { id: 103, src: '/images/gallery/aspire-927-03.jpg', alt: 'Workshop Attendee', eventId: 'aspire-sep-2025' },
+  { id: 104, src: '/images/gallery/aspire-927-04.jpg', alt: 'Hands-on Learning Session', eventId: 'aspire-sep-2025' },
+  { id: 105, src: '/images/gallery/aspire-927-05.jpg', alt: 'Collaborative Discussion', eventId: 'aspire-sep-2025' },
+  { id: 106, src: '/images/gallery/aspire-927-06.jpg', alt: 'Peer Learning', eventId: 'aspire-sep-2025' },
+  { id: 107, src: '/images/gallery/aspire-927-07.jpg', alt: 'Participant Q&A', eventId: 'aspire-sep-2025' },
+  { id: 108, src: '/images/gallery/aspire-927-08.jpg', alt: 'Taking Notes', eventId: 'aspire-sep-2025' },
+  { id: 109, src: '/images/gallery/aspire-927-09.jpg', alt: 'AI Learning Exercise', eventId: 'aspire-sep-2025' },
   // ASPIRE AI Workshop - June 2025
-  { id: 301, src: '/images/gallery/aspire-june-01.jpg', alt: 'Coach White with Post-It Notes', event: 'ASPIRE June 2025' },
-  { id: 302, src: '/images/gallery/aspire-june-02.jpg', alt: 'G-ACE Presentation', event: 'ASPIRE June 2025' },
-  { id: 303, src: '/images/gallery/aspire-june-03.jpg', alt: 'The Pocket Guide Presentation', event: 'ASPIRE June 2025' },
-  { id: 304, src: '/images/gallery/aspire-june-04.jpg', alt: 'Workshop Participant Smiling', event: 'ASPIRE June 2025' },
-  { id: 305, src: '/images/gallery/aspire-june-05.jpg', alt: 'Participant Asking Question', event: 'ASPIRE June 2025' },
-  { id: 306, src: '/images/gallery/aspire-june-06.jpg', alt: 'Facilitator Leading Discussion', event: 'ASPIRE June 2025' },
-  { id: 307, src: '/images/gallery/aspire-june-07.jpg', alt: 'Full Auditorium View', event: 'ASPIRE June 2025' },
-  { id: 308, src: '/images/gallery/aspire-june-08.jpg', alt: 'Participants with Laptops', event: 'ASPIRE June 2025' },
+  { id: 301, src: '/images/gallery/aspire-june-01.jpg', alt: 'Coach White with Post-It Notes', eventId: 'aspire-june-2025' },
+  { id: 302, src: '/images/gallery/aspire-june-02.jpg', alt: 'G-ACE Presentation', eventId: 'aspire-june-2025' },
+  { id: 303, src: '/images/gallery/aspire-june-03.jpg', alt: 'The Pocket Guide Presentation', eventId: 'aspire-june-2025' },
+  { id: 304, src: '/images/gallery/aspire-june-04.jpg', alt: 'Workshop Participant Smiling', eventId: 'aspire-june-2025' },
+  { id: 305, src: '/images/gallery/aspire-june-05.jpg', alt: 'Participant Asking Question', eventId: 'aspire-june-2025' },
+  { id: 306, src: '/images/gallery/aspire-june-06.jpg', alt: 'Facilitator Leading Discussion', eventId: 'aspire-june-2025' },
+  { id: 307, src: '/images/gallery/aspire-june-07.jpg', alt: 'Full Auditorium View', eventId: 'aspire-june-2025' },
+  { id: 308, src: '/images/gallery/aspire-june-08.jpg', alt: 'Participants with Laptops', eventId: 'aspire-june-2025' },
   // Microsoft Visit Photos
-  { id: 1, src: '/images/gallery/01-chamber-group.png', alt: 'Chamber Group Meeting', event: 'Microsoft Visit' },
-  { id: 2, src: '/images/gallery/02-memorial-group.png', alt: 'Memorial Group Photo', event: 'Microsoft Visit' },
-  { id: 3, src: '/images/gallery/03-memorial-wide.png', alt: 'Memorial Wide Shot', event: 'Microsoft Visit' },
-  { id: 4, src: '/images/gallery/04-greenwood-walk.png', alt: 'Greenwood Walking Tour', event: 'Microsoft Visit' },
-  { id: 5, src: '/images/gallery/05-bodega.png', alt: 'Bodega Visit', event: 'Microsoft Visit' },
-  { id: 6, src: '/images/gallery/06-underpass-tour.png', alt: 'Underpass Tour', event: 'Microsoft Visit' },
-  { id: 7, src: '/images/gallery/07-chamber-stairs.png', alt: 'Chamber Stairs', event: 'Microsoft Visit' },
-  { id: 8, src: '/images/gallery/08-moton-building.png', alt: 'Moton Building', event: 'Microsoft Visit' },
-  { id: 9, src: '/images/gallery/09-moton-group.png', alt: 'Moton Group Photo', event: 'Microsoft Visit' },
-  { id: 10, src: '/images/gallery/10-black-wall-street-mural.png', alt: 'Black Wall Street Mural', event: 'Microsoft Visit' },
-  { id: 11, src: '/images/gallery/11-chamber-meeting.png', alt: 'Chamber Meeting', event: 'Microsoft Visit' },
-  { id: 12, src: '/images/gallery/12-roundtable-discussion.jpg', alt: 'Roundtable Discussion', event: 'Microsoft Visit' },
-  { id: 13, src: '/images/gallery/13-downtown-walk.jpg', alt: 'Downtown Walk', event: 'Microsoft Visit' },
-  { id: 14, src: '/images/gallery/14-lobby-tour.jpg', alt: 'Lobby Tour', event: 'Microsoft Visit' },
+  { id: 1, src: '/images/gallery/01-chamber-group.png', alt: 'Chamber Group Meeting', eventId: 'microsoft-visit' },
+  { id: 2, src: '/images/gallery/02-memorial-group.png', alt: 'Memorial Group Photo', eventId: 'microsoft-visit' },
+  { id: 3, src: '/images/gallery/03-memorial-wide.png', alt: 'Memorial Wide Shot', eventId: 'microsoft-visit' },
+  { id: 4, src: '/images/gallery/04-greenwood-walk.png', alt: 'Greenwood Walking Tour', eventId: 'microsoft-visit' },
+  { id: 5, src: '/images/gallery/05-bodega.png', alt: 'Bodega Visit', eventId: 'microsoft-visit' },
+  { id: 6, src: '/images/gallery/06-underpass-tour.png', alt: 'Underpass Tour', eventId: 'microsoft-visit' },
+  { id: 7, src: '/images/gallery/07-chamber-stairs.png', alt: 'Chamber Stairs', eventId: 'microsoft-visit' },
+  { id: 8, src: '/images/gallery/08-moton-building.png', alt: 'Moton Building', eventId: 'microsoft-visit' },
+  { id: 9, src: '/images/gallery/09-moton-group.png', alt: 'Moton Group Photo', eventId: 'microsoft-visit' },
+  { id: 10, src: '/images/gallery/10-black-wall-street-mural.png', alt: 'Black Wall Street Mural', eventId: 'microsoft-visit' },
+  { id: 11, src: '/images/gallery/11-chamber-meeting.png', alt: 'Chamber Meeting', eventId: 'microsoft-visit' },
+  { id: 12, src: '/images/gallery/12-roundtable-discussion.jpg', alt: 'Roundtable Discussion', eventId: 'microsoft-visit' },
+  { id: 13, src: '/images/gallery/13-downtown-walk.jpg', alt: 'Downtown Walk', eventId: 'microsoft-visit' },
+  { id: 14, src: '/images/gallery/14-lobby-tour.jpg', alt: 'Lobby Tour', eventId: 'microsoft-visit' },
 ];
 
-export function TimelineGallery() {
+interface TimelineGalleryProps {
+  initialEventFilter?: GalleryEventId;
+}
+
+export function TimelineGallery({ initialEventFilter }: TimelineGalleryProps) {
   const [selectedImage, setSelectedImage] = useState<typeof galleryImages[0] | null>(null);
+  const [activeEvent, setActiveEvent] = useState<GalleryEventId>(initialEventFilter || 'all');
+
+  // Listen for custom event from timeline cards
+  useEffect(() => {
+    const handleSetFilter = (e: CustomEvent<GalleryEventId>) => {
+      setActiveEvent(e.detail);
+    };
+    
+    window.addEventListener('setGalleryFilter', handleSetFilter as EventListener);
+    return () => window.removeEventListener('setGalleryFilter', handleSetFilter as EventListener);
+  }, []);
+
+  const filteredImages = activeEvent === 'all' 
+    ? galleryImages 
+    : galleryImages.filter(img => img.eventId === activeEvent);
 
   const handleDownload = async (src: string, alt: string) => {
     try {
@@ -68,7 +98,7 @@ export function TimelineGallery() {
   };
 
   return (
-    <section className="py-16">
+    <section id="photo-gallery" className="py-16">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -78,41 +108,72 @@ export function TimelineGallery() {
         <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-3">
           Photo Gallery
         </h2>
-        <p className="text-muted-foreground max-w-md mx-auto">
+        <p className="text-muted-foreground max-w-md mx-auto mb-6">
           Moments captured from our journey building the future of Greenwood.
         </p>
+
+        {/* Event filter tabs */}
+        <div className="flex flex-wrap justify-center gap-2">
+          {galleryEvents.map((event) => (
+            <button
+              key={event.id}
+              onClick={() => setActiveEvent(event.id)}
+              className={cn(
+                "px-4 py-2 rounded-full text-sm font-medium transition-all duration-200",
+                activeEvent === event.id
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
+              )}
+            >
+              {event.label}
+              <span className="ml-1.5 text-xs opacity-70">
+                ({event.id === 'all' 
+                  ? galleryImages.length 
+                  : galleryImages.filter(img => img.eventId === event.id).length})
+              </span>
+            </button>
+          ))}
+        </div>
       </motion.div>
 
       {/* Masonry grid */}
-      <div className="columns-2 md:columns-3 lg:columns-4 gap-3 space-y-3">
-        {galleryImages.map((image, index) => (
-          <motion.div
-            key={image.id}
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.05 }}
-            className="break-inside-avoid group relative cursor-pointer"
-            onClick={() => setSelectedImage(image)}
-          >
-            <div className="relative overflow-hidden rounded-xl border border-border/30">
-              <img
-                src={image.src}
-                alt={image.alt}
-                className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <span className="text-xs text-white/90 font-medium truncate mr-2">
-                  {image.alt}
-                </span>
-                <ZoomIn className="h-4 w-4 text-white/80 shrink-0" />
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeEvent}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.3 }}
+          className="columns-2 md:columns-3 lg:columns-4 gap-3 space-y-3"
+        >
+          {filteredImages.map((image, index) => (
+            <motion.div
+              key={image.id}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: index * 0.03 }}
+              className="break-inside-avoid group relative cursor-pointer"
+              onClick={() => setSelectedImage(image)}
+            >
+              <div className="relative overflow-hidden rounded-xl border border-border/30">
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span className="text-xs text-white/90 font-medium truncate mr-2">
+                    {image.alt}
+                  </span>
+                  <ZoomIn className="h-4 w-4 text-white/80 shrink-0" />
+                </div>
               </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </AnimatePresence>
 
       {/* Lightbox */}
       <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
