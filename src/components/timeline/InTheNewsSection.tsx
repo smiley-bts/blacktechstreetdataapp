@@ -110,9 +110,6 @@ export function InTheNewsSection() {
         <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground">
           In the News
         </h2>
-        <p className="text-muted-foreground mt-2 text-sm">
-          Media coverage and features
-        </p>
       </motion.div>
       
       {/* Featured Videos */}

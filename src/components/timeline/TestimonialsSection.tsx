@@ -65,11 +65,10 @@ export function TestimonialsSection() {
         viewport={{ once: true }}
         className="text-center mb-12"
       >
-        <h2 className="text-2xl md:text-3xl font-display font-bold mb-2">
+        <h2 className="text-2xl md:text-3xl font-display font-bold">
           <span className="text-primary">Community</span>{' '}
           <span className="text-foreground">Voices</span>
         </h2>
-        <p className="text-muted-foreground text-sm">What our participants are saying</p>
       </motion.div>
 
       {/* Featured testimonial carousel */}
