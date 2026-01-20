@@ -6,6 +6,12 @@ export type TimelineCategory =
   | 'Events' 
   | 'Infrastructure';
 
+export interface MediaLink {
+  title: string;
+  source: string;
+  url: string;
+}
+
 export interface TimelineItem {
   id: string;
   date: string;
@@ -17,6 +23,7 @@ export interface TimelineItem {
   image?: string;
   longDescription?: string;
   links?: { label: string; url: string }[];
+  mediaLinks?: MediaLink[];
   photoCredit?: string;
   isFeatured?: boolean;
 }
@@ -139,13 +146,31 @@ The winner of the AI race will be the country that successfully integrates AI ac
   },
   {
     id: 'nvidia-partnership-2025',
-    date: '2025-09',
+    date: '2025-09-03',
     year: 2025,
-    title: 'NVIDIA Partnership',
-    description: 'Partnering to train up to 10,000 learners in AI, expand advanced compute access, support grants, open doors to NVIDIA Inception, and host hackathons and innovation challenges.',
+    title: 'NVIDIA Partnership Announcement',
+    description: 'Black Tech Street and NVIDIA announce a groundbreaking partnership to train up to 10,000 learners in AI, expand advanced compute access, support grants, open doors to NVIDIA Inception, and host hackathons and innovation challenges in the Greenwood District.',
     category: 'Partnerships',
-    tags: ['NVIDIA', 'GPUs', 'Inception', 'Education'],
-    image: '/placeholder.svg',
+    tags: ['NVIDIA', 'GPUs', 'Inception', 'Education', 'Greenwood'],
+    image: '/images/gallery/nvidia-sept3-01.jpg',
+    isFeatured: true,
+    mediaLinks: [
+      {
+        title: 'Black Tech Street Collaborates with NVIDIA to Launch AI Partnership',
+        source: 'Yahoo Finance',
+        url: 'https://finance.yahoo.com/news/black-tech-street-collaborates-nvidia-180000254.html',
+      },
+      {
+        title: 'Black Tech Street and NVIDIA Launch AI Partnership Focused on Tulsa\'s Greenwood District',
+        source: 'FOX23',
+        url: 'https://www.fox23.com/news/black-tech-street-and-nvidia-launch-ai-partnership-focused-on-tulsas-greenwood-district/article_461995ff-0392-477a-9ad0-8b7e17308674.html',
+      },
+      {
+        title: 'Black Tech Street, NVIDIA Partnership to Bring AI Training to Greenwood',
+        source: 'Tulsa World',
+        url: 'https://tulsaworld.com/news/local/business/article_e886152c-e0d9-4732-ad15-99c79c48a617.html',
+      },
+    ],
   },
 ];
 
