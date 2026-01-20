@@ -21,6 +21,15 @@ const galleryImages = [
   { id: 107, src: '/images/gallery/aspire-927-07.jpg', alt: 'Participant Q&A', event: 'ASPIRE Sep 2025' },
   { id: 108, src: '/images/gallery/aspire-927-08.jpg', alt: 'Taking Notes', event: 'ASPIRE Sep 2025' },
   { id: 109, src: '/images/gallery/aspire-927-09.jpg', alt: 'AI Learning Exercise', event: 'ASPIRE Sep 2025' },
+  // ASPIRE AI Workshop - June 2025
+  { id: 301, src: '/images/gallery/aspire-june-01.jpg', alt: 'Coach White with Post-It Notes', event: 'ASPIRE June 2025' },
+  { id: 302, src: '/images/gallery/aspire-june-02.jpg', alt: 'G-ACE Presentation', event: 'ASPIRE June 2025' },
+  { id: 303, src: '/images/gallery/aspire-june-03.jpg', alt: 'The Pocket Guide Presentation', event: 'ASPIRE June 2025' },
+  { id: 304, src: '/images/gallery/aspire-june-04.jpg', alt: 'Workshop Participant Smiling', event: 'ASPIRE June 2025' },
+  { id: 305, src: '/images/gallery/aspire-june-05.jpg', alt: 'Participant Asking Question', event: 'ASPIRE June 2025' },
+  { id: 306, src: '/images/gallery/aspire-june-06.jpg', alt: 'Facilitator Leading Discussion', event: 'ASPIRE June 2025' },
+  { id: 307, src: '/images/gallery/aspire-june-07.jpg', alt: 'Full Auditorium View', event: 'ASPIRE June 2025' },
+  { id: 308, src: '/images/gallery/aspire-june-08.jpg', alt: 'Participants with Laptops', event: 'ASPIRE June 2025' },
   // Microsoft Visit Photos
   { id: 1, src: '/images/gallery/01-chamber-group.png', alt: 'Chamber Group Meeting', event: 'Microsoft Visit' },
   { id: 2, src: '/images/gallery/02-memorial-group.png', alt: 'Memorial Group Photo', event: 'Microsoft Visit' },
