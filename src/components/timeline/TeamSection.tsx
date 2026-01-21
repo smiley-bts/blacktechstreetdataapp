@@ -28,7 +28,15 @@ Tyrance has given a TEDx talk and been featured in publications like Forbes, Bla
     name: "Josephine Nelms",
     title: "Chief Operating Officer",
     shortBio: "Josephine Nelms leads the operational strategy, partnerships and organizational systems that power Black Tech Street's mission. With more than 15 years of experience in operations, HR and organizational leadership.",
-    expandedBio: "Josephine Nelms leads the operational strategy, partnerships and organizational systems that power Black Tech Street's mission. With more than 15 years of experience in operations, HR and organizational leadership, she previously served as Director of Operations at Atento Capital and spent a decade with Girl Scouts of Eastern Oklahoma. A Tulsa native and University of Tulsa graduate, her leadership has earned recognition including the Atent-Awesome Leadership Award (2023) and Youth at Heart Alumnus Achievement Award (2019).",
+    expandedBio: `Josephine Nelms is the Chief Operating Officer of Black Tech Street, an organization committed to rebirthing Black Wall Street as the nation's premiere innovative economy, with a strategic focus on responsible AI, cybersecurity and emerging technologies. As COO, Josephine leads the operational strategy, partnerships and organizational systems that power Black Tech Street's mission. She oversees program execution and infrastructure development, driving scalable systems that empower communities through technology and innovation. Josephine brings more than 15 years of experience in operations, human resources and organizational leadership across both nonprofit and for-profit sectors.
+
+Before joining Black Tech Street, she served as Director of Operations at Atento Capital, where she led enterprise operations, HR initiatives and strategic planning for a rapidly growing venture capital firm. Prior to that, she spent a decade with Girl Scouts of Eastern Oklahoma, ultimately serving as Director of Community Outreach, where she expanded programs reaching thousands of youth annually and strengthened partnerships across Eastern Oklahoma.
+
+Her leadership has earned several honors, including the Supervisor of the Year Award (2018), the Youth at Heart Alumnus Achievement Award (2019), the Atent-Awesome Leadership Award (2023) and recognition from the Supporters of Families with Sickle Cell Disease (2023).
+
+A Tulsa native, Josephine is a graduate of the University of Tulsa with a Bachelor of Science in Biological Sciences and a Minor in Chemistry. She also completed Leadership Tulsa New Voices Class 11 and has served on the boards of the American Red Cross and Broken Arrow Neighbors. She remains actively connected to her community through volunteer work with 3D Elite Track and Field Club.
+
+Josephine is committed to building strong, future-focused systems that expand access to high-impact technology pathways, strengthen community capacity and create environments where individuals and families can thrive in an innovation-driven economy.`,
     image: "/images/team/josephine-nelms.png",
     linkedIn: "https://www.linkedin.com/in/josephine-nelms-108b87173/"
   },
