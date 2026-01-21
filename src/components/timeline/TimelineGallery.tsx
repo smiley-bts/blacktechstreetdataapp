@@ -308,6 +308,7 @@ export function TimelineGallery({ initialEventFilter }: TimelineGalleryProps) {
                     src={selectedImage.src}
                     alt={selectedImage.alt}
                     className="max-w-full max-h-[70vh] object-contain rounded-lg"
+                    decoding="async"
                   />
                 </div>
 
