@@ -85,6 +85,8 @@ export function MediaLinksSection({ links, isCleanMode = false }: MediaLinksSect
                     src={style.thumbnail} 
                     alt=""
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    loading="lazy"
+                    decoding="async"
                   />
                   {/* Gradient overlay */}
                   <div className={cn(

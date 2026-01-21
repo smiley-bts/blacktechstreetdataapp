@@ -97,6 +97,8 @@ function TeamMemberCard({ member, index }: { member: TeamMember; index: number }
                   src={member.image}
                   alt={member.name}
                   className="w-full h-full object-cover"
+                  loading="lazy"
+                  decoding="async"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
