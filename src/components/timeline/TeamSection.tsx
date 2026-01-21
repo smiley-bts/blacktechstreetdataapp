@@ -58,7 +58,15 @@ Allen remains active in service and civic leadership. He has volunteered with My
     name: "Smiley Elmore III",
     title: "Communications Manager",
     shortBio: "Smiley Elmore III leads all organizational communications, marketing, and brand execution across digital, email, and public platforms.",
-    expandedBio: "Smiley Elmore III leads all organizational communications, marketing, and brand execution across digital, email, and public platforms. He directs communications for major BTS programs including the ASPIRE AI Fluency Program, the NVIDIA collaboration, and partnerships with Tulsa Innovation Labs and Microsoft. Before joining Black Tech Street, Smiley founded Eminent Media, a digital agency specializing in branding, web development, AI automation, and lead-generation systems.",
+    expandedBio: `Smiley Elmore III is a Tulsa-based communications strategist and creative technologist who serves as the Communications Manager for Black Tech Street (BTS). In this role, Smiley leads all organizational communications, marketing, and brand execution across digital, email, and public platforms. He develops and manages communications flows, designs marketing assets, and oversees the messaging strategy for BTS initiatives and events. Smiley directs communications for major BTS programs including the ASPIRE AI Fluency Program, the NVIDIA collaboration, and partnerships with Tulsa Innovation Labs and Microsoft.
+
+He manages end-to-end communications for workshops, announcements, and large-scale events, producing campaigns, press materials, branded content, and the technical workflows that support them.
+
+His work includes building and maintaining data systems, CRM architecture, and operational processes that strengthen outreach and program visibility. Smiley also leads cross-team coordination with partners, vendors, and internal stakeholders to ensure consistent branding, clear messaging, and efficient execution across all channels. His approach blends creative direction with technical discipline, allowing BTS to communicate complex work in an accessible and professional way.
+
+Before joining Black Tech Street, Smiley founded Eminent Media, a digital agency specializing in branding, web development, AI automation, and lead-generation systems. He has built digital infrastructures, websites, funnels, and marketing operations for clients across multiple industries including real estate, churches, small businesses, entertainment, and emerging startups.
+
+His experience includes strategic communications, content development, event production, digital system design, and multimedia storytelling for organizations looking to modernize their brand and strengthen their operational pipeline. Smiley remains focused on communications, technology, and producing high-quality work that supports BTS and the broader innovation environment developing in Tulsa.`,
     image: "/images/team/smiley-elmore.png",
     linkedIn: "https://www.linkedin.com/in/smiley-elmore-iii/"
   }
