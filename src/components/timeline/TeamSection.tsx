@@ -44,7 +44,13 @@ Josephine is committed to building strong, future-focused systems that expand ac
     name: "Allen Collins",
     title: "Chief of Staff",
     shortBio: "Allen Collins transforms BTS initiatives into high-impact experiences that strengthen Tulsa's innovation ecosystem. He oversees program execution, community engagements, and manages logistics.",
-    expandedBio: "Allen Collins transforms BTS initiatives into high-impact experiences that strengthen Tulsa's innovation ecosystem. He oversees program execution, community engagements, and manages logistics while cultivating relationships with local partners. Previously, Allen held marketing and operations roles with City Year Tulsa, Hunger Free Oklahoma, and inTulsa. Active in civic leadership, he participated in Leadership Tulsa New Voices Class 12 and the TYPros Get On Board Internship.",
+    expandedBio: `Allen Collins is a Tulsa-born and community-centered leader who serves as the Chief of Staff for Black Tech Street (BTS). In this role, Allen is responsible for transforming BTS initiatives into high-impact experiences that strengthen Tulsa's innovation ecosystem. He oversees the execution of programs, events, and community engagements, managing logistics, venues, and vendor coordination to ensure each initiative reflects Black Tech Street's mission and delivers meaningful community impact.
+
+Deeply connected to the legacy of Tulsa's historic Greenwood District, Allen plays a key role in cultivating long-term relationships with local partners and community organizations, helping expand Black Tech Street's visibility and engagement across the Greater Tulsa Region. He also oversees BTS internship relations by supervising, managing, and mentoring interns to support their professional development and contributions to the organization.
+
+Before joining Black Tech Street, Allen held marketing, communications, and operations roles with City Year Tulsa, Hunger Free Oklahoma, the Tahlequah Area Chamber of Commerce, and inTulsa. His experience includes coordinating large-scale events, managing vendor partnerships, and supporting programs that build bridges between residents, educators, and local institutions.
+
+Allen remains active in service and civic leadership. He has volunteered with My Brother's Keeper Sports at McLain High School and has participated in leadership and board-readiness programs including Leadership Tulsa New Voices Class 12, 918 Lead, and the TYPros Get On Board Internship with the Foundation for Tulsa Schools.`,
     image: "/images/team/allen-collins.png",
     linkedIn: "https://www.linkedin.com/in/allen-collins/"
   },
