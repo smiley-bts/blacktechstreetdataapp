@@ -3,6 +3,7 @@ import { Contact } from "@/types/contact";
 import { useContactMetrics } from "@/hooks/useContactMetrics";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { CountUp } from "@/components/ui/count-up";
 
 interface DashboardHeroProps {
   contacts: Contact[];
@@ -16,35 +17,41 @@ export function DashboardHero({ contacts, onViewContacts, onViewEvents }: Dashbo
   const heroStats = [
     {
       label: "Total Contacts",
-      value: metrics.total.toLocaleString(),
+      value: metrics.total,
+      displayValue: metrics.total.toLocaleString(),
       icon: Users,
       color: "text-blue-500",
       bgColor: "bg-blue-500/10",
     },
     {
       label: "Event Registered",
-      value: metrics.eventRegistered.toLocaleString(),
+      value: metrics.eventRegistered,
+      displayValue: metrics.eventRegistered.toLocaleString(),
       icon: CalendarDays,
       color: "text-amber-500",
       bgColor: "bg-amber-500/10",
     },
     {
       label: "Attendees",
-      value: metrics.eventActuallyAttended.toLocaleString(),
+      value: metrics.eventActuallyAttended,
+      displayValue: metrics.eventActuallyAttended.toLocaleString(),
       icon: UserCheck,
       color: "text-emerald-500",
       bgColor: "bg-emerald-500/10",
     },
     {
       label: "Feedback Collected",
-      value: metrics.withFeedback.toLocaleString(),
+      value: metrics.withFeedback,
+      displayValue: metrics.withFeedback.toLocaleString(),
       icon: Sparkles,
       color: "text-pink-500",
       bgColor: "bg-pink-500/10",
     },
     {
       label: "NPS Score",
-      value: metrics.npsScore !== null ? `${metrics.npsScore > 0 ? '+' : ''}${metrics.npsScore}` : "N/A",
+      value: metrics.npsScore ?? 0,
+      isNPS: true,
+      displayValue: metrics.npsScore !== null ? `${metrics.npsScore > 0 ? '+' : ''}${metrics.npsScore}` : "N/A",
       icon: TrendingUp,
       color: metrics.npsScore && metrics.npsScore >= 50 ? "text-emerald-500" : "text-muted-foreground",
       bgColor: metrics.npsScore && metrics.npsScore >= 50 ? "bg-emerald-500/10" : "bg-muted/50",
@@ -88,7 +95,7 @@ export function DashboardHero({ contacts, onViewContacts, onViewEvents }: Dashbo
                 <stat.icon className={cn("h-5 w-5", stat.color)} />
               </div>
               <p className="text-2xl sm:text-3xl font-bold text-foreground">
-                {stat.value}
+                {stat.isNPS ? stat.displayValue : <CountUp end={stat.value} duration={600} prefix={stat.isNPS && stat.value > 0 ? '+' : ''} />}
               </p>
               <p className="text-sm text-muted-foreground">
                 {stat.label}

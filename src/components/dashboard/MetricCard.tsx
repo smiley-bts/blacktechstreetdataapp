@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { LucideIcon } from "lucide-react";
+import { CountUp } from "@/components/ui/count-up";
 
 interface MetricCardProps {
   title: string;
@@ -9,6 +10,7 @@ interface MetricCardProps {
   variant?: "default" | "blue" | "purple" | "amber" | "green";
   className?: string;
   delay?: number;
+  animate?: boolean;
 }
 
 const variantStyles = {
@@ -35,7 +37,11 @@ export function MetricCard({
   variant = "default",
   className,
   delay = 0,
+  animate = true,
 }: MetricCardProps) {
+  const numericValue = typeof value === 'number' ? value : parseFloat(value.toString().replace(/[^0-9.-]/g, ''));
+  const isNumeric = !isNaN(numericValue) && typeof value !== 'string';
+  
   return (
     <div
       className={cn(
@@ -49,7 +55,7 @@ export function MetricCard({
         <div>
           <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
           <div className={cn("text-4xl font-display font-bold mt-2", valueStyles[variant])}>
-            {value}
+            {animate && isNumeric ? <CountUp end={numericValue} duration={600} /> : value}
           </div>
           {subtitle && (
             <p className="text-xs text-muted-foreground mt-2">{subtitle}</p>

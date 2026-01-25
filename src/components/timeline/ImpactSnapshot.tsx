@@ -1,16 +1,18 @@
 import { motion } from 'framer-motion';
 import { Users, ThumbsUp, Calendar, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { CountUp } from '@/components/ui/count-up';
 
 interface StatCardProps {
   icon: React.ReactNode;
-  value: string;
+  value: number;
+  suffix?: string;
   label: string;
   sublabel?: string;
   delay: number;
 }
 
-function StatCard({ icon, value, label, sublabel, delay }: StatCardProps) {
+function StatCard({ icon, value, suffix = '', label, sublabel, delay }: StatCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30, scale: 0.95 }}
@@ -37,7 +39,7 @@ function StatCard({ icon, value, label, sublabel, delay }: StatCardProps) {
           transition={{ duration: 0.5, delay: delay + 0.2, type: 'spring', stiffness: 200 }}
           className="text-4xl md:text-5xl font-display font-bold text-foreground mb-2"
         >
-          {value}
+          <CountUp end={value} duration={800} suffix={suffix} />
         </motion.div>
         
         {/* Label */}
@@ -94,7 +96,7 @@ function NPSGauge({ score }: { score: number }) {
           transition={{ delay: 0.8 }}
           className="text-3xl md:text-4xl font-display font-bold text-primary"
         >
-          {score}
+          <CountUp end={score} duration={1200} />
         </motion.span>
         <span className="text-xs text-muted-foreground mt-1">NPS Score</span>
       </div>
@@ -127,21 +129,22 @@ export function ImpactSnapshot() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <StatCard
           icon={<Calendar className="h-6 w-6 text-primary" />}
-          value="3"
+          value={3}
           label="Cohorts"
           sublabel="Training program cohorts"
           delay={0}
         />
         <StatCard
           icon={<Users className="h-6 w-6 text-primary" />}
-          value="300+"
+          value={300}
+          suffix="+"
           label="Unique Participants"
           sublabel="Community members engaged"
           delay={0.1}
         />
         <StatCard
           icon={<ThumbsUp className="h-6 w-6 text-primary" />}
-          value="91"
+          value={91}
           label="Net Promoter Score"
           sublabel="Would recommend to others"
           delay={0.2}
