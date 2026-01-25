@@ -4,6 +4,7 @@ import { useContactMetrics } from "@/hooks/useContactMetrics";
 import { useContactTags } from "@/hooks/useContactTags";
 import { cn } from "@/lib/utils";
 import { useMemo } from "react";
+import { CountUp } from "@/components/ui/count-up";
 
 interface QuickStatsProps {
   contacts: Contact[];
@@ -30,35 +31,35 @@ export function QuickStats({ contacts }: QuickStatsProps) {
   const statCards = [
     {
       label: "Total Contacts",
-      value: metrics.total.toLocaleString(),
+      value: metrics.total,
       icon: Users,
       gradient: "from-blue-500 to-indigo-600",
       glow: "shadow-blue-500/20",
     },
     {
       label: "Website Leads",
-      value: customMetrics.websiteOnlyCount.toLocaleString(),
+      value: customMetrics.websiteOnlyCount,
       icon: Globe,
       gradient: "from-cyan-500 to-blue-600",
       glow: "shadow-cyan-500/20",
     },
     {
       label: "IRL Attendees",
-      value: customMetrics.irlAttendeesCount.toLocaleString(),
+      value: customMetrics.irlAttendeesCount,
       icon: Calendar,
       gradient: "from-emerald-500 to-teal-600",
       glow: "shadow-emerald-500/20",
     },
     {
       label: "Stakeholders",
-      value: customMetrics.stakeholderCount.toLocaleString(),
+      value: customMetrics.stakeholderCount,
       icon: Crown,
       gradient: "from-amber-500 to-orange-600",
       glow: "shadow-amber-500/20",
     },
     {
       label: "Needs Attention",
-      value: metrics.incomplete.toLocaleString(),
+      value: metrics.incomplete,
       icon: AlertCircle,
       gradient: "from-red-500 to-rose-600",
       glow: "shadow-red-500/20",
@@ -92,7 +93,7 @@ export function QuickStats({ contacts }: QuickStatsProps) {
               "text-muted-foreground group-hover:text-primary group-hover:scale-110 transition-all duration-200"
             )} />
             <p className="text-2xl font-bold tracking-tight text-foreground">
-              {stat.value}
+              <CountUp end={stat.value} duration={600} />
             </p>
             <p className="text-xs text-muted-foreground">
               {stat.label}
