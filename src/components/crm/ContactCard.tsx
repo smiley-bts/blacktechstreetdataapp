@@ -2,11 +2,12 @@ import { Contact, hasEventFeedback, hasBuildDayData, getDisplayName, getContactI
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Mail, Phone, MapPin, Building2, ChevronRight, Star, Hammer, StickyNote, FileCheck } from "lucide-react";
+import { Mail, Phone, MapPin, Building2, ChevronRight, Star, Hammer, StickyNote, FileCheck, Crown } from "lucide-react";
 import { useContactNotes } from "@/hooks/useContactNotes";
 import { useNameOverrides } from "@/hooks/useNameOverrides";
 import { NameQualityBadge } from "./NameQualityBadge";
 import { CompletenessIndicator } from "./CompletenessIndicator";
+import { StakeholderCheckbox } from "./StakeholderCheckbox";
 
 interface ContactCardProps {
   contact: Contact;
@@ -53,6 +54,11 @@ export function ContactCard({ contact, onClick }: ContactCardProps) {
       className="group relative overflow-hidden border-border/50 bg-card/80 backdrop-blur-sm hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 cursor-pointer card-shine"
       onClick={onClick}
     >
+      {/* Stakeholder checkbox */}
+      <div className="absolute top-3 right-3 z-10">
+        <StakeholderCheckbox contactId={contact.recordId} size="md" />
+      </div>
+      
       {/* Subtle gradient overlay on hover */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-transparent to-accent/0 group-hover:from-primary/5 group-hover:to-accent/5 transition-all duration-500 pointer-events-none" />
       

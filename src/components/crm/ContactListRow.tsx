@@ -6,6 +6,7 @@ import { useContactNotes } from "@/hooks/useContactNotes";
 import { useNameOverrides } from "@/hooks/useNameOverrides";
 import { NameQualityBadge } from "./NameQualityBadge";
 import { CompletenesssDot } from "./CompletenessIndicator";
+import { StakeholderCheckbox } from "./StakeholderCheckbox";
 
 interface ContactListRowProps {
   contact: Contact;
@@ -54,6 +55,7 @@ export function ContactListRow({ contact, onClick, variant }: ContactListRowProp
         className="group flex items-center gap-3 px-4 py-2 bg-card/60 hover:bg-card border-b border-border/30 cursor-pointer transition-colors"
         onClick={onClick}
       >
+        <StakeholderCheckbox contactId={contact.recordId} size="sm" />
         <Avatar className={`h-8 w-8 bg-gradient-to-br ${getAiLevelGradient(contact.aiExperienceLevel)} shrink-0`}>
           <AvatarFallback className="bg-transparent text-foreground text-xs font-semibold">
             {getContactInitials(contact)}
@@ -98,6 +100,7 @@ export function ContactListRow({ contact, onClick, variant }: ContactListRowProp
       className="group flex items-center gap-4 px-4 py-3 bg-card/80 hover:bg-card border border-border/30 rounded-lg cursor-pointer transition-all hover:shadow-md hover:border-primary/30"
       onClick={onClick}
     >
+      <StakeholderCheckbox contactId={contact.recordId} size="sm" />
       <Avatar className={`h-10 w-10 bg-gradient-to-br ${getAiLevelGradient(contact.aiExperienceLevel)} shrink-0 ring-2 ring-transparent group-hover:ring-primary/30 transition-all`}>
         <AvatarFallback className="bg-transparent text-foreground font-semibold">
           {getContactInitials(contact)}

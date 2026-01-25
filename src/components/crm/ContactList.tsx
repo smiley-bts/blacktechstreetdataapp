@@ -1,12 +1,13 @@
 import { useState, useMemo, useCallback } from "react";
-import { Contact, ContactFilter, isEventAttendee, hasBuildDayData, hasEventFeedback, hasValidDisplayName } from "@/types/contact";
+import { Contact, ContactFilter, isEventAttendee, hasBuildDayData, hasEventFeedback, hasValidDisplayName, isJune2025Event, isHappyHourAug2025, isSep2025Event, isDec6Workshop, isDec13LTF, isSept27BuildDay } from "@/types/contact";
 import { ContactCard, ContactCardSkeleton } from "./ContactCard";
 import { ContactListRow, ContactListRowSkeleton } from "./ContactListRow";
 import { ContactDetailModal } from "./ContactDetailModal";
 import { ViewOptionsBar, ViewMode, SortField, SortDirection } from "./ViewOptionsBar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, UserCheck, UserPlus, Star, Sparkles, Calendar, Hammer, AlertCircle } from "lucide-react";
+import { Users, Globe, Calendar, Crown, AlertCircle, CalendarDays, PartyPopper, Hammer, GraduationCap, Presentation } from "lucide-react";
 import { getCompletenessScore } from "@/lib/contactCompleteness";
+import { useContactTags } from "@/hooks/useContactTags";
 
 interface ContactListProps {
   contacts: Contact[];
@@ -18,10 +19,11 @@ interface TabConfig {
   id: string;
   label: string;
   icon: any;
-  filter: (contact: Contact) => boolean;
+  filter: (contact: Contact, getContactsWithTag: (tag: string) => string[]) => boolean;
 }
 
-const tabs: TabConfig[] = [
+// Primary tabs: All, Website Only, IRL Attendees, Stakeholders
+const primaryTabs: TabConfig[] = [
   {
     id: "all",
     label: "All Contacts",
@@ -29,49 +31,62 @@ const tabs: TabConfig[] = [
     filter: () => true,
   },
   {
-    id: "event-attendees",
-    label: "Event Attendees",
+    id: "website",
+    label: "Website Only",
+    icon: Globe,
+    filter: (c) => !isEventAttendee(c),
+  },
+  {
+    id: "irl",
+    label: "IRL Attendees",
     icon: Calendar,
     filter: (c) => isEventAttendee(c),
   },
   {
-    id: "buildday",
-    label: "Build Day",
+    id: "stakeholders",
+    label: "Stakeholders",
+    icon: Crown,
+    filter: (c, getContactsWithTag) => getContactsWithTag("Stakeholder").includes(c.recordId),
+  },
+];
+
+// Event sub-tabs for IRL Attendees
+const eventSubTabs: TabConfig[] = [
+  {
+    id: "all-irl",
+    label: "All IRL",
+    icon: Calendar,
+    filter: (c) => isEventAttendee(c),
+  },
+  {
+    id: "june-2025",
+    label: "June Workshop",
+    icon: CalendarDays,
+    filter: (c) => isJune2025Event(c),
+  },
+  {
+    id: "happy-hour",
+    label: "Happy Hour",
+    icon: PartyPopper,
+    filter: (c) => isHappyHourAug2025(c),
+  },
+  {
+    id: "sep-2025",
+    label: "Sept Build Day",
     icon: Hammer,
-    filter: (c) => hasBuildDayData(c),
+    filter: (c) => isSep2025Event(c) || isSept27BuildDay(c),
   },
   {
-    id: "feedback",
-    label: "Has Feedback",
-    icon: Star,
-    filter: (c) => hasEventFeedback(c),
+    id: "dec-workshop",
+    label: "Dec Workshop",
+    icon: Presentation,
+    filter: (c) => isDec6Workshop(c),
   },
   {
-    id: "leads",
-    label: "Leads",
-    icon: UserPlus,
-    filter: (c) => c.lifecycleStage?.toLowerCase() === "lead",
-  },
-  {
-    id: "emerging",
-    label: "Emerging AI",
-    icon: Sparkles,
-    filter: (c) => c.aiExperienceLevel?.toLowerCase().includes("emerging"),
-  },
-  {
-    id: "intermediate",
-    label: "Intermediate+",
-    icon: UserCheck,
-    filter: (c) => 
-      c.aiExperienceLevel?.toLowerCase().includes("intermediate") ||
-      c.aiExperienceLevel?.toLowerCase().includes("advanced") ||
-      c.aiExperienceLevel?.toLowerCase().includes("expert"),
-  },
-  {
-    id: "incomplete",
-    label: "Needs Attention",
-    icon: AlertCircle,
-    filter: (c) => getCompletenessScore(c) < 50,
+    id: "dec-ltf",
+    label: "Lead The Future",
+    icon: GraduationCap,
+    filter: (c) => isDec13LTF(c),
   },
 ];
 
@@ -141,10 +156,12 @@ function shuffleArray<T>(array: T[]): T[] {
 export function ContactList({ contacts, loading, filters }: ContactListProps) {
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [activeTab, setActiveTab] = useState("all");
+  const [activeEventSubTab, setActiveEventSubTab] = useState("all-irl");
   const [viewMode, setViewMode] = useState<ViewMode>("cards");
   const [sortField, setSortField] = useState<SortField>("name");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
   const [shuffleKey, setShuffleKey] = useState(0);
+  const { getContactsWithTag } = useContactTags();
 
   const handleSortChange = useCallback((field: SortField, direction: SortDirection) => {
     setSortField(field);
@@ -155,11 +172,14 @@ export function ContactList({ contacts, loading, filters }: ContactListProps) {
     setShuffleKey(prev => prev + 1);
   }, []);
 
+  // Compute tab contacts with stakeholder tag support
   const tabContacts = useMemo(() => {
     const result: Record<string, Contact[]> = {};
-    tabs.forEach((tab) => {
-      let filtered = contacts.filter(tab.filter);
-      // Apply sort or shuffle
+    const stakeholderIds = getContactsWithTag("Stakeholder");
+    
+    // Primary tabs
+    primaryTabs.forEach((tab) => {
+      let filtered = contacts.filter(c => tab.filter(c, () => stakeholderIds));
       if (shuffleKey > 0) {
         filtered = shuffleArray(filtered);
       } else {
@@ -167,10 +187,29 @@ export function ContactList({ contacts, loading, filters }: ContactListProps) {
       }
       result[tab.id] = filtered;
     });
+    
+    // Event sub-tabs
+    eventSubTabs.forEach((tab) => {
+      let filtered = contacts.filter(c => tab.filter(c, () => stakeholderIds));
+      if (shuffleKey > 0) {
+        filtered = shuffleArray(filtered);
+      } else {
+        filtered = sortContacts(filtered, sortField, sortDirection);
+      }
+      result[tab.id] = filtered;
+    });
+    
     return result;
-  }, [contacts, sortField, sortDirection, shuffleKey]);
+  }, [contacts, sortField, sortDirection, shuffleKey, getContactsWithTag]);
 
-  const currentTabContacts = tabContacts[activeTab] || [];
+  // Get current contacts based on active tab
+  const currentTabContacts = useMemo(() => {
+    if (activeTab === "irl") {
+      return tabContacts[activeEventSubTab] || [];
+    }
+    return tabContacts[activeTab] || [];
+  }, [activeTab, activeEventSubTab, tabContacts]);
+
   const displayLimit = viewMode === "compact" ? 200 : 100;
   const displayContacts = currentTabContacts.slice(0, displayLimit);
 
@@ -206,7 +245,7 @@ export function ContactList({ contacts, loading, filters }: ContactListProps) {
 
   const renderContacts = (contactsToRender: Contact[]) => {
     if (contactsToRender.length === 0) {
-      const activeTabConfig = tabs.find(t => t.id === activeTab);
+      const activeTabConfig = [...primaryTabs, ...eventSubTabs].find(t => t.id === (activeTab === "irl" ? activeEventSubTab : activeTab));
       const Icon = activeTabConfig?.icon || Users;
       return (
         <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -277,9 +316,10 @@ export function ContactList({ contacts, loading, filters }: ContactListProps) {
           totalFiltered={currentTabContacts.length}
         />
 
+        {/* Primary Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="w-full justify-start overflow-x-auto flex-nowrap mb-4 h-auto p-1">
-            {tabs.map((tab) => (
+          <TabsList className="w-full justify-start overflow-x-auto flex-nowrap mb-4 h-auto p-1 bg-muted/50">
+            {primaryTabs.map((tab) => (
               <TabsTrigger
                 key={tab.id}
                 value={tab.id}
@@ -294,7 +334,8 @@ export function ContactList({ contacts, loading, filters }: ContactListProps) {
             ))}
           </TabsList>
 
-          {tabs.map((tab) => (
+          {/* Regular tab content */}
+          {primaryTabs.filter(t => t.id !== "irl").map((tab) => (
             <TabsContent key={tab.id} value={tab.id} className="m-0">
               {renderContacts(tabContacts[tab.id]?.slice(0, displayLimit) || [])}
               {(tabContacts[tab.id]?.length || 0) > displayLimit && (
@@ -305,6 +346,39 @@ export function ContactList({ contacts, loading, filters }: ContactListProps) {
               )}
             </TabsContent>
           ))}
+
+          {/* IRL Tab with Event Sub-tabs */}
+          <TabsContent value="irl" className="m-0 space-y-4">
+            <Tabs value={activeEventSubTab} onValueChange={setActiveEventSubTab} className="w-full">
+              <TabsList className="w-full justify-start overflow-x-auto flex-nowrap h-auto p-1 bg-card/50 border border-border/30">
+                {eventSubTabs.map((subTab) => (
+                  <TabsTrigger
+                    key={subTab.id}
+                    value={subTab.id}
+                    className="flex items-center gap-1.5 text-xs whitespace-nowrap data-[state=active]:bg-accent data-[state=active]:text-accent-foreground"
+                  >
+                    <subTab.icon className="h-3.5 w-3.5" />
+                    <span className="hidden md:inline">{subTab.label}</span>
+                    <span className="text-[10px] opacity-70">
+                      ({tabContacts[subTab.id]?.length || 0})
+                    </span>
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+
+              {eventSubTabs.map((subTab) => (
+                <TabsContent key={subTab.id} value={subTab.id} className="m-0 mt-4">
+                  {renderContacts(tabContacts[subTab.id]?.slice(0, displayLimit) || [])}
+                  {(tabContacts[subTab.id]?.length || 0) > displayLimit && (
+                    <p className="text-center text-sm text-muted-foreground mt-4 py-4 bg-muted/30 rounded-lg">
+                      Showing first {displayLimit} of {tabContacts[subTab.id]?.length.toLocaleString()} contacts. 
+                      Use search/filters to narrow results.
+                    </p>
+                  )}
+                </TabsContent>
+              ))}
+            </Tabs>
+          </TabsContent>
         </Tabs>
       </div>
 
