@@ -288,34 +288,9 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
                   <p className="text-sm text-muted-foreground">{event.date}</p>
                 </div>
                 
-                <div className="flex items-center gap-4 text-right">
-                  {event.multiDay ? (
-                    <>
-                      <div>
-                        <p className="text-xl font-bold text-cyan-600 dark:text-cyan-400">{event.day1Count}</p>
-                        <p className="text-xs text-muted-foreground">Day 1</p>
-                      </div>
-                      <div className="w-px h-10 bg-border" />
-                      <div>
-                        <p className="text-xl font-bold text-cyan-600 dark:text-cyan-400">{event.day2Count}</p>
-                        <p className="text-xs text-muted-foreground">Day 2</p>
-                      </div>
-                      {event.day1ToDay2Retention !== null && (
-                        <>
-                          <div className="w-px h-10 bg-border" />
-                          <div>
-                            <p className="text-xl font-bold text-amber-600 dark:text-amber-400">{event.day1ToDay2Retention}%</p>
-                            <p className="text-xs text-muted-foreground">retention</p>
-                          </div>
-                        </>
-                      )}
-                    </>
-                  ) : (
-                    <div>
-                      <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">{event.attendedCount}</p>
-                      <p className="text-xs text-muted-foreground">attended</p>
-                    </div>
-                  )}
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <span className="text-sm">View Details</span>
+                  <ExternalLink className="h-4 w-4" />
                 </div>
               </div>
             ))}
@@ -335,11 +310,9 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
               <CardContent className="p-4 text-center">
                 <p className="text-lg font-bold text-foreground">{eventsOfType.length}</p>
                 <p className="text-sm text-muted-foreground">{label}s</p>
-                <div className="flex justify-center gap-2 mt-2 text-xs text-muted-foreground">
-                  <span>{totalRegistered} reg</span>
-                  <span>•</span>
-                  <span className="text-emerald-600 dark:text-emerald-400">{totalAttended} att</span>
-                </div>
+                <p className="text-xs text-muted-foreground mt-2">
+                  {totalRegistered} registered
+                </p>
               </CardContent>
             </Card>
           );
