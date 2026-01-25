@@ -12,6 +12,7 @@ import { ImportContactsModal } from "./ImportContactsModal";
 import { AttendanceImportModal } from "./AttendanceImportModal";
 import { DeduplicationModal } from "./DeduplicationModal";
 import { ExecutiveSummary } from "./ExecutiveSummary";
+import { CommunityBreakdown } from "./CommunityBreakdown";
 import { SavedReports } from "./SavedReports";
 import { ShareReportButton } from "./ShareReportButton";
 import { TagFilter } from "./TagFilter";
@@ -606,6 +607,21 @@ export default function CRMDashboard() {
               contacts={contacts}
               onViewContacts={() => setActiveTab("contacts")}
               onViewEvents={() => setActiveTab("events")}
+            />
+            <CommunityBreakdown 
+              contacts={contacts}
+              onNavigateToWebsiteLeads={() => {
+                setFilters(prev => ({ ...prev, eventAttendeesOnly: false }));
+                setActiveTab("contacts");
+              }}
+              onNavigateToIRLAttendees={() => {
+                setFilters(prev => ({ ...prev, eventAttendeesOnly: true }));
+                setActiveTab("contacts");
+              }}
+              onNavigateToStakeholders={() => {
+                setFilters(prev => ({ ...prev, tags: ["Stakeholder"] }));
+                setActiveTab("contacts");
+              }}
             />
             <ExecutiveSummary 
               contacts={contacts} 
