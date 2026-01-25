@@ -12,7 +12,8 @@ import {
   Activity, 
   Shield,
   Home,
-  Users
+  Users,
+  BarChart3
 } from 'lucide-react';
 import btsLogo from '@/assets/black-tech-street-logo.png';
 import { PasswordChangeCard } from '@/components/admin/PasswordChangeCard';
@@ -20,6 +21,7 @@ import { ReportsSection } from '@/components/admin/ReportsSection';
 import { ActivityLogsSection } from '@/components/admin/ActivityLogsSection';
 import { ContactManagementSection } from '@/components/admin/ContactManagementSection';
 import { UserManagementSection } from '@/components/admin/UserManagementSection';
+import { CRMUsageAnalytics } from '@/components/admin/CRMUsageAnalytics';
 
 export default function AdminDashboard() {
   const { user, profile, loading, signOut, isOwner, isAdmin } = useAuth();
@@ -89,7 +91,7 @@ export default function AdminDashboard() {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 max-w-3xl">
+          <TabsList className="grid w-full grid-cols-6 max-w-4xl">
             <TabsTrigger value="profile" className="flex items-center gap-2">
               <User className="h-4 w-4" />
               Profile
@@ -97,6 +99,10 @@ export default function AdminDashboard() {
             <TabsTrigger value="users" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               Users
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              Analytics
             </TabsTrigger>
             <TabsTrigger value="reports" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
@@ -152,6 +158,10 @@ export default function AdminDashboard() {
 
           <TabsContent value="users">
             <UserManagementSection isOwner={isOwner} currentUserId={user.id} />
+          </TabsContent>
+
+          <TabsContent value="analytics">
+            <CRMUsageAnalytics />
           </TabsContent>
 
           <TabsContent value="reports">

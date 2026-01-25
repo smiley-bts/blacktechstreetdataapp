@@ -38,6 +38,7 @@ import { useSessionTimeout } from "@/hooks/useSessionTimeout";
 import { useFeedback } from "@/hooks/useFeedback";
 import { useProjects } from "@/hooks/useProjects";
 import { useReleaseForms } from "@/hooks/useReleaseForms";
+import { useCRMAnalytics } from "@/hooks/useCRMAnalytics";
 import btsLogo from "@/assets/black-tech-street-logo.png";
 
 // CRM Dashboard v2 - Event Attendee Focus
@@ -87,6 +88,20 @@ export default function CRMDashboard() {
   const [taglineIndex, setTaglineIndex] = useState(0);
   const [taglineFading, setTaglineFading] = useState(false);
   const [showPresentationMode, setShowPresentationMode] = useState(false);
+  
+  // CRM Analytics tracking
+  const { 
+    trackTabSwitch, 
+    trackFilterApply, 
+    trackSearch, 
+    trackContactView,
+    trackExport,
+    trackPrint,
+    trackSync,
+    trackDedup,
+    trackImport,
+    trackPresentationMode
+  } = useCRMAnalytics();
 
   // Count pending duplicates
   const pendingDuplicateCount = useMemo(() => {
@@ -167,6 +182,12 @@ export default function CRMDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
   const [selectedContactEmail, setSelectedContactEmail] = useState<string | null>(null);
 
+  // Track tab switches
+  const handleTabChange = useCallback((tab: string) => {
+    setActiveTab(tab);
+    trackTabSwitch(tab);
+  }, [trackTabSwitch]);
+
   // Find contact by email for modal
   const selectedContact = useMemo(() => {
     if (!selectedContactEmail) return null;
@@ -175,7 +196,12 @@ export default function CRMDashboard() {
 
   const handleContactClick = useCallback((email: string) => {
     setSelectedContactEmail(email);
-  }, []);
+    // Track contact view
+    const contact = contacts.find(c => c.email?.toLowerCase() === email.toLowerCase());
+    if (contact) {
+      trackContactView(contact.recordId);
+    }
+  }, [contacts, trackContactView]);
 
   // Sync filters to URL (debounced)
   useEffect(() => {
@@ -300,19 +326,26 @@ export default function CRMDashboard() {
       ...prev,
       ...eventFilters,
     }));
-  }, []);
+    // Track filter changes
+    Object.entries(eventFilters).forEach(([key, value]) => {
+      if (value) trackFilterApply(key, String(value));
+    });
+  }, [trackFilterApply]);
 
   const handleTagsChange = useCallback((tags: string[]) => {
     setFilters(prev => ({ ...prev, tags }));
-  }, []);
+    if (tags.length > 0) trackFilterApply('tags', tags);
+  }, [trackFilterApply]);
 
   const handleImportContacts = useCallback((newContacts: Contact[]) => {
     addContacts(newContacts);
-  }, [addContacts]);
+    trackImport(newContacts.length);
+  }, [addContacts, trackImport]);
 
   const handleMergeContacts = useCallback((merged: Contact, removedIds: string[]) => {
     mergeContacts(merged, removedIds);
-  }, [mergeContacts]);
+    trackDedup(removedIds.length);
+  }, [mergeContacts, trackDedup]);
 
   const handleLoadReport = useCallback((reportFilters: ContactFilter) => {
     setFilters(reportFilters);
@@ -321,7 +354,18 @@ export default function CRMDashboard() {
 
   const handlePrint = useCallback(() => {
     openPrintView(filteredContacts, filters, "Contact Report");
-  }, [filteredContacts, filters]);
+    trackPrint(filteredContacts.length);
+  }, [filteredContacts, filters, trackPrint]);
+
+  // Track search results
+  useEffect(() => {
+    if (filters.search && filters.search.length > 2) {
+      const timer = setTimeout(() => {
+        trackSearch(filteredContacts.length > 0, filteredContacts.length);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [filters.search, filteredContacts.length, trackSearch]);
 
   if (error) {
     return (
@@ -528,7 +572,7 @@ export default function CRMDashboard() {
         )}
 
         {/* Main Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full animate-fade-in" style={{ animationDelay: '0.1s' }}>
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full animate-fade-in" style={{ animationDelay: '0.1s' }}>
           <TabsList className="grid w-full grid-cols-6 bg-secondary/50 h-auto p-1">
             <TabsTrigger value="overview" className="gap-1 sm:gap-2 px-2 sm:px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <LayoutDashboard className="h-4 w-4" />
