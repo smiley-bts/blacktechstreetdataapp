@@ -18,6 +18,7 @@ import MicrosoftVisit from "./pages/MicrosoftVisit";
 import MicrosoftVisitRecap from "./pages/MicrosoftVisitRecap";
 import MicrosoftVisitGallery from "./pages/MicrosoftVisitGallery";
 import Timeline from "./pages/Timeline";
+import AspireEnterprise from "./pages/AspireEnterprise";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +42,7 @@ function AnimatedRoutes() {
         <Route path="/microsoftvisitrecap" element={<MicrosoftVisitRecap />} />
         <Route path="/microsoftvisitgallery" element={<MicrosoftVisitGallery />} />
         <Route path="/timeline" element={<Timeline />} />
+        <Route path="/aspireenterprise" element={<AspireEnterprise />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
