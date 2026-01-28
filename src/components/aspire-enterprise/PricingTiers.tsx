@@ -93,8 +93,9 @@ export function PricingTiers() {
           >
             <Card className={`relative bg-gradient-to-br ${tier.gradient} backdrop-blur-md 
                             border border-white/[0.08] hover:border-white/[0.15]
-                            shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30
-                            transition-all duration-300 overflow-hidden group`}>
+                            shadow-lg shadow-black/20 hover:shadow-2xl hover:shadow-black/40
+                            transition-all duration-300 ease-out overflow-hidden group
+                            hover:scale-[1.02] hover:-translate-y-1`}>
               {/* Subtle inner glow */}
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
                 <div className={`absolute inset-0 bg-gradient-to-br ${tier.gradient} blur-xl`} />
