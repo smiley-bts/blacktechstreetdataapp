@@ -8,8 +8,9 @@ const tiers = [
     icon: Building2,
     name: 'Corporate Tier',
     bestFor: 'Corporations, enterprise teams, large institutions',
-    color: 'from-blue-500/20 to-primary/20',
-    borderColor: 'border-blue-500/30 hover:border-blue-500/60',
+    gradient: 'from-blue-500/10 via-blue-400/5 to-primary/10',
+    accentColor: 'blue-500',
+    iconBg: 'bg-blue-500/20',
     pricing: [
       { format: 'Open Enrollment (per participant)', price: '$750' },
       { format: 'Private Cohort (up to 25 participants)', price: '$15,000 flat' },
@@ -28,8 +29,9 @@ const tiers = [
     icon: Store,
     name: 'Small Business Tier',
     bestFor: 'Small businesses, startups, local enterprises',
-    color: 'from-amber-500/20 to-primary/20',
-    borderColor: 'border-amber-500/30 hover:border-amber-500/60',
+    gradient: 'from-amber-500/10 via-amber-400/5 to-primary/10',
+    accentColor: 'amber-500',
+    iconBg: 'bg-amber-500/20',
     pricing: [
       { format: 'Open Enrollment (per participant)', price: '$400' },
       { format: 'Team Package (5–10 participants)', price: '$3,000 flat' },
@@ -46,8 +48,9 @@ const tiers = [
     icon: Heart,
     name: 'Nonprofit & Public Sector Tier',
     bestFor: 'Nonprofits, educational institutions, government agencies',
-    color: 'from-rose-500/20 to-primary/20',
-    borderColor: 'border-rose-500/30 hover:border-rose-500/60',
+    gradient: 'from-rose-500/10 via-rose-400/5 to-primary/10',
+    accentColor: 'rose-500',
+    iconBg: 'bg-rose-500/20',
     pricing: [
       { format: 'Open Enrollment (per participant)', price: '$200' },
       { format: 'Team Package (5–15 participants)', price: '$2,000 flat' },
@@ -88,11 +91,18 @@ export function PricingTiers() {
             viewport={{ once: true }}
             transition={{ delay: tierIndex * 0.1 }}
           >
-            <Card className={`bg-gradient-to-br ${tier.color} backdrop-blur-sm border ${tier.borderColor} 
-                            transition-all duration-300 overflow-hidden`}>
-              <CardHeader className="pb-4">
+            <Card className={`relative bg-gradient-to-br ${tier.gradient} backdrop-blur-md 
+                            border border-white/[0.08] hover:border-white/[0.15]
+                            shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30
+                            transition-all duration-300 overflow-hidden group`}>
+              {/* Subtle inner glow */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+                <div className={`absolute inset-0 bg-gradient-to-br ${tier.gradient} blur-xl`} />
+              </div>
+              
+              <CardHeader className="relative pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-xl bg-background/50">
+                  <div className={`p-2.5 rounded-xl ${tier.iconBg} backdrop-blur-sm border border-white/10`}>
                     <tier.icon className="w-6 h-6 text-primary" />
                   </div>
                   <div>
@@ -101,14 +111,16 @@ export function PricingTiers() {
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="relative space-y-4">
                 {/* Pricing table */}
-                <div className="bg-background/30 rounded-lg overflow-hidden">
-                  <div className="divide-y divide-border/30">
+                <div className="bg-background/20 rounded-xl overflow-hidden border border-white/[0.05]">
+                  <div className="divide-y divide-white/[0.05]">
                     {tier.pricing.map((item, index) => (
-                      <div key={index} className="flex justify-between items-center px-4 py-3 hover:bg-background/20 transition-colors">
-                        <span className="text-sm text-foreground/80">{item.format}</span>
-                        <Badge variant="secondary" className="bg-primary/10 text-primary font-semibold">
+                      <div key={index} className="flex justify-between items-center px-4 py-3.5 
+                                                  hover:bg-white/[0.03] transition-colors">
+                        <span className="text-sm text-foreground/70">{item.format}</span>
+                        <Badge variant="secondary" className="bg-primary/15 text-primary font-semibold 
+                                                             border border-primary/20 shadow-sm shadow-primary/10">
                           {item.price}
                         </Badge>
                       </div>
