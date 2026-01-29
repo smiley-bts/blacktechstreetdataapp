@@ -153,7 +153,7 @@ export function useEventAutoSync(existingContacts: Contact[], contactsLoading: b
   }, [june2025Merged, existingContacts]);
   
   const syncHappyHourEvent = useCallback(async () => {
-    const eventName = "Happy Hour Aug 2025";
+    const eventName = "Community Engagement Aug 2025";
     
     // Skip if already synced or no data
     if (hasEventBeenSynced(eventName) || happyHourRsvps.length === 0) {
@@ -177,7 +177,7 @@ export function useEventAutoSync(existingContacts: Contact[], contactsLoading: b
         .insert(dbRows);
       
       if (error) {
-        console.error('Error inserting Happy Hour contacts:', error);
+        console.error('Error inserting Community Engagement contacts:', error);
       } else {
         added = toInsert.length;
       }

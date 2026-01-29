@@ -65,8 +65,8 @@ const eventSubTabs: TabConfig[] = [
     filter: (c) => isJune2025Event(c),
   },
   {
-    id: "happy-hour",
-    label: "Happy Hour",
+    id: "community-engagement",
+    label: "Community Engagement",
     icon: PartyPopper,
     filter: (c) => isHappyHourAug2025(c),
   },

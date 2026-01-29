@@ -113,7 +113,7 @@ export interface ContactFilter {
   dec13LTF: boolean;
   sept27BuildDay: boolean;
   june2025Event: boolean; // June 27-28, 2025 ASPIRE event
-  happyHourAug2025: boolean; // August 27, 2025 Happy Hour
+  happyHourAug2025: boolean; // August 27, 2025 Community Engagement
   hasFeedback: boolean;
   hasProject: boolean;
 }
@@ -341,10 +341,10 @@ export function isJune2025Event(contact: Contact): boolean {
   );
 }
 
-// Check if contact attended Happy Hour Aug 2025
+// Check if contact attended Community Engagement Aug 2025
 export function isHappyHourAug2025(contact: Contact): boolean {
   return !!(
-    contact.eventsAttended && contact.eventsAttended.includes("Happy Hour Aug 2025")
+    contact.eventsAttended && contact.eventsAttended.includes("Community Engagement Aug 2025")
   );
 }
 

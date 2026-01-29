@@ -66,7 +66,7 @@ export function june2025SignupToContact(signup: June2025Signup, attended: boolea
   };
 }
 
-// Convert Happy Hour RSVP to contact format
+// Convert Community Engagement RSVP to contact format
 export function happyHourRsvpToContact(rsvp: HappyHourRSVP): Partial<Contact> {
   const nameParts = rsvp.fullName.split(' ');
   const firstName = nameParts[0] || '';
@@ -79,8 +79,8 @@ export function happyHourRsvpToContact(rsvp: HappyHourRSVP): Partial<Contact> {
     fullName: rsvp.fullName,
     phone: rsvp.phone,
     postalCode: rsvp.zipCode,
-    eventsAttended: 'Happy Hour Aug 2025',
-    recordSource: 'Happy Hour RSVP',
+    eventsAttended: 'Community Engagement Aug 2025',
+    recordSource: 'Community Engagement RSVP',
   };
 }
 
