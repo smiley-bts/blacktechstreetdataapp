@@ -54,7 +54,7 @@ export function useHappyHourEvent() {
           }
         });
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load Happy Hour data");
+        setError(err instanceof Error ? err.message : "Failed to load Community Engagement data");
         setLoading(false);
       }
     };
@@ -66,7 +66,7 @@ export function useHappyHourEvent() {
     return {
       totalRSVPs: rsvps.length,
       eventDate: "August 27, 2025",
-      eventName: "Happy Hour Aug 2025",
+      eventName: "Community Engagement Aug 2025",
     };
   }, [rsvps]);
 
