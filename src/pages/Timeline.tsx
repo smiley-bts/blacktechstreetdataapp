@@ -16,7 +16,7 @@ import { TestimonialsSection } from '@/components/timeline/TestimonialsSection';
 import { TableOfContents } from '@/components/timeline/TableOfContents';
 import { InTheNewsSection } from '@/components/timeline/InTheNewsSection';
 import { BackToTopButton } from '@/components/timeline/BackToTopButton';
-import { Button } from '@/components/ui/button';
+import { TimelineExportButton } from '@/components/timeline/TimelineExportButton';
 
 export default function Timeline() {
   const location = useLocation();
@@ -112,9 +112,12 @@ export default function Timeline() {
       {/* Hero */}
       <TimelineHero />
 
-      {/* Table of Contents */}
+      {/* Table of Contents with Export Button */}
       <div className="relative z-10 px-5 max-w-2xl mx-auto">
-        <TableOfContents />
+        <div className="flex items-center justify-between gap-4 print:hidden">
+          <TableOfContents />
+          <TimelineExportButton />
+        </div>
       </div>
 
       {/* Main content */}
