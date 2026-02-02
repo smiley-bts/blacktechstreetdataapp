@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useParticipants, ParticipantWithEmails } from "./useParticipants";
-import { useEventAttendance, EventSummary } from "./useEventAttendance";
+import { useEventAttendance, EventSummary, EventTypeBreakdown, GrantCategoryRollup } from "./useEventAttendance";
+import { EventType } from "@/types/eventTypes";
 
 export interface AttendanceMetrics {
   // Core attendance-first counts (not inflated by registrations)
@@ -38,6 +39,12 @@ export interface AttendanceMetrics {
   firstTimeAttendees: number; // Attended only one event ever
   returningAttendees: number; // Attended 2+ events
   retentionRate: number; // % who returned after first event
+
+  // Event type breakdown (NEW)
+  eventTypeBreakdown: EventTypeBreakdown[];
+
+  // Grant-aligned rollups (NEW - deduplicated per category)
+  grantRollups: GrantCategoryRollup[];
 }
 
 export interface ParticipantStatus {
@@ -45,18 +52,30 @@ export interface ParticipantStatus {
   eventCount: number;
   lastEventDate: string | null;
   surveyCompleted: boolean;
+  eventTypes: EventType[];
 }
 
-export function useParticipantMetrics() {
+export function useParticipantMetrics(eventTypeFilter?: EventType) {
   const { participants, isLoading: participantsLoading } = useParticipants();
-  const { attendance, eventSummaries, isLoading: attendanceLoading } =
-    useEventAttendance();
+  const { 
+    attendance, 
+    eventSummaries, 
+    eventTypeBreakdown,
+    grantRollups,
+    isLoading: attendanceLoading 
+  } = useEventAttendance(eventTypeFilter ? { eventType: eventTypeFilter } : undefined);
 
   const metrics = useMemo((): AttendanceMetrics => {
     // Build attendance map per participant
     const participantAttendance = new Map<
       string,
-      { attended: number; registered: number; surveyed: number; released: number }
+      { 
+        attended: number; 
+        registered: number; 
+        surveyed: number; 
+        released: number;
+        eventTypes: Set<EventType>;
+      }
     >();
 
     attendance.forEach((a) => {
@@ -65,10 +84,16 @@ export function useParticipantMetrics() {
         registered: 0,
         surveyed: 0,
         released: 0,
+        eventTypes: new Set<EventType>(),
       };
 
       existing.registered += 1;
-      if (a.confirmed_attended) existing.attended += 1;
+      if (a.confirmed_attended) {
+        existing.attended += 1;
+        if (a.classifiedType) {
+          existing.eventTypes.add(a.classifiedType);
+        }
+      }
       if (a.completed_survey) existing.surveyed += 1;
       if (a.signed_release) existing.released += 1;
 
@@ -195,8 +220,10 @@ export function useParticipantMetrics() {
       firstTimeAttendees,
       returningAttendees,
       retentionRate,
+      eventTypeBreakdown,
+      grantRollups,
     };
-  }, [participants, attendance, eventSummaries]);
+  }, [participants, attendance, eventSummaries, eventTypeBreakdown, grantRollups]);
 
   // Helper to get a participant's status
   const getParticipantStatus = useMemo(() => {
@@ -211,6 +238,7 @@ export function useParticipantMetrics() {
           eventCount: 0,
           lastEventDate: null,
           surveyCompleted: false,
+          eventTypes: [],
         };
       }
 
@@ -220,6 +248,13 @@ export function useParticipantMetrics() {
         (a, b) =>
           new Date(b.event_date).getTime() - new Date(a.event_date).getTime()
       )[0];
+
+      // Collect unique event types attended
+      const eventTypes = [...new Set(
+        attended
+          .map((a) => a.classifiedType)
+          .filter((t): t is EventType => t !== undefined)
+      )];
 
       return {
         status:
@@ -231,6 +266,7 @@ export function useParticipantMetrics() {
         eventCount: attended.length,
         lastEventDate: lastEvent?.event_date || null,
         surveyCompleted: surveyed,
+        eventTypes,
       };
     };
   }, [attendance]);
