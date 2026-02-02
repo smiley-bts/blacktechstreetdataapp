@@ -69,43 +69,8 @@ export function CommunityBreakdown({
   }, [contacts, getContactsWithTag]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-      {/* Website Leads Card */}
-      <Card className="border-border/50 hover:border-primary/30 transition-all duration-300 group">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-cyan-500/10">
-              <Globe className="h-5 w-5 text-cyan-500" />
-            </div>
-            Website Leads
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <p className="text-4xl font-bold text-foreground">
-              <CountUp end={metrics.websiteOnlyCount} duration={600} />
-            </p>
-            <p className="text-sm text-muted-foreground mt-1">
-              Contacts from online signups only
-            </p>
-          </div>
-          <div className="pt-2 border-t border-border/50">
-            <p className="text-xs text-muted-foreground mb-2">
-              No in-person event attendance recorded
-            </p>
-          </div>
-          <Button 
-            variant="outline" 
-            className="w-full gap-2 group-hover:border-primary/50"
-            onClick={onNavigateToWebsiteLeads}
-          >
-            View All
-            <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* IRL Attendees Card */}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+      {/* IRL Attendees Card - Primary Focus */}
       <Card className="border-border/50 hover:border-primary/30 transition-all duration-300 group">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2">
@@ -125,16 +90,16 @@ export function CommunityBreakdown({
             </p>
           </div>
           
-          {/* Mini Event Distribution Chart */}
+          {/* Event Distribution Chart */}
           {metrics.eventDistribution.length > 0 && (
-            <div className="h-[120px] -mx-2">
+            <div className="h-[140px] -mx-2">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={metrics.eventDistribution} layout="vertical">
                   <XAxis type="number" hide />
                   <YAxis 
                     type="category" 
                     dataKey="name" 
-                    width={70} 
+                    width={80} 
                     tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} 
                     axisLine={false}
                     tickLine={false}
@@ -164,7 +129,7 @@ export function CommunityBreakdown({
             className="w-full gap-2 group-hover:border-primary/50"
             onClick={onNavigateToIRLAttendees}
           >
-            View All
+            View All Attendees
             <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
           </Button>
         </CardContent>
@@ -223,7 +188,7 @@ export function CommunityBreakdown({
             className="w-full gap-2 group-hover:border-primary/50"
             onClick={onNavigateToStakeholders}
           >
-            View All
+            View All Stakeholders
             <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
           </Button>
         </CardContent>
