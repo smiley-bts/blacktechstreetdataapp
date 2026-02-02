@@ -1,6 +1,6 @@
-import { Users, CalendarDays, TrendingUp, Sparkles, ArrowRight, UserCheck } from "lucide-react";
+import { CalendarDays, TrendingUp, ArrowRight, UserCheck, CheckCircle, Users } from "lucide-react";
 import { Contact } from "@/types/contact";
-import { useContactMetrics } from "@/hooks/useContactMetrics";
+import { useParticipantMetrics } from "@/hooks/useParticipantMetrics";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CountUp } from "@/components/ui/count-up";
@@ -9,74 +9,71 @@ interface DashboardHeroProps {
   contacts: Contact[];
   onViewContacts?: () => void;
   onViewEvents?: () => void;
+  onViewAttendees?: () => void;
 }
 
-export function DashboardHero({ contacts, onViewContacts, onViewEvents }: DashboardHeroProps) {
-  const metrics = useContactMetrics(contacts);
+export function DashboardHero({ contacts, onViewContacts, onViewEvents, onViewAttendees }: DashboardHeroProps) {
+  const { metrics, isLoading } = useParticipantMetrics();
 
+  // Attendee-focused stats
   const heroStats = [
     {
-      label: "Total Contacts",
-      value: metrics.total,
-      displayValue: metrics.total.toLocaleString(),
-      icon: Users,
+      label: "Confirmed Attendees",
+      value: metrics.totalUniqueAttendees,
+      icon: CheckCircle,
+      color: "text-emerald-500",
+      bgColor: "bg-emerald-500/10",
+      isPrimary: true,
+    },
+    {
+      label: "Total Attendances",
+      value: metrics.totalAttendances,
+      icon: CalendarDays,
       color: "text-blue-500",
       bgColor: "bg-blue-500/10",
     },
     {
-      label: "Event Registered",
-      value: metrics.eventRegistered,
-      displayValue: metrics.eventRegistered.toLocaleString(),
-      icon: CalendarDays,
+      label: "Retention Rate",
+      value: metrics.retentionRate,
+      icon: TrendingUp,
+      color: "text-purple-500",
+      bgColor: "bg-purple-500/10",
+      isPercentage: true,
+    },
+    {
+      label: "Attendance Rate",
+      value: metrics.overallAttendanceRate,
+      icon: UserCheck,
       color: "text-amber-500",
       bgColor: "bg-amber-500/10",
-    },
-    {
-      label: "Attendees",
-      value: metrics.eventActuallyAttended,
-      displayValue: metrics.eventActuallyAttended.toLocaleString(),
-      icon: UserCheck,
-      color: "text-emerald-500",
-      bgColor: "bg-emerald-500/10",
-    },
-    {
-      label: "Feedback Collected",
-      value: metrics.withFeedback,
-      displayValue: metrics.withFeedback.toLocaleString(),
-      icon: Sparkles,
-      color: "text-pink-500",
-      bgColor: "bg-pink-500/10",
-    },
-    {
-      label: "NPS Score",
-      value: metrics.npsScore ?? 0,
-      isNPS: true,
-      displayValue: metrics.npsScore !== null ? `${metrics.npsScore > 0 ? '+' : ''}${metrics.npsScore}` : "N/A",
-      icon: TrendingUp,
-      color: metrics.npsScore && metrics.npsScore >= 50 ? "text-emerald-500" : "text-muted-foreground",
-      bgColor: metrics.npsScore && metrics.npsScore >= 50 ? "bg-emerald-500/10" : "bg-muted/50",
+      isPercentage: true,
     },
   ];
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/5 via-background to-accent/5 border border-border p-6 sm:p-8">
+    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500/5 via-background to-primary/5 border border-border p-6 sm:p-8">
       {/* Background decorations */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-      <div className="absolute bottom-0 left-0 w-48 h-48 bg-accent/5 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
+      <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+      <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/5 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
       
       <div className="relative z-10">
         {/* Welcome text */}
         <div className="mb-6">
           <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
-            Community Dashboard
+            Attendee Dashboard
           </h2>
           <p className="text-muted-foreground mt-1">
-            Your ASPIRE program at a glance
+            Track confirmed event attendance and engagement
+          </p>
+          {/* Secondary stat: Total contacts */}
+          <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1.5">
+            <Users className="h-3 w-3" />
+            {contacts.length.toLocaleString()} total contacts in database
           </p>
         </div>
 
-        {/* Stats grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+        {/* Stats grid - Attendee focused */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           {heroStats.map((stat, index) => (
             <div
               key={stat.label}
@@ -84,7 +81,8 @@ export function DashboardHero({ contacts, onViewContacts, onViewEvents }: Dashbo
                 "relative overflow-hidden rounded-xl p-4",
                 "bg-card/50 backdrop-blur-sm border border-border/50",
                 "hover:border-primary/30 hover:shadow-lg transition-all duration-300",
-                "group animate-fade-in"
+                "group animate-fade-in",
+                stat.isPrimary && "lg:col-span-1 ring-2 ring-emerald-500/20"
               )}
               style={{ animationDelay: `${index * 0.1}s` }}
             >
@@ -94,8 +92,18 @@ export function DashboardHero({ contacts, onViewContacts, onViewEvents }: Dashbo
               )}>
                 <stat.icon className={cn("h-5 w-5", stat.color)} />
               </div>
-              <p className="text-2xl sm:text-3xl font-bold text-foreground">
-                {stat.isNPS ? stat.displayValue : <CountUp end={stat.value} duration={600} prefix={stat.isNPS && stat.value > 0 ? '+' : ''} />}
+              <p className={cn(
+                "font-bold text-foreground",
+                stat.isPrimary ? "text-3xl sm:text-4xl" : "text-2xl sm:text-3xl"
+              )}>
+                {isLoading ? (
+                  <span className="animate-pulse">--</span>
+                ) : (
+                  <>
+                    <CountUp end={stat.value} duration={600} />
+                    {stat.isPercentage && <span className="text-lg">%</span>}
+                  </>
+                )}
               </p>
               <p className="text-sm text-muted-foreground">
                 {stat.label}
@@ -108,11 +116,11 @@ export function DashboardHero({ contacts, onViewContacts, onViewEvents }: Dashbo
         <div className="flex flex-wrap gap-3">
           <Button 
             variant="default" 
-            className="gap-2"
-            onClick={onViewContacts}
+            className="gap-2 bg-emerald-600 hover:bg-emerald-700"
+            onClick={onViewAttendees}
           >
-            <Users className="h-4 w-4" />
-            View All Contacts
+            <CheckCircle className="h-4 w-4" />
+            View Attendees
             <ArrowRight className="h-4 w-4" />
           </Button>
           <Button 
@@ -122,6 +130,14 @@ export function DashboardHero({ contacts, onViewContacts, onViewEvents }: Dashbo
           >
             <CalendarDays className="h-4 w-4" />
             Browse Events
+          </Button>
+          <Button 
+            variant="ghost" 
+            className="gap-2 text-muted-foreground"
+            onClick={onViewContacts}
+          >
+            <Users className="h-4 w-4" />
+            All Contacts
           </Button>
         </div>
       </div>
