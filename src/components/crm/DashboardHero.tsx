@@ -1,6 +1,7 @@
 import { CalendarDays, TrendingUp, ArrowRight, UserCheck, CheckCircle, Users } from "lucide-react";
 import { Contact } from "@/types/contact";
 import { useParticipantMetrics } from "@/hooks/useParticipantMetrics";
+import { useContactMetrics } from "@/hooks/useContactMetrics";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CountUp } from "@/components/ui/count-up";
@@ -13,13 +14,17 @@ interface DashboardHeroProps {
 }
 
 export function DashboardHero({ contacts, onViewContacts, onViewEvents, onViewAttendees }: DashboardHeroProps) {
-  const { metrics, isLoading } = useParticipantMetrics();
+  const { metrics: participantMetrics, isLoading } = useParticipantMetrics();
+  const legacyMetrics = useContactMetrics(contacts);
 
-  // Attendee-focused stats
-  const heroStats = [
+  // Use new participant data if available, otherwise fallback to legacy
+  const hasParticipantData = participantMetrics.totalUniqueAttendees > 0;
+
+  // Attendee-focused stats with fallback
+  const heroStats = hasParticipantData ? [
     {
       label: "Confirmed Attendees",
-      value: metrics.totalUniqueAttendees,
+      value: participantMetrics.totalUniqueAttendees,
       icon: CheckCircle,
       color: "text-emerald-500",
       bgColor: "bg-emerald-500/10",
@@ -27,14 +32,14 @@ export function DashboardHero({ contacts, onViewContacts, onViewEvents, onViewAt
     },
     {
       label: "Total Attendances",
-      value: metrics.totalAttendances,
+      value: participantMetrics.totalAttendances,
       icon: CalendarDays,
       color: "text-blue-500",
       bgColor: "bg-blue-500/10",
     },
     {
       label: "Retention Rate",
-      value: metrics.retentionRate,
+      value: participantMetrics.retentionRate,
       icon: TrendingUp,
       color: "text-purple-500",
       bgColor: "bg-purple-500/10",
@@ -42,11 +47,42 @@ export function DashboardHero({ contacts, onViewContacts, onViewEvents, onViewAt
     },
     {
       label: "Attendance Rate",
-      value: metrics.overallAttendanceRate,
+      value: participantMetrics.overallAttendanceRate,
       icon: UserCheck,
       color: "text-amber-500",
       bgColor: "bg-amber-500/10",
       isPercentage: true,
+    },
+  ] : [
+    // Legacy fallback stats
+    {
+      label: "Event Attendees",
+      value: legacyMetrics.eventActuallyAttended,
+      icon: CheckCircle,
+      color: "text-emerald-500",
+      bgColor: "bg-emerald-500/10",
+      isPrimary: true,
+    },
+    {
+      label: "Unique Attendees",
+      value: legacyMetrics.uniqueEventAttendees,
+      icon: CalendarDays,
+      color: "text-blue-500",
+      bgColor: "bg-blue-500/10",
+    },
+    {
+      label: "Multi-Event",
+      value: legacyMetrics.multiEventAttendees,
+      icon: TrendingUp,
+      color: "text-purple-500",
+      bgColor: "bg-purple-500/10",
+    },
+    {
+      label: "With Feedback",
+      value: legacyMetrics.withFeedback,
+      icon: UserCheck,
+      color: "text-amber-500",
+      bgColor: "bg-amber-500/10",
     },
   ];
 
