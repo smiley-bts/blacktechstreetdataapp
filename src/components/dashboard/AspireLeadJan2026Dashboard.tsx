@@ -14,7 +14,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 
-const galleryImages = Array.from({ length: 20 }, (_, i) => ({
+const galleryImages = Array.from({ length: 30 }, (_, i) => ({
   src: `/images/gallery/aspire-lead-jan26-${String(i + 1).padStart(2, '0')}.jpg`,
   alt: `ASPIRE Lead January 2026 - Photo ${i + 1}`,
 }));
