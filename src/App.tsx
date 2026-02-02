@@ -13,6 +13,7 @@ import ASPIREFeedback from "./pages/ASPIREFeedback";
 import PreSurvey from "./pages/PreSurvey";
 import BuildDayProjects from "./pages/BuildDayProjects";
 import StudentDashboard from "./pages/StudentDashboard";
+import AspireLeadJan2026 from "./pages/AspireLeadJan2026";
 import EventBreakdown from "./pages/EventBreakdown";
 import MicrosoftVisit from "./pages/MicrosoftVisit";
 import MicrosoftVisitRecap from "./pages/MicrosoftVisitRecap";
@@ -37,6 +38,7 @@ function AnimatedRoutes() {
         <Route path="/pre-survey" element={<PreSurvey />} />
         <Route path="/build-day" element={<BuildDayProjects />} />
         <Route path="/student-dashboard" element={<StudentDashboard />} />
+        <Route path="/aspireleadjan312026" element={<AspireLeadJan2026 />} />
         <Route path="/events/:eventId" element={<EventBreakdown />} />
         <Route path="/microsoftvisit" element={<MicrosoftVisit />} />
         <Route path="/microsoftvisitrecap" element={<MicrosoftVisitRecap />} />
