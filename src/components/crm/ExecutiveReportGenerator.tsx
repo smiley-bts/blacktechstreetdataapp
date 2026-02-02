@@ -142,7 +142,7 @@ export function ExecutiveReportGenerator({ contacts, feedbackQuotes = [], projec
       label: "Data Quality",
       value: `${stats.avgCompleteness}%`,
       icon: Target,
-      description: `${stats.complete} complete, ${stats.incomplete} need attention`,
+      description: `${stats.complete} complete profiles`,
       gradient: stats.avgCompleteness >= 70 ? "from-emerald-500 to-teal-600" : "from-amber-500 to-orange-600",
     },
   ];
@@ -353,14 +353,6 @@ export function ExecutiveReportGenerator({ contacts, feedbackQuotes = [], projec
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-foreground print:text-black">{stats.complete} Complete Profiles</p>
                   <p className="text-xs text-muted-foreground print:text-gray-600">80%+ data completeness</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-3 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 print:bg-amber-50 print:border-amber-200">
-                <AlertCircle className="h-5 w-5 text-amber-500 shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-foreground print:text-black">{stats.incomplete} Need Attention</p>
-                  <p className="text-xs text-muted-foreground print:text-gray-600">Less than 50% complete</p>
                 </div>
               </div>
 
@@ -754,7 +746,7 @@ export function openExecutiveReport(contacts: Contact[], feedbackQuotes: string[
           <div>
             <p class="kpi-label">Data Quality</p>
             <p class="kpi-value">${stats.avgCompleteness}%</p>
-            <p class="kpi-desc">${stats.complete} complete, ${stats.incomplete} need attention</p>
+            <p class="kpi-desc">${stats.complete} complete profiles</p>
           </div>
           <div class="kpi-icon ${stats.avgCompleteness >= 70 ? 'emerald' : 'amber'}">🎯</div>
         </div>
@@ -796,13 +788,6 @@ export function openExecutiveReport(contacts: Contact[], feedbackQuotes: string[
           <div class="insight-text">
             <strong>${stats.complete} Complete Profiles</strong>
             <span>80%+ data completeness</span>
-          </div>
-        </div>
-        <div class="insight-item amber">
-          <span class="insight-icon amber">⚠</span>
-          <div class="insight-text">
-            <strong>${stats.incomplete} Need Attention</strong>
-            <span>Less than 50% complete</span>
           </div>
         </div>
         <div class="insight-item primary">
