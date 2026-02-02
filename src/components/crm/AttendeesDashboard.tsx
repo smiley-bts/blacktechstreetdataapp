@@ -1,14 +1,16 @@
 import { useState, useMemo } from "react";
 import { useParticipantMetrics } from "@/hooks/useParticipantMetrics";
 import { useParticipants } from "@/hooks/useParticipants";
+import { useContacts } from "@/hooks/useContacts";
+import { useContactMetrics } from "@/hooks/useContactMetrics";
+import { isEventAttendee, isDec6Workshop, isDec13LTF, isSept27BuildDay, isJune2025Event, isHappyHourAug2025, isSep2025Event, Contact } from "@/types/contact";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { CountUp } from "@/components/ui/count-up";
-import { Calendar, Users, Search, Filter, ChevronRight, CheckCircle, Clock, TrendingUp, Crown, Briefcase, MapPin } from "lucide-react";
+import { Calendar, Users, Search, Filter, ChevronRight, CheckCircle, Clock, TrendingUp, Briefcase, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AttendeesDashboardProps {
@@ -16,86 +18,109 @@ interface AttendeesDashboardProps {
 }
 
 export function AttendeesDashboard({ onContactClick }: AttendeesDashboardProps) {
-  const { metrics, isLoading } = useParticipantMetrics();
+  const { metrics: participantMetrics, isLoading: participantLoading } = useParticipantMetrics();
   const { participants, isLoading: participantsLoading } = useParticipants();
-  const [activeEventTab, setActiveEventTab] = useState("all");
+  const { contacts, loading: contactsLoading } = useContacts();
+  const legacyMetrics = useContactMetrics(contacts);
+  
   const [demographicFilter, setDemographicFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Get unique events from metrics
-  const events = useMemo(() => {
-    return metrics.eventSummaries || [];
-  }, [metrics.eventSummaries]);
+  // Check if we have new participant data or need to use legacy
+  const hasParticipantData = participantMetrics.totalUniqueAttendees > 0;
+  const isLoading = hasParticipantData ? (participantLoading || participantsLoading) : contactsLoading;
 
-  // Get attendees based on active filters
+  // Get events - from participant metrics or legacy
+  const events = useMemo(() => {
+    if (hasParticipantData) {
+      return participantMetrics.eventSummaries || [];
+    }
+    // Legacy event data
+    return [
+      { eventName: "June '25 Workshop", totalAttended: legacyMetrics.june2025Event, totalRegistered: legacyMetrics.june2025Event, attendanceRate: 100 },
+      { eventName: "Happy Hour Aug '25", totalAttended: legacyMetrics.happyHourAug2025, totalRegistered: legacyMetrics.happyHourAug2025, attendanceRate: 100 },
+      { eventName: "Sep '25 Events", totalAttended: legacyMetrics.sep2025Event, totalRegistered: legacyMetrics.sep2025Event, attendanceRate: 100 },
+      { eventName: "Sept 27 Build Day", totalAttended: legacyMetrics.sept27BuildDay, totalRegistered: legacyMetrics.sept27BuildDay, attendanceRate: 100 },
+      { eventName: "Dec 6 Workshop", totalAttended: legacyMetrics.dec6Workshop, totalRegistered: legacyMetrics.dec6Workshop, attendanceRate: 100 },
+      { eventName: "Dec 13 LTF", totalAttended: legacyMetrics.dec13LTF, totalRegistered: legacyMetrics.dec13LTF, attendanceRate: 100 },
+    ].filter(e => e.totalAttended > 0);
+  }, [hasParticipantData, participantMetrics.eventSummaries, legacyMetrics]);
+
+  // Get attendees - from participants or legacy contacts
+  const attendeeList = useMemo(() => {
+    if (hasParticipantData) {
+      return participants.filter(p => !p.is_stakeholder);
+    }
+    // Legacy: filter contacts that attended events
+    return contacts.filter(c => isEventAttendee(c));
+  }, [hasParticipantData, participants, contacts]);
+
+  // Get filtered attendees based on search and demographic filters
   const filteredAttendees = useMemo(() => {
-    let attendees = participants.filter(p => !p.is_stakeholder);
+    let result = [...attendeeList];
     
     // Search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      attendees = attendees.filter(p => 
-        p.full_name?.toLowerCase().includes(query) ||
-        p.primary_email?.toLowerCase().includes(query) ||
-        p.company_name?.toLowerCase().includes(query)
-      );
+      if (hasParticipantData) {
+        result = result.filter((p: any) => 
+          p.full_name?.toLowerCase().includes(query) ||
+          p.primary_email?.toLowerCase().includes(query) ||
+          p.company_name?.toLowerCase().includes(query)
+        );
+      } else {
+        result = result.filter((c: any) => 
+          c.fullName?.toLowerCase().includes(query) ||
+          c.email?.toLowerCase().includes(query) ||
+          c.companyName?.toLowerCase().includes(query)
+        );
+      }
     }
 
     // Demographic filter
     if (demographicFilter !== "all") {
-      switch (demographicFilter) {
-        case "age-18-24":
-          attendees = attendees.filter(p => p.age_range?.includes("18-24"));
-          break;
-        case "age-25-34":
-          attendees = attendees.filter(p => p.age_range?.includes("25-34"));
-          break;
-        case "age-35-44":
-          attendees = attendees.filter(p => p.age_range?.includes("35-44"));
-          break;
-        case "age-45+":
-          attendees = attendees.filter(p => p.age_range?.includes("45") || p.age_range?.includes("55") || p.age_range?.includes("65"));
-          break;
-        case "beginner":
-          attendees = attendees.filter(p => p.ai_experience_level?.toLowerCase().includes("beginner") || p.ai_experience_level?.toLowerCase().includes("none"));
-          break;
-        case "intermediate":
-          attendees = attendees.filter(p => p.ai_experience_level?.toLowerCase().includes("intermediate") || p.ai_experience_level?.toLowerCase().includes("some"));
-          break;
-        case "advanced":
-          attendees = attendees.filter(p => p.ai_experience_level?.toLowerCase().includes("advanced") || p.ai_experience_level?.toLowerCase().includes("expert"));
-          break;
-      }
+      result = result.filter((item: any) => {
+        const ageRange = hasParticipantData ? item.age_range : item.ageRange;
+        const aiLevel = hasParticipantData ? item.ai_experience_level : item.aiExperienceLevel;
+        
+        switch (demographicFilter) {
+          case "age-18-24": return ageRange?.includes("18-24");
+          case "age-25-34": return ageRange?.includes("25-34");
+          case "age-35-44": return ageRange?.includes("35-44");
+          case "age-45+": return ageRange?.includes("45") || ageRange?.includes("55") || ageRange?.includes("65");
+          case "beginner": return aiLevel?.toLowerCase().includes("beginner") || aiLevel?.toLowerCase().includes("none");
+          case "intermediate": return aiLevel?.toLowerCase().includes("intermediate") || aiLevel?.toLowerCase().includes("some");
+          case "advanced": return aiLevel?.toLowerCase().includes("advanced") || aiLevel?.toLowerCase().includes("expert");
+          default: return true;
+        }
+      });
     }
 
-    return attendees;
-  }, [participants, searchQuery, demographicFilter]);
+    return result;
+  }, [attendeeList, searchQuery, demographicFilter, hasParticipantData]);
 
   // Demographic breakdown
   const demographicBreakdown = useMemo(() => {
-    const attendees = participants.filter(p => !p.is_stakeholder);
-    
     const ageGroups: Record<string, number> = {};
     const industries: Record<string, number> = {};
     const aiLevels: Record<string, number> = {};
     const locations: Record<string, number> = {};
 
-    attendees.forEach(p => {
-      // Age
-      if (p.age_range) {
-        ageGroups[p.age_range] = (ageGroups[p.age_range] || 0) + 1;
+    attendeeList.forEach((item: any) => {
+      const ageRange = hasParticipantData ? item.age_range : item.ageRange;
+      const industry = hasParticipantData ? item.industry : item.industry;
+      const aiLevel = hasParticipantData ? item.ai_experience_level : item.aiExperienceLevel;
+      const city = hasParticipantData ? item.city : item.city;
+      const state = hasParticipantData ? item.state : item.state;
+
+      if (ageRange) ageGroups[ageRange] = (ageGroups[ageRange] || 0) + 1;
+      if (industry) industries[industry] = (industries[industry] || 0) + 1;
+      if (aiLevel) {
+        const level = aiLevel.split(":")[0].trim();
+        aiLevels[level] = (aiLevels[level] || 0) + 1;
       }
-      // Industry
-      if (p.industry) {
-        industries[p.industry] = (industries[p.industry] || 0) + 1;
-      }
-      // AI Level
-      if (p.ai_experience_level) {
-        aiLevels[p.ai_experience_level] = (aiLevels[p.ai_experience_level] || 0) + 1;
-      }
-      // Location
-      if (p.city || p.state) {
-        const loc = [p.city, p.state].filter(Boolean).join(", ");
+      if (city || state) {
+        const loc = [city, state].filter(Boolean).join(", ");
         locations[loc] = (locations[loc] || 0) + 1;
       }
     });
@@ -106,9 +131,31 @@ export function AttendeesDashboard({ onContactClick }: AttendeesDashboardProps) 
       aiLevels: Object.entries(aiLevels).sort((a, b) => b[1] - a[1]).slice(0, 5),
       locations: Object.entries(locations).sort((a, b) => b[1] - a[1]).slice(0, 5),
     };
-  }, [participants]);
+  }, [attendeeList, hasParticipantData]);
 
-  if (isLoading || participantsLoading) {
+  // Core stats
+  const stats = useMemo(() => {
+    if (hasParticipantData) {
+      return {
+        totalAttendees: participantMetrics.totalUniqueAttendees,
+        totalAttendances: participantMetrics.totalAttendances,
+        retentionRate: participantMetrics.retentionRate,
+        attendanceRate: participantMetrics.overallAttendanceRate,
+      };
+    }
+    return {
+      totalAttendees: legacyMetrics.eventActuallyAttended,
+      totalAttendances: legacyMetrics.uniqueEventAttendees,
+      retentionRate: legacyMetrics.multiEventAttendees > 0 
+        ? Math.round((legacyMetrics.multiEventAttendees / legacyMetrics.uniqueEventAttendees) * 100) 
+        : 0,
+      attendanceRate: legacyMetrics.eventRegistered > 0
+        ? Math.round((legacyMetrics.eventActuallyAttended / legacyMetrics.eventRegistered) * 100)
+        : 0,
+    };
+  }, [hasParticipantData, participantMetrics, legacyMetrics]);
+
+  if (isLoading) {
     return (
       <div className="space-y-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -127,6 +174,20 @@ export function AttendeesDashboard({ onContactClick }: AttendeesDashboardProps) 
 
   return (
     <div className="space-y-6">
+      {/* Data source indicator */}
+      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <div className={cn(
+          "w-2 h-2 rounded-full",
+          hasParticipantData ? "bg-emerald-500" : "bg-amber-500"
+        )} />
+        <span>
+          {hasParticipantData 
+            ? "Showing attendance-verified metrics" 
+            : "Showing legacy contact-based metrics"
+          }
+        </span>
+      </div>
+
       {/* Attendee Stats Header */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="bg-gradient-to-br from-emerald-500/10 to-teal-500/5 border-emerald-500/20">
@@ -136,7 +197,7 @@ export function AttendeesDashboard({ onContactClick }: AttendeesDashboardProps) 
               <span className="text-sm font-medium text-muted-foreground">Confirmed Attendees</span>
             </div>
             <p className="text-3xl font-bold text-foreground">
-              <CountUp end={metrics.totalUniqueAttendees} duration={600} />
+              <CountUp end={stats.totalAttendees} duration={600} />
             </p>
           </CardContent>
         </Card>
@@ -145,10 +206,12 @@ export function AttendeesDashboard({ onContactClick }: AttendeesDashboardProps) 
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
               <Calendar className="h-5 w-5 text-blue-500" />
-              <span className="text-sm font-medium text-muted-foreground">Total Attendances</span>
+              <span className="text-sm font-medium text-muted-foreground">
+                {hasParticipantData ? "Total Attendances" : "Unique Attendees"}
+              </span>
             </div>
             <p className="text-3xl font-bold text-foreground">
-              <CountUp end={metrics.totalAttendances} duration={600} />
+              <CountUp end={stats.totalAttendances} duration={600} />
             </p>
           </CardContent>
         </Card>
@@ -160,7 +223,7 @@ export function AttendeesDashboard({ onContactClick }: AttendeesDashboardProps) 
               <span className="text-sm font-medium text-muted-foreground">Retention Rate</span>
             </div>
             <p className="text-3xl font-bold text-foreground">
-              <CountUp end={metrics.retentionRate} duration={600} />%
+              <CountUp end={stats.retentionRate} duration={600} />%
             </p>
           </CardContent>
         </Card>
@@ -172,7 +235,7 @@ export function AttendeesDashboard({ onContactClick }: AttendeesDashboardProps) 
               <span className="text-sm font-medium text-muted-foreground">Attendance Rate</span>
             </div>
             <p className="text-3xl font-bold text-foreground">
-              <CountUp end={metrics.overallAttendanceRate} duration={600} />%
+              <CountUp end={stats.attendanceRate} duration={600} />%
             </p>
           </CardContent>
         </Card>
@@ -197,44 +260,50 @@ export function AttendeesDashboard({ onContactClick }: AttendeesDashboardProps) 
 
         {/* By Event Tab */}
         <TabsContent value="by-event" className="mt-4 space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {events.map((event, index) => (
-              <Card key={event.eventName} className="hover:border-primary/30 transition-all duration-300">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-base flex items-center justify-between">
-                    <span className="truncate">{event.eventName}</span>
-                    {event.attendanceRate >= 70 && (
-                      <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-600 text-[10px]">
-                        High Turnout
-                      </Badge>
-                    )}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <p className="text-2xl font-bold text-emerald-600">{event.totalAttended}</p>
-                      <p className="text-xs text-muted-foreground">Attended</p>
+          {events.length > 0 ? (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {events.map((event) => (
+                <Card key={event.eventName} className="hover:border-primary/30 transition-all duration-300">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base flex items-center justify-between">
+                      <span className="truncate">{event.eventName}</span>
+                      {event.attendanceRate >= 70 && (
+                        <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-600 text-[10px]">
+                          High Turnout
+                        </Badge>
+                      )}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <p className="text-2xl font-bold text-emerald-600">{event.totalAttended}</p>
+                        <p className="text-xs text-muted-foreground">Attended</p>
+                      </div>
+                      <div>
+                        <p className="text-2xl font-bold text-muted-foreground">{event.totalRegistered}</p>
+                        <p className="text-xs text-muted-foreground">Registered</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-2xl font-bold text-muted-foreground">{event.totalRegistered}</p>
-                      <p className="text-xs text-muted-foreground">Registered</p>
+                    <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                      <span className="text-xs text-muted-foreground">Attendance Rate</span>
+                      <span className={cn(
+                        "text-sm font-semibold",
+                        event.attendanceRate >= 70 ? "text-emerald-500" : 
+                        event.attendanceRate >= 50 ? "text-amber-500" : "text-red-500"
+                      )}>
+                        {event.attendanceRate}%
+                      </span>
                     </div>
-                  </div>
-                  <div className="flex items-center justify-between pt-2 border-t border-border/50">
-                    <span className="text-xs text-muted-foreground">Attendance Rate</span>
-                    <span className={cn(
-                      "text-sm font-semibold",
-                      event.attendanceRate >= 70 ? "text-emerald-500" : 
-                      event.attendanceRate >= 50 ? "text-amber-500" : "text-red-500"
-                    )}>
-                      {event.attendanceRate}%
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <Card className="p-8 text-center">
+              <p className="text-muted-foreground">No event data available</p>
+            </Card>
+          )}
         </TabsContent>
 
         {/* By Demographics Tab */}
@@ -257,7 +326,7 @@ export function AttendeesDashboard({ onContactClick }: AttendeesDashboardProps) 
                         <div className="w-24 h-2 bg-secondary rounded-full overflow-hidden">
                           <div 
                             className="h-full bg-primary rounded-full" 
-                            style={{ width: `${(count / metrics.totalUniqueAttendees) * 100}%` }}
+                            style={{ width: `${(count / stats.totalAttendees) * 100}%` }}
                           />
                         </div>
                         <span className="text-sm font-medium w-8 text-right">{count}</span>
@@ -287,7 +356,7 @@ export function AttendeesDashboard({ onContactClick }: AttendeesDashboardProps) 
                         <div className="w-24 h-2 bg-secondary rounded-full overflow-hidden">
                           <div 
                             className="h-full bg-purple-500 rounded-full" 
-                            style={{ width: `${(count / metrics.totalUniqueAttendees) * 100}%` }}
+                            style={{ width: `${(count / stats.totalAttendees) * 100}%` }}
                           />
                         </div>
                         <span className="text-sm font-medium w-8 text-right">{count}</span>
@@ -383,39 +452,46 @@ export function AttendeesDashboard({ onContactClick }: AttendeesDashboardProps) 
 
           {/* Attendee Cards */}
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-            {filteredAttendees.slice(0, 30).map((attendee) => (
-              <Card 
-                key={attendee.id} 
-                className="hover:border-primary/30 transition-all cursor-pointer"
-                onClick={() => attendee.primary_email && onContactClick?.(attendee.primary_email)}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0 flex-1">
-                      <p className="font-medium text-foreground truncate">
-                        {attendee.full_name || 'Unknown'}
-                      </p>
-                      <p className="text-xs text-muted-foreground truncate">
-                        {attendee.primary_email || 'No email'}
-                      </p>
+            {filteredAttendees.slice(0, 30).map((attendee: any, index: number) => {
+              const name = hasParticipantData ? attendee.full_name : attendee.fullName;
+              const email = hasParticipantData ? attendee.primary_email : attendee.email;
+              const industry = hasParticipantData ? attendee.industry : attendee.industry;
+              const ageRange = hasParticipantData ? attendee.age_range : attendee.ageRange;
+              
+              return (
+                <Card 
+                  key={attendee.id || index}
+                  className="hover:border-primary/30 transition-all cursor-pointer"
+                  onClick={() => email && onContactClick?.(email)}
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-foreground truncate">
+                          {name || 'Unknown'}
+                        </p>
+                        <p className="text-xs text-muted-foreground truncate">
+                          {email || 'No email'}
+                        </p>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
                     </div>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
-                  </div>
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {attendee.industry && (
-                      <Badge variant="secondary" className="text-[10px]">
-                        {attendee.industry}
-                      </Badge>
-                    )}
-                    {attendee.age_range && (
-                      <Badge variant="outline" className="text-[10px]">
-                        {attendee.age_range}
-                      </Badge>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {industry && (
+                        <Badge variant="secondary" className="text-[10px]">
+                          {industry}
+                        </Badge>
+                      )}
+                      {ageRange && (
+                        <Badge variant="outline" className="text-[10px]">
+                          {ageRange}
+                        </Badge>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
 
           {filteredAttendees.length > 30 && (
