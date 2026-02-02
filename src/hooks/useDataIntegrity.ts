@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useDemographics, DEMOGRAPHIC_FIELDS } from "./useDemographics";
+import { DEMOGRAPHIC_FIELDS } from "./useDemographics";
 
 export type IssueSeverity = "critical" | "warning" | "info";
 export type IssueCategory = "duplicates" | "attendance" | "surveys" | "demographics" | "data_quality";
@@ -27,10 +27,9 @@ export interface IntegritySummary {
 }
 
 export function useDataIntegrity() {
-  const { summary: demoSummary } = useDemographics();
-
+  // NOTE: All data fetching happens inside useQuery to avoid hook ordering issues
   return useQuery({
-    queryKey: ["data-integrity", demoSummary.totalAttendees],
+    queryKey: ["data-integrity"],
     queryFn: async (): Promise<IntegritySummary> => {
       const issues: DataIntegrityIssue[] = [];
 
@@ -125,38 +124,71 @@ export function useDataIntegrity() {
         });
       }
 
-      // 4. Check demographic gaps for grant reporting
-      const grantFields = DEMOGRAPHIC_FIELDS.filter((f) => f.grantRequired);
-      const criticalGaps = demoSummary.missingFields.filter((m) => {
-        const field = grantFields.find((f) => f.field === m.field);
-        return field && m.missingCount > demoSummary.totalAttendees * 0.3; // >30% missing
-      });
+      // 4. Check demographic completeness (fetch inline to avoid hook ordering issues)
+      const { data: allParticipants } = await supabase
+        .from("participants")
+        .select("*");
 
-      if (criticalGaps.length > 0) {
-        issues.push({
-          id: "demographic-gaps",
-          category: "demographics",
-          severity: "warning",
-          title: "Critical Demographic Data Gaps",
-          description: `${criticalGaps.length} grant-required fields have >30% missing data`,
-          count: criticalGaps.length,
-          actionLabel: "View Demographics",
-          actionRoute: "/admin/crm?tab=demographics",
-        });
-      }
+      if (allParticipants && allParticipants.length > 0) {
+        const grantFields = DEMOGRAPHIC_FIELDS.filter((f) => f.grantRequired);
+        const totalParticipants = allParticipants.length;
 
-      // 5. Check for low grant readiness
-      if (demoSummary.grantReadiness < 50 && demoSummary.totalAttendees > 0) {
-        issues.push({
-          id: "low-grant-readiness",
-          category: "demographics",
-          severity: "critical",
-          title: "Low Grant Readiness Score",
-          description: `Grant readiness is only ${demoSummary.grantReadiness}% - many required fields are incomplete`,
-          count: demoSummary.grantReadiness,
-          actionLabel: "Improve Data",
-          actionRoute: "/admin/crm?tab=demographics",
+        // Calculate missing counts per field
+        const fieldMissingCounts: { field: string; label: string; missing: number }[] = [];
+        grantFields.forEach(({ field, label }) => {
+          const missing = allParticipants.filter((p: any) => {
+            const val = p[field];
+            return val === null || val === undefined || val === "";
+          }).length;
+          if (missing > 0) {
+            fieldMissingCounts.push({ field, label, missing });
+          }
         });
+
+        // Check for fields with >30% missing
+        const criticalGaps = fieldMissingCounts.filter(
+          (f) => f.missing > totalParticipants * 0.3
+        );
+
+        if (criticalGaps.length > 0) {
+          issues.push({
+            id: "demographic-gaps",
+            category: "demographics",
+            severity: "warning",
+            title: "Critical Demographic Data Gaps",
+            description: `${criticalGaps.length} grant-required fields have >30% missing data`,
+            count: criticalGaps.length,
+            actionLabel: "View Demographics",
+            actionRoute: "/admin/crm?tab=demographics",
+          });
+        }
+
+        // Calculate grant readiness
+        let totalFieldCompleteness = 0;
+        grantFields.forEach(({ field }) => {
+          const filled = allParticipants.filter((p: any) => {
+            const val = p[field];
+            return val !== null && val !== undefined && val !== "";
+          }).length;
+          totalFieldCompleteness += (filled / totalParticipants) * 100;
+        });
+        const grantReadiness = grantFields.length > 0 
+          ? Math.round(totalFieldCompleteness / grantFields.length)
+          : 0;
+
+        // 5. Check for low grant readiness
+        if (grantReadiness < 50) {
+          issues.push({
+            id: "low-grant-readiness",
+            category: "demographics",
+            severity: "critical",
+            title: "Low Grant Readiness Score",
+            description: `Grant readiness is only ${grantReadiness}% - many required fields are incomplete`,
+            count: grantReadiness,
+            actionLabel: "Improve Data",
+            actionRoute: "/admin/crm?tab=demographics",
+          });
+        }
       }
 
       // 6. Check for participants with incomplete names
