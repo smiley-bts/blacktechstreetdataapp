@@ -1,7 +1,4 @@
 import { AspireLeadJan2026Dashboard } from "@/components/dashboard/AspireLeadJan2026Dashboard";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import btsLogo from "@/assets/black-tech-street-logo.png";
 
@@ -12,13 +9,7 @@ const AspireLeadJan2026 = () => {
         {/* Header */}
         <header className="mb-6 sm:mb-8">
           <div className="flex items-center justify-between mb-4">
-            <Link to="/">
-              <Button variant="outline" size="sm" className="gap-1 sm:gap-2 px-2 sm:px-3">
-                <ArrowLeft className="h-4 w-4" />
-                <span className="hidden sm:inline">Back to CRM</span>
-                <span className="sm:hidden">Back</span>
-              </Button>
-            </Link>
+            <div />
             <img 
               src={btsLogo} 
               alt="Black Tech Street Logo" 
