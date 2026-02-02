@@ -605,6 +605,96 @@ export type Database = {
         }
         Relationships: []
       }
+      project_archives: {
+        Row: {
+          at_risk_reason: string | null
+          at_risk_since: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          event_date: string
+          event_name: string
+          file_urls: string[] | null
+          id: string
+          is_winner: boolean | null
+          last_activity_at: string | null
+          lovable_project_url: string | null
+          notes: string | null
+          original_submission_id: string
+          project_links: string[] | null
+          project_name: string
+          snapshot_taken_at: string | null
+          snapshot_url: string | null
+          status: Database["public"]["Enums"]["project_status"]
+          submitted_at: string
+          tags: string[] | null
+          team_members: string[] | null
+          team_rep_email: string | null
+          team_rep_name: string
+          updated_at: string
+          updated_by: string | null
+          winner_category: string | null
+        }
+        Insert: {
+          at_risk_reason?: string | null
+          at_risk_since?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          event_date: string
+          event_name: string
+          file_urls?: string[] | null
+          id?: string
+          is_winner?: boolean | null
+          last_activity_at?: string | null
+          lovable_project_url?: string | null
+          notes?: string | null
+          original_submission_id: string
+          project_links?: string[] | null
+          project_name: string
+          snapshot_taken_at?: string | null
+          snapshot_url?: string | null
+          status?: Database["public"]["Enums"]["project_status"]
+          submitted_at: string
+          tags?: string[] | null
+          team_members?: string[] | null
+          team_rep_email?: string | null
+          team_rep_name: string
+          updated_at?: string
+          updated_by?: string | null
+          winner_category?: string | null
+        }
+        Update: {
+          at_risk_reason?: string | null
+          at_risk_since?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          event_date?: string
+          event_name?: string
+          file_urls?: string[] | null
+          id?: string
+          is_winner?: boolean | null
+          last_activity_at?: string | null
+          lovable_project_url?: string | null
+          notes?: string | null
+          original_submission_id?: string
+          project_links?: string[] | null
+          project_name?: string
+          snapshot_taken_at?: string | null
+          snapshot_url?: string | null
+          status?: Database["public"]["Enums"]["project_status"]
+          submitted_at?: string
+          tags?: string[] | null
+          team_members?: string[] | null
+          team_rep_email?: string | null
+          team_rep_name?: string
+          updated_at?: string
+          updated_by?: string | null
+          winner_category?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -654,6 +744,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "owner"
+      project_status: "active" | "at_risk" | "archived" | "deleted"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -782,6 +873,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "owner"],
+      project_status: ["active", "at_risk", "archived", "deleted"],
     },
   },
 } as const
