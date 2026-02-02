@@ -332,6 +332,213 @@ export type Database = {
         }
         Relationships: []
       }
+      event_attendance: {
+        Row: {
+          completed_survey: boolean | null
+          confirmed_attended: boolean | null
+          created_at: string
+          created_by: string | null
+          day_label: string | null
+          event_date: string
+          event_name: string
+          event_type: string | null
+          id: string
+          participant_id: string
+          registered_only: boolean | null
+          signed_release: boolean | null
+          source: string | null
+        }
+        Insert: {
+          completed_survey?: boolean | null
+          confirmed_attended?: boolean | null
+          created_at?: string
+          created_by?: string | null
+          day_label?: string | null
+          event_date: string
+          event_name: string
+          event_type?: string | null
+          id?: string
+          participant_id: string
+          registered_only?: boolean | null
+          signed_release?: boolean | null
+          source?: string | null
+        }
+        Update: {
+          completed_survey?: boolean | null
+          confirmed_attended?: boolean | null
+          created_at?: string
+          created_by?: string | null
+          day_label?: string | null
+          event_date?: string
+          event_name?: string
+          event_type?: string | null
+          id?: string
+          participant_id?: string
+          registered_only?: boolean | null
+          signed_release?: boolean | null
+          source?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_attendance_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      merge_history: {
+        Row: {
+          id: string
+          kept_participant_id: string
+          merge_reason: string | null
+          merged_at: string
+          merged_by: string | null
+          merged_data_snapshot: Json | null
+          merged_emails: string[] | null
+          merged_participant_id: string | null
+          merged_participant_name: string | null
+        }
+        Insert: {
+          id?: string
+          kept_participant_id: string
+          merge_reason?: string | null
+          merged_at?: string
+          merged_by?: string | null
+          merged_data_snapshot?: Json | null
+          merged_emails?: string[] | null
+          merged_participant_id?: string | null
+          merged_participant_name?: string | null
+        }
+        Update: {
+          id?: string
+          kept_participant_id?: string
+          merge_reason?: string | null
+          merged_at?: string
+          merged_by?: string | null
+          merged_data_snapshot?: Json | null
+          merged_emails?: string[] | null
+          merged_participant_id?: string | null
+          merged_participant_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "merge_history_kept_participant_id_fkey"
+            columns: ["kept_participant_id"]
+            isOneToOne: false
+            referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      participant_emails: {
+        Row: {
+          added_at: string
+          added_by: string | null
+          email: string
+          id: string
+          is_primary: boolean | null
+          participant_id: string
+          source: string | null
+        }
+        Insert: {
+          added_at?: string
+          added_by?: string | null
+          email: string
+          id?: string
+          is_primary?: boolean | null
+          participant_id: string
+          source?: string | null
+        }
+        Update: {
+          added_at?: string
+          added_by?: string | null
+          email?: string
+          id?: string
+          is_primary?: boolean | null
+          participant_id?: string
+          source?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "participant_emails_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      participants: {
+        Row: {
+          age_range: string | null
+          ai_experience_level: string | null
+          city: string | null
+          company_name: string | null
+          created_at: string
+          created_by: string | null
+          first_name: string | null
+          full_name: string | null
+          id: string
+          industry: string | null
+          is_stakeholder: boolean | null
+          job_title: string | null
+          last_name: string | null
+          notes: string | null
+          original_contact_id: string | null
+          phone: string | null
+          primary_email: string | null
+          state: string | null
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          age_range?: string | null
+          ai_experience_level?: string | null
+          city?: string | null
+          company_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          first_name?: string | null
+          full_name?: string | null
+          id?: string
+          industry?: string | null
+          is_stakeholder?: boolean | null
+          job_title?: string | null
+          last_name?: string | null
+          notes?: string | null
+          original_contact_id?: string | null
+          phone?: string | null
+          primary_email?: string | null
+          state?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          age_range?: string | null
+          ai_experience_level?: string | null
+          city?: string | null
+          company_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          first_name?: string | null
+          full_name?: string | null
+          id?: string
+          industry?: string | null
+          is_stakeholder?: boolean | null
+          job_title?: string | null
+          last_name?: string | null
+          notes?: string | null
+          original_contact_id?: string | null
+          phone?: string | null
+          primary_email?: string | null
+          state?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
