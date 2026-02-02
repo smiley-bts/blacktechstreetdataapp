@@ -75,7 +75,10 @@ export function AspireLeadJan2026Dashboard() {
 
   const loadData = async () => {
     try {
-      const response = await fetch("/aspire-lead-jan2026-feedback.csv");
+      // Avoid stale caching in preview when the CSV is updated.
+      const response = await fetch(`/aspire-lead-jan2026-feedback.csv?t=${Date.now()}`, {
+        cache: "no-store",
+      });
       if (!response.ok) {
         setError("Unable to load feedback data.");
         setLoading(false);
