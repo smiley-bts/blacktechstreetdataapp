@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import Papa from "papaparse";
-import { TrendingUp, Users, Lightbulb, ChevronDown, ChevronUp, Search, GraduationCap } from "lucide-react";
+import { TrendingUp, Users, Lightbulb, ChevronDown, ChevronUp, Search, GraduationCap, X, ChevronLeft, ChevronRight, Camera } from "lucide-react";
 import { MetricCard } from "./MetricCard";
 import { ChartCard } from "./ChartCard";
 import { HorizontalBarChart } from "./HorizontalBarChart";
@@ -13,6 +13,11 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+
+const galleryImages = Array.from({ length: 20 }, (_, i) => ({
+  src: `/images/gallery/aspire-lead-jan26-${String(i + 1).padStart(2, '0')}.jpg`,
+  alt: `ASPIRE Lead January 2026 - Photo ${i + 1}`,
+}));
 
 interface NPSData {
   nps: number;
@@ -56,6 +61,38 @@ export function AspireLeadJan2026Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const [openParticipants, setOpenParticipants] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const openLightbox = (index: number) => {
+    setCurrentImageIndex(index);
+    setLightboxOpen(true);
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeLightbox = () => {
+    setLightboxOpen(false);
+    document.body.style.overflow = '';
+  };
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % galleryImages.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!lightboxOpen) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowRight') nextImage();
+      if (e.key === 'ArrowLeft') prevImage();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [lightboxOpen]);
 
   useEffect(() => {
     loadData();
@@ -448,6 +485,117 @@ export function AspireLeadJan2026Dashboard() {
           ))}
         </div>
       </ChartCard>
+
+      {/* Photo Gallery Section */}
+      <div className="mt-12 animate-fade-in" style={{ animationDelay: '1000ms' }}>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+            <Camera className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h2 className="text-xl sm:text-2xl font-display font-bold text-foreground">Event Gallery</h2>
+            <p className="text-sm text-muted-foreground">{galleryImages.length} photos from the workshop</p>
+          </div>
+        </div>
+        
+        {/* Responsive Grid Gallery */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
+          {galleryImages.map((image, index) => (
+            <button
+              key={index}
+              onClick={() => openLightbox(index)}
+              className="relative aspect-square overflow-hidden rounded-lg group cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            >
+              <img
+                src={image.src}
+                alt={image.alt}
+                loading="lazy"
+                decoding="async"
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center">
+                <span className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm font-medium">
+                  View
+                </span>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Lightbox Modal */}
+      {lightboxOpen && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
+          onClick={closeLightbox}
+        >
+          {/* Close button */}
+          <button
+            onClick={closeLightbox}
+            className="absolute top-4 right-4 z-50 p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white"
+            aria-label="Close gallery"
+          >
+            <X className="w-6 h-6" />
+          </button>
+
+          {/* Image counter */}
+          <div className="absolute top-4 left-4 text-white/80 text-sm font-medium bg-black/50 px-3 py-1 rounded-full">
+            {currentImageIndex + 1} / {galleryImages.length}
+          </div>
+
+          {/* Previous button */}
+          <button
+            onClick={(e) => { e.stopPropagation(); prevImage(); }}
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-50 p-3 sm:p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white"
+            aria-label="Previous image"
+          >
+            <ChevronLeft className="w-6 h-6 sm:w-8 sm:h-8" />
+          </button>
+
+          {/* Main image */}
+          <div 
+            className="max-w-[90vw] max-h-[85vh] sm:max-h-[90vh] flex items-center justify-center px-12 sm:px-20"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={galleryImages[currentImageIndex].src}
+              alt={galleryImages[currentImageIndex].alt}
+              className="max-w-full max-h-[85vh] sm:max-h-[90vh] object-contain rounded-lg shadow-2xl"
+            />
+          </div>
+
+          {/* Next button */}
+          <button
+            onClick={(e) => { e.stopPropagation(); nextImage(); }}
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-50 p-3 sm:p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white"
+            aria-label="Next image"
+          >
+            <ChevronRight className="w-6 h-6 sm:w-8 sm:h-8" />
+          </button>
+
+          {/* Thumbnail strip - hidden on mobile */}
+          <div className="hidden sm:flex absolute bottom-4 left-1/2 -translate-x-1/2 gap-2 max-w-[90vw] overflow-x-auto p-2 bg-black/50 rounded-lg">
+            {galleryImages.map((image, index) => (
+              <button
+                key={index}
+                onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(index); }}
+                className={`flex-shrink-0 w-16 h-12 rounded overflow-hidden transition-all ${
+                  index === currentImageIndex 
+                    ? 'ring-2 ring-primary opacity-100' 
+                    : 'opacity-50 hover:opacity-80'
+                }`}
+              >
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  loading="lazy"
+                  className="w-full h-full object-cover"
+                />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
