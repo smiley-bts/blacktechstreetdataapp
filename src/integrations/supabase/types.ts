@@ -475,12 +475,22 @@ export type Database = {
           age_range: string | null
           ai_experience_level: string | null
           city: string | null
+          cohort_id: string | null
+          cohort_start_date: string | null
           company_name: string | null
           created_at: string
           created_by: string | null
+          demographic_completed: boolean | null
+          demographic_updated_at: string | null
+          disability_status: boolean | null
+          education_level: string | null
+          employment_status: string | null
+          ethnicity: string | null
           first_name: string | null
           full_name: string | null
+          gender: string | null
           id: string
+          income_range: string | null
           industry: string | null
           is_stakeholder: boolean | null
           job_title: string | null
@@ -489,20 +499,33 @@ export type Database = {
           original_contact_id: string | null
           phone: string | null
           primary_email: string | null
+          referral_source: string | null
           state: string | null
           updated_at: string
           updated_by: string | null
+          veteran_status: boolean | null
+          zip_code: string | null
         }
         Insert: {
           age_range?: string | null
           ai_experience_level?: string | null
           city?: string | null
+          cohort_id?: string | null
+          cohort_start_date?: string | null
           company_name?: string | null
           created_at?: string
           created_by?: string | null
+          demographic_completed?: boolean | null
+          demographic_updated_at?: string | null
+          disability_status?: boolean | null
+          education_level?: string | null
+          employment_status?: string | null
+          ethnicity?: string | null
           first_name?: string | null
           full_name?: string | null
+          gender?: string | null
           id?: string
+          income_range?: string | null
           industry?: string | null
           is_stakeholder?: boolean | null
           job_title?: string | null
@@ -511,20 +534,33 @@ export type Database = {
           original_contact_id?: string | null
           phone?: string | null
           primary_email?: string | null
+          referral_source?: string | null
           state?: string | null
           updated_at?: string
           updated_by?: string | null
+          veteran_status?: boolean | null
+          zip_code?: string | null
         }
         Update: {
           age_range?: string | null
           ai_experience_level?: string | null
           city?: string | null
+          cohort_id?: string | null
+          cohort_start_date?: string | null
           company_name?: string | null
           created_at?: string
           created_by?: string | null
+          demographic_completed?: boolean | null
+          demographic_updated_at?: string | null
+          disability_status?: boolean | null
+          education_level?: string | null
+          employment_status?: string | null
+          ethnicity?: string | null
           first_name?: string | null
           full_name?: string | null
+          gender?: string | null
           id?: string
+          income_range?: string | null
           industry?: string | null
           is_stakeholder?: boolean | null
           job_title?: string | null
@@ -533,9 +569,12 @@ export type Database = {
           original_contact_id?: string | null
           phone?: string | null
           primary_email?: string | null
+          referral_source?: string | null
           state?: string | null
           updated_at?: string
           updated_by?: string | null
+          veteran_status?: boolean | null
+          zip_code?: string | null
         }
         Relationships: []
       }
