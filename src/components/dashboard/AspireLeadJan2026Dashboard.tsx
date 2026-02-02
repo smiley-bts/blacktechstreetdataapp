@@ -1,6 +1,7 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import Papa from "papaparse";
 import { TrendingUp, Users, Lightbulb, ChevronDown, ChevronUp, Search, GraduationCap, X, ChevronLeft, ChevronRight, Camera } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { MetricCard } from "./MetricCard";
 import { ChartCard } from "./ChartCard";
 import { HorizontalBarChart } from "./HorizontalBarChart";
@@ -63,6 +64,34 @@ export function AspireLeadJan2026Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
+  const [visibleImages, setVisibleImages] = useState<Set<number>>(new Set());
+  const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Intersection Observer for progressive loading
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const index = Number(entry.target.getAttribute('data-index'));
+          if (entry.isIntersecting && !isNaN(index)) {
+            setVisibleImages((prev) => new Set([...prev, index]));
+          }
+        });
+      },
+      { rootMargin: '100px', threshold: 0.1 }
+    );
+
+    imageRefs.current.forEach((ref) => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => observer.disconnect();
+  }, [loading]);
+
+  const handleImageLoad = useCallback((index: number) => {
+    setLoadedImages((prev) => new Set([...prev, index]));
+  }, []);
 
   const openLightbox = (index: number) => {
     setCurrentImageIndex(index);
@@ -498,27 +527,45 @@ export function AspireLeadJan2026Dashboard() {
           </div>
         </div>
         
-        {/* Responsive Grid Gallery */}
+        {/* Responsive Grid Gallery with Progressive Loading */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
           {galleryImages.map((image, index) => (
-            <button
+            <div
               key={index}
-              onClick={() => openLightbox(index)}
-              className="relative aspect-square overflow-hidden rounded-lg group cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              ref={(el) => (imageRefs.current[index] = el)}
+              data-index={index}
+              className="relative aspect-square"
             >
-              <img
-                src={image.src}
-                alt={image.alt}
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center">
-                <span className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm font-medium">
-                  View
-                </span>
-              </div>
-            </button>
+              <button
+                onClick={() => openLightbox(index)}
+                className="relative w-full h-full overflow-hidden rounded-lg group cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              >
+                {/* Skeleton placeholder */}
+                {!loadedImages.has(index) && (
+                  <Skeleton className="absolute inset-0 w-full h-full rounded-lg" />
+                )}
+                
+                {/* Only render img when visible in viewport */}
+                {visibleImages.has(index) && (
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    loading="lazy"
+                    decoding="async"
+                    onLoad={() => handleImageLoad(index)}
+                    className={`w-full h-full object-cover transition-all duration-300 group-hover:scale-110 ${
+                      loadedImages.has(index) ? 'opacity-100' : 'opacity-0'
+                    }`}
+                  />
+                )}
+                
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center">
+                  <span className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm font-medium">
+                    View
+                  </span>
+                </div>
+              </button>
+            </div>
           ))}
         </div>
       </div>
