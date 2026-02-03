@@ -36,6 +36,13 @@ const ADMIN_ACCOUNTS = [
     display_name: "Smiley",
     role: "owner" as const,
   },
+  {
+    email: "chris@blacktechstreet.com",
+    passwordEnvKey: "ADMIN_PASSWORD_CHRIS",
+    username: "chris",
+    display_name: "Chris",
+    role: "admin" as const,
+  },
 ];
 
 serve(async (req) => {
