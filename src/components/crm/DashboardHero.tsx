@@ -23,7 +23,7 @@ export function DashboardHero({ contacts, onViewContacts, onViewEvents, onViewAt
   // Attendee-focused stats with fallback
   const heroStats = hasParticipantData ? [
     {
-      label: "Confirmed Attendees",
+      label: "Certificate Holders",
       value: participantMetrics.totalUniqueAttendees,
       icon: CheckCircle,
       color: "text-emerald-500",

@@ -194,7 +194,7 @@ export function AttendeesDashboard({ onContactClick }: AttendeesDashboardProps) 
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
               <CheckCircle className="h-5 w-5 text-emerald-500" />
-              <span className="text-sm font-medium text-muted-foreground">Confirmed Attendees</span>
+              <span className="text-sm font-medium text-muted-foreground">Certificate Holders</span>
             </div>
             <p className="text-3xl font-bold text-foreground">
               <CountUp end={stats.totalAttendees} duration={600} />

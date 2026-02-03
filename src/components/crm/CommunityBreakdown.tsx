@@ -97,7 +97,7 @@ export function CommunityBreakdown({
             <div className="p-2 rounded-lg bg-emerald-500/10">
               <Calendar className="h-5 w-5 text-emerald-500" />
             </div>
-            {hasParticipantData ? "Confirmed Attendees" : "IRL Attendees"}
+            {hasParticipantData ? "Certificate Holders" : "IRL Attendees"}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
