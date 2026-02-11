@@ -166,7 +166,7 @@ function DemographicCharts({ rows, label }: { rows: any[]; label: string }) {
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie data={raceData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100}
-                label={({ name, percent }) => `${name.split(" ")[0]} ${(percent * 100).toFixed(0)}%`}>
+                label={({ name, value }) => `${name.split(" ")[0]} ${Math.round((value / total) * 100)}%`}>
                 {raceData.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
               </Pie>
               <Tooltip contentStyle={{ background: "hsl(220, 20%, 10%)", border: "1px solid hsl(220, 15%, 18%)", borderRadius: 8, color: "hsl(210, 40%, 98%)" }} itemStyle={{ color: "hsl(210, 40%, 98%)" }} />
