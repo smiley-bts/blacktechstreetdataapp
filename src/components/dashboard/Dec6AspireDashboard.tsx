@@ -248,9 +248,20 @@ export function Dec6AspireDashboard() {
     ? Object.keys(rows[0]).find((k) => k.toLowerCase().includes("email")) || COL.EMAIL
     : COL.EMAIL;
 
-  // Filter registration rows to only those whose email appears in participants
+  // Deduplicate all registration rows by email (keep first occurrence)
+  const deduplicatedRows = (() => {
+    const seen = new Set<string>();
+    return rows.filter((r) => {
+      const email = (r[emailKey] || "").trim().toLowerCase();
+      if (!email || seen.has(email)) return false;
+      seen.add(email);
+      return true;
+    });
+  })();
+
+  // Filter deduplicated rows to only those whose email appears in participants
   const participantRows = attendance
-    ? rows.filter((r) => {
+    ? deduplicatedRows.filter((r) => {
         const email = (r[emailKey] || "").trim().toLowerCase();
         return email && attendance.participantEmails.has(email);
       })
@@ -306,18 +317,21 @@ export function Dec6AspireDashboard() {
 
       {/* Demographics with tabs: All Registrants / Participants Only */}
       <Tabs defaultValue="participants" className="space-y-4">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
           <h2 className="text-xl font-display font-semibold text-foreground">Demographics</h2>
           <TabsList>
             <TabsTrigger value="participants">Participants ({participantRows.length})</TabsTrigger>
-            <TabsTrigger value="registrants">All Registrants ({rows.length})</TabsTrigger>
+            <TabsTrigger value="registrants">All Registrants ({deduplicatedRows.length})</TabsTrigger>
           </TabsList>
         </div>
+        <p className="text-xs text-muted-foreground -mt-2">
+          Demographics shown for registrants who completed the survey. Walk-in participants without a registration form are not included.
+        </p>
         <TabsContent value="participants">
           <DemographicCharts rows={participantRows} label="Participants" />
         </TabsContent>
         <TabsContent value="registrants">
-          <DemographicCharts rows={rows} label="Registrants" />
+          <DemographicCharts rows={deduplicatedRows} label="Registrants" />
         </TabsContent>
       </Tabs>
     </div>
