@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import Papa from "papaparse";
+import * as XLSX from "xlsx";
 import { ChartCard } from "./ChartCard";
 import { HorizontalBarChart } from "./HorizontalBarChart";
 import { MetricCard } from "./MetricCard";
-import { Users, MapPin, GraduationCap, Briefcase, Brain, Heart } from "lucide-react";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
+import { Users, UserCheck, MapPin, Brain, Heart, BarChart3 } from "lucide-react";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 
 const RACE_COLUMNS: Record<string, string> = {
   "What's your racial identity? (Black or African American)": "Black or African American",
@@ -78,18 +79,78 @@ function getRaceBreakdown(rows: any[]): { name: string; value: number }[] {
     .sort((a, b) => b.value - a.value);
 }
 
+interface AttendanceRow {
+  firstName: string;
+  lastName: string;
+  email: string;
+  totalCheckIns: number;
+  checkedIn: boolean;
+  organization: string;
+}
+
+function parseAttendanceData(data: any[]): { uniqueRegistrants: number; uniqueParticipants: number; attendanceRate: number } {
+  // Deduplicate by email (lowercase)
+  const byEmail = new Map<string, AttendanceRow>();
+  data.forEach((row) => {
+    const email = (row["Email"] || "").trim().toLowerCase();
+    if (!email) return;
+    const checkIns = parseInt(row["Total check-ins"] || "0") || 0;
+    const existing = byEmail.get(email);
+    if (existing) {
+      // Keep the one with higher check-ins
+      if (checkIns > existing.totalCheckIns) {
+        existing.totalCheckIns = checkIns;
+        existing.checkedIn = checkIns > 0;
+      } else if (!existing.checkedIn && checkIns > 0) {
+        existing.checkedIn = true;
+        existing.totalCheckIns = checkIns;
+      }
+    } else {
+      byEmail.set(email, {
+        firstName: row["First name"] || "",
+        lastName: row["Last name"] || "",
+        email,
+        totalCheckIns: checkIns,
+        checkedIn: checkIns > 0,
+        organization: row["Organization"] || "",
+      });
+    }
+  });
+
+  const uniqueRegistrants = byEmail.size;
+  const uniqueParticipants = Array.from(byEmail.values()).filter((r) => r.checkedIn).length;
+  const attendanceRate = uniqueRegistrants > 0 ? Math.round((uniqueParticipants / uniqueRegistrants) * 100) : 0;
+
+  return { uniqueRegistrants, uniqueParticipants, attendanceRate };
+}
+
 export function Dec6AspireDashboard() {
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [attendance, setAttendance] = useState<{ uniqueRegistrants: number; uniqueParticipants: number; attendanceRate: number } | null>(null);
 
   useEffect(() => {
-    fetch(`/aspire-dec6-registration.csv?t=${Date.now()}`, { cache: "no-store" })
+    // Load both CSV (registration) and XLSX (attendance) in parallel
+    const loadRegistration = fetch(`/aspire-dec6-registration.csv?t=${Date.now()}`, { cache: "no-store" })
       .then((r) => r.text())
       .then((text) => {
         const result = Papa.parse(text, { header: true, skipEmptyLines: true });
-        setRows(result.data as any[]);
-        setLoading(false);
+        return result.data as any[];
       });
+
+    const loadAttendance = fetch(`/aspire-dec6-attendance.xlsx?t=${Date.now()}`, { cache: "no-store" })
+      .then((r) => r.arrayBuffer())
+      .then((buffer) => {
+        const workbook = XLSX.read(buffer, { type: "array" });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        return XLSX.utils.sheet_to_json(sheet) as any[];
+      });
+
+    Promise.all([loadRegistration, loadAttendance]).then(([regData, attData]) => {
+      setRows(regData);
+      setAttendance(parseAttendanceData(attData));
+      setLoading(false);
+    });
   }, []);
 
   if (loading) return <div className="text-center py-12 text-muted-foreground">Loading dashboard…</div>;
@@ -120,18 +181,56 @@ export function Dec6AspireDashboard() {
     value: Math.round((d.value / total) * 100),
   }));
 
+  const comparisonData = attendance ? [
+    { name: "Registrants", value: attendance.uniqueRegistrants },
+    { name: "Participants", value: attendance.uniqueParticipants },
+  ] : [];
+
   return (
     <div className="space-y-6">
       {/* Quick stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <MetricCard icon={Users} title="Registrants" value={total} delay={0} />
-        <MetricCard icon={Brain} title="Avg Confidence (Problem Solving)" value={avgSolve} subtitle="/5" delay={100} />
-        <MetricCard icon={Heart} title="Avg Confidence (Apply AI)" value={avgApply} subtitle="/5" delay={200} />
-        <MetricCard icon={MapPin} title="Unique ZIP Codes" value={new Set(rows.map(r => r[COL.ZIP]).filter(Boolean)).size} delay={300} />
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <MetricCard icon={Users} title="Registrants" value={attendance?.uniqueRegistrants ?? total} delay={0} />
+        <MetricCard icon={UserCheck} title="Participants" value={attendance?.uniqueParticipants ?? 0} delay={100} />
+        <MetricCard icon={BarChart3} title="Attendance Rate" value={`${attendance?.attendanceRate ?? 0}%`} delay={200} />
+        <MetricCard icon={Brain} title="Avg Confidence (Solve)" value={avgSolve} subtitle="/5" delay={300} />
+        <MetricCard icon={Heart} title="Avg Confidence (Apply)" value={avgApply} subtitle="/5" delay={400} />
       </div>
 
+      {/* Registrants vs Participants */}
+      {attendance && (
+        <ChartCard title="Registrants vs Participants (Checked In)" delay={450}>
+          <div className="grid md:grid-cols-2 gap-6 items-center">
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={comparisonData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="name" tick={{ fill: "hsl(var(--foreground))", fontSize: 14 }} />
+                <YAxis tick={{ fill: "hsl(var(--muted-foreground))" }} />
+                <Tooltip
+                  contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8 }}
+                />
+                <Bar dataKey="value" radius={[6, 6, 0, 0]}>
+                  <Cell fill="hsl(var(--chart-2))" />
+                  <Cell fill="hsl(var(--primary))" />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+            <div className="space-y-4 text-center md:text-left">
+              <div>
+                <p className="text-3xl font-bold text-foreground">{attendance.uniqueParticipants}</p>
+                <p className="text-sm text-muted-foreground">of {attendance.uniqueRegistrants} registrants checked in</p>
+              </div>
+              <div className="inline-block bg-primary/10 rounded-lg px-4 py-2">
+                <p className="text-2xl font-bold text-primary">{attendance.attendanceRate}%</p>
+                <p className="text-xs text-muted-foreground">Attendance Rate</p>
+              </div>
+            </div>
+          </div>
+        </ChartCard>
+      )}
+
       {/* Race / Ethnicity - Featured */}
-      <ChartCard title="Racial Identity Breakdown" delay={400}>
+      <ChartCard title="Racial Identity Breakdown" delay={500}>
         <div className="grid md:grid-cols-2 gap-6">
           <div>
             <ResponsiveContainer width="100%" height={300}>
@@ -155,10 +254,7 @@ export function Dec6AspireDashboard() {
             </ResponsiveContainer>
           </div>
           <div>
-            <HorizontalBarChart
-              data={raceBarData}
-              color="hsl(var(--primary))"
-            />
+            <HorizontalBarChart data={raceBarData} color="hsl(var(--primary))" />
             <p className="text-xs text-muted-foreground mt-3">
               * Participants may select multiple racial identities. Percentages may exceed 100%.
             </p>
@@ -168,52 +264,31 @@ export function Dec6AspireDashboard() {
 
       {/* Age Range */}
       <div className="grid md:grid-cols-2 gap-6">
-        <ChartCard title="Age Range" delay={500}>
-          <HorizontalBarChart
-            data={ageData}
-            color="hsl(var(--chart-2))"
-          />
+        <ChartCard title="Age Range" delay={600}>
+          <HorizontalBarChart data={ageData} color="hsl(var(--chart-2))" />
         </ChartCard>
-
-        <ChartCard title="Education Level" delay={600}>
-          <HorizontalBarChart
-            data={educationData}
-            color="hsl(var(--chart-3))"
-          />
+        <ChartCard title="Education Level" delay={700}>
+          <HorizontalBarChart data={educationData} color="hsl(var(--chart-3))" />
         </ChartCard>
       </div>
 
       {/* Industry & Role */}
       <div className="grid md:grid-cols-2 gap-6">
-        <ChartCard title="Industry" delay={700}>
-          <HorizontalBarChart
-            data={industryData}
-            color="hsl(var(--chart-4))"
-          />
+        <ChartCard title="Industry" delay={800}>
+          <HorizontalBarChart data={industryData} color="hsl(var(--chart-4))" />
         </ChartCard>
-
-        <ChartCard title="Current Role" delay={800}>
-          <HorizontalBarChart
-            data={roleData}
-            color="hsl(var(--chart-5))"
-          />
+        <ChartCard title="Current Role" delay={900}>
+          <HorizontalBarChart data={roleData} color="hsl(var(--chart-5))" />
         </ChartCard>
       </div>
 
       {/* AI Experience & Income */}
       <div className="grid md:grid-cols-2 gap-6">
-        <ChartCard title="AI Experience Level" delay={900}>
-          <HorizontalBarChart
-            data={aiLevelData}
-            color="hsl(var(--primary))"
-          />
+        <ChartCard title="AI Experience Level" delay={1000}>
+          <HorizontalBarChart data={aiLevelData} color="hsl(var(--primary))" />
         </ChartCard>
-
-        <ChartCard title="Household Income" delay={1000}>
-          <HorizontalBarChart
-            data={incomeData}
-            color="hsl(var(--chart-2))"
-          />
+        <ChartCard title="Household Income" delay={1100}>
+          <HorizontalBarChart data={incomeData} color="hsl(var(--chart-2))" />
         </ChartCard>
       </div>
     </div>
