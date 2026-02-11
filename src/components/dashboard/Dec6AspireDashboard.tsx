@@ -267,53 +267,53 @@ export function Dec6AspireDashboard() {
       })
     : [];
 
-  const comparisonData = attendance
-    ? [
-        { name: "Registrants", value: attendance.uniqueRegistrants },
-        { name: "Participants", value: attendance.uniqueParticipants },
-      ]
-    : [];
+  const registrantCount = deduplicatedRows.length;
+  const participantCount = participantRows.length;
+  const attRate = registrantCount > 0 ? Math.round((participantCount / registrantCount) * 100) : 0;
+
+  const comparisonData = [
+    { name: "Registrants", value: registrantCount },
+    { name: "Participants", value: participantCount },
+  ];
 
   return (
     <div className="space-y-6">
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <MetricCard icon={Users} title="Registrants" value={attendance?.uniqueRegistrants ?? rows.length} delay={0} />
-        <MetricCard icon={UserCheck} title="Participants" value={attendance?.uniqueParticipants ?? 0} delay={100} />
-        <MetricCard icon={BarChart3} title="Attendance Rate" value={`${attendance?.attendanceRate ?? 0}%`} delay={200} />
+        <MetricCard icon={Users} title="Registrants" value={registrantCount} delay={0} />
+        <MetricCard icon={UserCheck} title="Participants" value={participantCount} delay={100} />
+        <MetricCard icon={BarChart3} title="Attendance Rate" value={`${attRate}%`} delay={200} />
         <MetricCard icon={Brain} title="Avg Confidence (Solve)" value={avgSolve} subtitle="/5" delay={300} />
         <MetricCard icon={Heart} title="Avg Confidence (Apply)" value={avgApply} subtitle="/5" delay={400} />
       </div>
 
       {/* Registrants vs Participants bar chart */}
-      {attendance && (
-        <ChartCard title="Registrants vs Participants (Checked In)">
-          <div className="grid md:grid-cols-2 gap-6 items-center">
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={comparisonData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 15%, 18%)" />
-                <XAxis dataKey="name" tick={{ fill: "hsl(210, 40%, 98%)", fontSize: 14 }} />
-                <YAxis tick={{ fill: "hsl(215, 20%, 55%)" }} />
-                <Tooltip contentStyle={{ background: "hsl(220, 20%, 10%)", border: "1px solid hsl(220, 15%, 18%)", borderRadius: 8, color: "hsl(210, 40%, 98%)" }} />
-                <Bar dataKey="value" radius={[6, 6, 0, 0]}>
-                  <Cell fill={CHART_COLORS.blue} />
-                  <Cell fill={CHART_COLORS.primary} />
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-            <div className="space-y-4 text-center md:text-left">
-              <div>
-                <p className="text-3xl font-bold text-foreground">{attendance.uniqueParticipants}</p>
-                <p className="text-sm text-muted-foreground">of {attendance.uniqueRegistrants} registrants checked in</p>
-              </div>
-              <div className="inline-block rounded-lg px-4 py-2" style={{ background: "hsla(160, 84%, 45%, 0.12)" }}>
-                <p className="text-2xl font-bold" style={{ color: CHART_COLORS.primary }}>{attendance.attendanceRate}%</p>
-                <p className="text-xs text-muted-foreground">Attendance Rate</p>
-              </div>
+      <ChartCard title="Registrants vs Participants (Checked In)">
+        <div className="grid md:grid-cols-2 gap-6 items-center">
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={comparisonData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 15%, 18%)" />
+              <XAxis dataKey="name" tick={{ fill: "hsl(210, 40%, 98%)", fontSize: 14 }} />
+              <YAxis tick={{ fill: "hsl(215, 20%, 55%)" }} />
+              <Tooltip contentStyle={{ background: "hsl(220, 20%, 10%)", border: "1px solid hsl(220, 15%, 18%)", borderRadius: 8, color: "hsl(210, 40%, 98%)" }} />
+              <Bar dataKey="value" radius={[6, 6, 0, 0]}>
+                <Cell fill={CHART_COLORS.blue} />
+                <Cell fill={CHART_COLORS.primary} />
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+          <div className="space-y-4 text-center md:text-left">
+            <div>
+              <p className="text-3xl font-bold text-foreground">{participantCount}</p>
+              <p className="text-sm text-muted-foreground">of {registrantCount} registrants checked in</p>
+            </div>
+            <div className="inline-block rounded-lg px-4 py-2" style={{ background: "hsla(160, 84%, 45%, 0.12)" }}>
+              <p className="text-2xl font-bold" style={{ color: CHART_COLORS.primary }}>{attRate}%</p>
+              <p className="text-xs text-muted-foreground">Attendance Rate</p>
             </div>
           </div>
-        </ChartCard>
-      )}
+        </div>
+      </ChartCard>
 
       {/* Demographics with tabs: All Registrants / Participants Only */}
       <Tabs defaultValue="participants" className="space-y-4">
