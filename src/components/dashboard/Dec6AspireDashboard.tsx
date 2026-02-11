@@ -102,6 +102,16 @@ function getRaceBreakdown(rows: any[]): { name: string; value: number }[] {
     .sort((a, b) => b.value - a.value);
 }
 
+function getMultiRaceCount(rows: any[]): number {
+  return rows.filter((r) => {
+    let selected = 0;
+    Object.keys(RACE_COLUMNS).forEach((col) => {
+      if ((r[col] || "").toLowerCase() === "true") selected++;
+    });
+    return selected > 1;
+  }).length;
+}
+
 interface AttendanceSummary {
   uniqueRegistrants: number;
   uniqueParticipants: number;
@@ -138,6 +148,7 @@ function parseAttendanceData(data: any[]): AttendanceSummary {
 function DemographicCharts({ rows, label }: { rows: any[]; label: string }) {
   const total = rows.length;
   const raceData = getRaceBreakdown(rows);
+  const multiRaceCount = getMultiRaceCount(rows);
   const ageData = countField(rows, COL.AGE);
   const educationData = countField(rows, COL.EDUCATION);
   const industryData = mergeCountFields(rows, COL.INDUSTRY, COL.INDUSTRY2);
@@ -176,7 +187,7 @@ function DemographicCharts({ rows, label }: { rows: any[]; label: string }) {
           <div>
             <HorizontalBarChart data={raceBarData} color={CHART_COLORS.primary} />
             <p className="text-xs text-muted-foreground mt-3">
-              * Multiple selections allowed. Percentages may exceed 100%.
+              * Multiple selections allowed — <strong>{multiRaceCount}</strong> {label.toLowerCase()} selected more than one identity ({total > 0 ? Math.round((multiRaceCount / total) * 100) : 0}%). Percentages may exceed 100%.
             </p>
           </div>
         </div>
