@@ -1,59 +1,109 @@
 
 
-# Wipe and Re-import: Full Data Reset Plan
+# CSV-First Event Attendance System with Actual vs. Non-Duplicate Tabs
 
-## Phase 1: Export Current Data (Immediate)
+## Overview
 
-Before touching anything, we'll build a one-click export that downloads ALL current database data as a JSON backup file. This includes:
+Since the CRM was wiped clean, we're rebuilding event tracking from the ground up using the uploaded CSV files as the **source of truth**. Each event will have its own attendance data parsed directly from CSV, with a tab system showing "Actual" (raw rows) vs "Non-Duplicate" (deduplicated unique individuals).
 
-- **contacts** (3,243 records) -- the main data to preserve
-- **contact_tags** (0 records)
-- **contact_notes** (1 record)
-- **contact_overrides** (0 records)
-- **participants** (0 records)
-- **participant_emails** (0 records)
-- **event_attendance** (0 records)
-- **merge_history** (0 records)
-- **project_archives** (0 records)
+## Data Files to Import
 
-**What we'll do:** Update the existing `exportAllData()` function in `useDataIntegrity.ts` to also include the legacy `contacts`, `contact_tags`, `contact_notes`, and `contact_overrides` tables. Then trigger the download immediately.
+| File | Event | Format | Key Details |
+|------|-------|--------|-------------|
+| `June_ASPIRE_Day_1.csv` | June ASPIRE Day 1 | First Name, Last Name, Attendance (Yes) | 109 raw rows, has dupes (e.g., Tiffany Brown, Phillipa Rosman appear twice) |
+| `June_ASPIRE_2nd_Day_Attendance-2.xlsx` | June ASPIRE Day 2 | First Name, Last Name, Day 2 Attendance | ~80 raw rows, has dupes |
+| `All_Attendance_No_Duplicates_.xlsx_-_June_ASPIRE_Day_2.csv` | June ASPIRE Day 2 (NonDupe) | First Name, Last Name, Attendance | 8 unique-to-Day-2 attendees |
+| `Sept_27th_Attendance_...csv` | Sept 27 Build Day | Full check-in format with emails | 208 RSVPs, `Total check-ins >= 1` = attended |
+| `ASPIRE_December_6th_Check_In_...csv` | Dec 6 Workshop | Full check-in format with emails | 144 rows, `Total check-ins >= 1` = attended |
+| `ASPIRE_Lead_the_Future_...csv` | Dec 13 LTF | Student feedback submissions | 25 responses (youth event) |
 
-## Phase 2: Wipe All Tables
+## What "Actual vs NonDupe" Means
 
-After the export is downloaded, we'll clear all data from every CRM-related table:
+For each event, two views:
+- **Actual**: Total raw attendance rows (including people who signed in multiple times or appear on multiple sheets)
+- **Non-Duplicate**: Unique individuals only, deduplicated by name (case-insensitive, trimmed). For files with emails, deduplication is by email.
 
-1. `contact_notes`
-2. `contact_tags`
-3. `contact_overrides`
-4. `contacts`
-5. `participant_emails`
-6. `event_attendance`
-7. `merge_history`
-8. `participants`
+## Architecture
 
-Project archives will be left alone (they're project data, not contact/attendee data). We'll create a backend function to handle the bulk delete securely.
+### New Files
 
-## Phase 3: Ready for Re-import
+1. **`src/hooks/useEventAttendanceCSV.ts`** -- A single hook that loads and parses all event attendance CSVs. Returns per-event data with both raw counts and deduplicated lists.
 
-Once wiped, the system will be clean and ready for fresh CSV imports into the participant-centric tables.
+2. **`src/components/crm/EventAttendanceTabs.tsx`** -- A reusable component that renders "Actual" and "Non-Duplicate" tabs for any event, showing:
+   - KPI cards (Actual count, NonDupe count, Duplicate rate)
+   - Attendee name list in each tab
 
----
+3. **Copy uploaded files to `public/attendance/`** -- All 6 files stored as CSVs in the public directory for client-side parsing.
+
+### Modified Files
+
+4. **`src/pages/EventBreakdown.tsx`** -- Refactor the event configs to pull from CSV data instead of the now-empty contacts table. Add the Actual/NonDupe tab component to each event view.
+
+5. **`src/components/crm/EventsDashboard.tsx`** -- Update summary counts to use CSV-sourced data instead of contacts.
+
+## Deduplication Logic
+
+- **June Day 1**: Deduplicate by `(firstName + lastName)` lowercased/trimmed. Rows with "Attendance" in the third column are duplicates of existing "Yes" rows.
+- **June Day 2**: Same name-based dedup. The separate "No Duplicates" file provides the 8 people who attended Day 2 but NOT Day 1 (cross-event dedup).
+- **Sept 27**: Deduplicate by email (lowercased). Attended = `Total check-ins >= 1`.
+- **Dec 6**: Deduplicate by email (lowercased). Attended = `Total check-ins >= 1`.
+- **Dec 13 LTF**: Each feedback submission = 1 attendee (25 students). Already unique by Submission ID.
+
+## Tab UI Per Event
+
+Each event breakdown page will show:
+
+```text
++------------------+--------------------+
+| Actual (109)     | Non-Duplicate (87) |
++------------------+--------------------+
+
+KPI Cards:
+- Total Sign-ins: 109
+- Unique Attendees: 87  
+- Duplicate Rate: 20%
+
+[Attendee List Table]
+```
+
+For multi-day events (June ASPIRE), sub-tabs for Day 1 and Day 2:
+
+```text
++--------+--------+
+| Day 1  | Day 2  |
++--------+--------+
+
+Within each day:
++------------------+--------------------+
+| Actual (109)     | Non-Duplicate (87) |
++------------------+--------------------+
+```
 
 ## Technical Details
 
-### File Changes
+### File: `src/hooks/useEventAttendanceCSV.ts`
+- Uses Papa Parse to load CSVs from `public/attendance/`
+- Uses xlsx library for the June Day 2 xlsx file (converted to CSV first)
+- Returns a structured object per event with `{ rawRows, deduplicatedRows, rawCount, dedupeCount }`
+- Dedup key: email when available, otherwise `firstName+lastName` normalized
 
-1. **`src/hooks/useDataIntegrity.ts`** -- Update `exportAllData()` to include legacy tables (`contacts`, `contact_tags`, `contact_notes`, `contact_overrides`) in the export payload.
+### File: `src/components/crm/EventAttendanceTabs.tsx`
+- Takes `rawRows` and `deduplicatedRows` as props
+- Renders Tabs component with "Actual" and "Non-Duplicate" triggers
+- Each tab shows a simple table of names (and emails when available)
+- KPI summary at top
 
-2. **`supabase/functions/wipe-crm-data/index.ts`** -- New backend function that truncates all CRM tables in the correct order (respecting any implicit dependencies). Admin-only, authenticated.
+### File: `src/pages/EventBreakdown.tsx`
+- Remove dependency on `useContacts()` for attendance counts
+- Import `useEventAttendanceCSV()` instead
+- Integrate `EventAttendanceTabs` into each event's detail view
+- Keep existing event configs but source counts from CSV data
 
-3. **`supabase/config.toml`** -- Register the new edge function with `verify_jwt = false` (auth checked in code).
-
-4. **`src/components/admin/DataIntegrityPanel.tsx`** -- Add a "Wipe All Data" button with a confirmation dialog that calls the new backend function.
-
-### Rollback Strategy
-
-If the new approach doesn't work out:
-- Revert the code to a previous version using Lovable's history
-- Re-import the downloaded JSON backup using the existing import tools or a simple script
+### File: `public/attendance/` (new directory)
+- `june-aspire-day1.csv`
+- `june-aspire-day2.csv` (converted from xlsx)
+- `june-aspire-day2-nodupe.csv`
+- `sept27-attendance.csv`
+- `dec6-attendance.csv`
+- `ltf-dec13-feedback.csv`
 
