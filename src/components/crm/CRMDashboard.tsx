@@ -21,6 +21,7 @@ import { EventsDashboard } from "./EventsDashboard";
 import { ProjectsDashboard } from "./ProjectsDashboard";
 import { ContactDetailModal } from "./ContactDetailModal";
 import { AIInsightsPanel } from "./AIInsightsPanel";
+import { AIChatPanel } from "./AIChatPanel";
 import { PresentationMode } from "@/components/presentation/PresentationMode";
 import { DashboardHero } from "./DashboardHero";
 import { AttendeesDashboard } from "./AttendeesDashboard";
@@ -29,7 +30,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { LayoutDashboard, Users, FileText, Printer, MessageSquare, Folder, Settings, Presentation, LogOut, FileBarChart, RefreshCw, FileCheck, CalendarDays, Database, Upload, Wand2, UserCheck } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Printer, MessageSquare, Folder, Settings, Presentation, LogOut, FileBarChart, RefreshCw, FileCheck, CalendarDays, Database, Upload, Wand2, UserCheck, Bot } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useContactTags } from "@/hooks/useContactTags";
 import { getFiltersFromUrl, serializeFilters } from "@/lib/urlState";
@@ -575,7 +576,7 @@ export default function CRMDashboard() {
 
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full animate-fade-in" style={{ animationDelay: '0.1s' }}>
-          <TabsList className="grid w-full grid-cols-7 bg-secondary/50 h-auto p-1">
+          <TabsList className="grid w-full grid-cols-8 bg-secondary/50 h-auto p-1">
             <TabsTrigger value="overview" className="gap-1 sm:gap-2 px-2 sm:px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <LayoutDashboard className="h-4 w-4" />
               <span className="hidden sm:inline">Overview</span>
@@ -603,6 +604,10 @@ export default function CRMDashboard() {
             <TabsTrigger value="reports" className="gap-1 sm:gap-2 px-2 sm:px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <FileText className="h-4 w-4" />
               <span className="hidden sm:inline">Reports</span>
+            </TabsTrigger>
+            <TabsTrigger value="ai-assistant" className="gap-1 sm:gap-2 px-2 sm:px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <Bot className="h-4 w-4" />
+              <span className="hidden sm:inline">AI Assistant</span>
             </TabsTrigger>
           </TabsList>
 
@@ -741,6 +746,11 @@ export default function CRMDashboard() {
               currentFilters={filters} 
               onLoadReport={handleLoadReport}
             />
+          </TabsContent>
+
+          {/* AI Assistant Tab */}
+          <TabsContent value="ai-assistant" className="mt-6">
+            <AIChatPanel />
           </TabsContent>
         </Tabs>
 
