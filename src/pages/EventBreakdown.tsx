@@ -8,7 +8,9 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ArrowLeft, Users, UserCheck, Calendar, Rocket, GraduationCap, PartyPopper, Sparkles, ClipboardList, Wrench, ShieldCheck } from "lucide-react";
 import { LTFDashboard } from "@/components/dashboard/LTFDashboard";
 import { EventAttendanceTabs } from "@/components/crm/EventAttendanceTabs";
+import { DemographicComparisonCharts } from "@/components/crm/DemographicComparisonCharts";
 import { useEventAttendanceCSV } from "@/hooks/useEventAttendanceCSV";
+import { EventKey } from "@/hooks/useSignupDemographics";
 
 interface EventConfig {
   id: string;
@@ -245,6 +247,9 @@ export default function EventBreakdown() {
             </Card>
           </div>
 
+          {/* Demographic Comparison Charts */}
+          <DemographicComparisonCharts eventKey="june2025Event" eventName={event.name} />
+
           {/* Day tabs with Actual/NonDupe inside */}
           <Tabs defaultValue="day1" className="w-full">
             <TabsList>
@@ -330,6 +335,10 @@ export default function EventBreakdown() {
               </CardContent>
             </Card>
           </div>
+        )}
+        {/* Demographic Comparison Charts */}
+        {(eventId === "sept27BuildDay" || eventId === "dec6Workshop") && (
+          <DemographicComparisonCharts eventKey={eventId as EventKey} eventName={event.name} />
         )}
 
         {/* Actual/NonDupe Tabs */}
