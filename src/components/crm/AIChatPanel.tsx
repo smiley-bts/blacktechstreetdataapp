@@ -15,7 +15,7 @@ const STARTER_QUESTIONS = [
 ];
 
 export function AIChatPanel() {
-  const { messages, isLoading, send, clearChat } = useAIChat();
+  const { messages, isLoading, send, clearChat, dataLoaded } = useAIChat();
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
