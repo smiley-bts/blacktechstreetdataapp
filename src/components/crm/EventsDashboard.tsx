@@ -1,124 +1,26 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Contact, isDec6Workshop, isDec13LTF, isSept27BuildDay, isHappyHourAug2025, isJune2025Event, isSep2025Event, isMarch2025Event, isMay2025Event } from "@/types/contact";
-import { useContactMetrics } from "@/hooks/useContactMetrics";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Users, PartyPopper, GraduationCap, Sparkles, Rocket, UserCheck, ClipboardList, Wrench, ExternalLink } from "lucide-react";
+import { useEventAttendanceCSV } from "@/hooks/useEventAttendanceCSV";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface EventsDashboardProps {
-  contacts: Contact[];
+  contacts?: any[];
   onEventClick?: (eventFilter: string) => void;
 }
 
-interface EventInfo {
-  id: string;
+interface EventDisplayInfo {
   name: string;
   date: string;
-  type: "workshop" | "build-day" | "social" | "training" | "survey";
+  type: string;
   icon: React.ReactNode;
-  filter: (contact: Contact) => boolean;
-  attendedFilter: (contact: Contact) => boolean;
   filterKey: string;
   color: string;
-  inviteOnly?: boolean;
-  multiDay?: boolean;
-  day1Filter?: (contact: Contact) => boolean;
-  day2Filter?: (contact: Contact) => boolean;
+  uniqueAttendees: number;
   isYouthEvent?: boolean;
-  fixedAttendeeCount?: number;
 }
-
-// Helper to check if contact actually attended an event
-function actuallyAttendedEvent(contact: Contact, eventKeyword: string): boolean {
-  return !!(contact.eventsActuallyAttended && contact.eventsActuallyAttended.toLowerCase().includes(eventKeyword.toLowerCase()));
-}
-
-const EVENTS: EventInfo[] = [
-  {
-    id: "march-2025-presurvey",
-    name: "Pre-Survey/Interest",
-    date: "March 6, 2025",
-    type: "survey",
-    icon: <ClipboardList className="h-5 w-5" />,
-    filter: isMarch2025Event,
-    attendedFilter: (c) => actuallyAttendedEvent(c, "March"),
-    filterKey: "march2025Event",
-    color: "bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/30",
-  },
-  {
-    id: "may-2025-workshops",
-    name: "May Workshops",
-    date: "May 15 & 30, 2025",
-    type: "workshop",
-    icon: <Wrench className="h-5 w-5" />,
-    filter: isMay2025Event,
-    attendedFilter: (c) => actuallyAttendedEvent(c, "May"),
-    filterKey: "may2025Event",
-    color: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/30",
-    inviteOnly: true,
-  },
-  {
-    id: "june-2025-aspire",
-    name: "ASPIRE Workshop",
-    date: "June 27-28, 2025",
-    type: "workshop",
-    icon: <Rocket className="h-5 w-5" />,
-    filter: isJune2025Event,
-    attendedFilter: (c) => actuallyAttendedEvent(c, "June 2025 Day 1") || actuallyAttendedEvent(c, "June 2025 Day 2"),
-    filterKey: "june2025Event",
-    color: "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/30",
-    multiDay: true,
-    day1Filter: (c: Contact) => actuallyAttendedEvent(c, "June 2025 Day 1"),
-    day2Filter: (c: Contact) => actuallyAttendedEvent(c, "June 2025 Day 2"),
-  },
-  {
-    id: "community-engagement-aug-2025",
-    name: "Community Engagement",
-    date: "August 27, 2025",
-    type: "social",
-    icon: <PartyPopper className="h-5 w-5" />,
-    filter: isHappyHourAug2025,
-    attendedFilter: (c) => actuallyAttendedEvent(c, "Community Engagement"),
-    filterKey: "happyHourAug2025",
-    color: "bg-pink-500/10 text-pink-600 dark:text-pink-400 border-pink-500/30",
-  },
-  {
-    id: "sep-2025-aspire-build-day",
-    name: "ASPIRE AI Fluency + Build Day",
-    date: "September 27, 2025",
-    type: "build-day",
-    icon: <GraduationCap className="h-5 w-5" />,
-    filter: (c) => isSep2025Event(c) || isSept27BuildDay(c),
-    attendedFilter: (c) => actuallyAttendedEvent(c, "Sep 2025"),
-    filterKey: "sept27BuildDay",
-    color: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
-  },
-  {
-    id: "dec-6-workshop",
-    name: "ASPIRE Workshop",
-    date: "December 6, 2025",
-    type: "workshop",
-    icon: <GraduationCap className="h-5 w-5" />,
-    filter: isDec6Workshop,
-    attendedFilter: (c) => actuallyAttendedEvent(c, "Dec 6"),
-    filterKey: "dec6Workshop",
-    color: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30",
-  },
-  {
-    id: "dec-13-ltf",
-    name: "Lead The Future",
-    date: "December 13, 2025",
-    type: "training",
-    icon: <Sparkles className="h-5 w-5" />,
-    filter: isDec13LTF,
-    attendedFilter: (c) => actuallyAttendedEvent(c, "Dec 13") || actuallyAttendedEvent(c, "LTF"),
-    filterKey: "dec13LTF",
-    color: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30",
-    isYouthEvent: true,
-    fixedAttendeeCount: 22, // 22 student participants with 100% feedback
-  },
-];
 
 const EVENT_TYPE_LABELS: Record<string, string> = {
   "workshop": "Workshop",
@@ -130,71 +32,72 @@ const EVENT_TYPE_LABELS: Record<string, string> = {
 
 export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps) {
   const navigate = useNavigate();
-  const metrics = useContactMetrics(contacts);
+  const csvData = useEventAttendanceCSV();
 
-  const eventStats = useMemo(() => {
-    return EVENTS.map(event => {
-      const registeredCount = contacts.filter(event.filter).length;
-      // For youth events, use fixed attendee count instead of counting contacts
-      const attendedCount = event.fixedAttendeeCount ?? contacts.filter(event.attendedFilter).length;
-      const day1Count = event.day1Filter ? contacts.filter(event.day1Filter).length : 0;
-      const day2Count = event.day2Filter ? contacts.filter(event.day2Filter).length : 0;
-      
-      // Calculate conversion rates
-      const registrationToAttendance = registeredCount > 0 
-        ? Math.round((attendedCount / registeredCount) * 100) 
-        : 0;
-      const day1ToDay2Retention = event.multiDay && day1Count > 0 
-        ? Math.round((day2Count / day1Count) * 100) 
-        : null;
-      
-      return {
-        ...event,
-        registeredCount,
-        attendedCount,
-        registeredContacts: event.isYouthEvent ? [] : contacts.filter(event.filter),
-        attendedContacts: event.isYouthEvent ? [] : contacts.filter(event.attendedFilter),
-        day1Count,
-        day2Count,
-        registrationToAttendance,
-        day1ToDay2Retention,
-      };
-    });
-  }, [contacts]);
+  const events: EventDisplayInfo[] = useMemo(() => {
+    if (csvData.loading) return [];
+    return [
+      {
+        name: "ASPIRE Workshop",
+        date: "June 27-28, 2025",
+        type: "workshop",
+        icon: <Rocket className="h-5 w-5" />,
+        filterKey: "june2025Event",
+        color: "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/30",
+        uniqueAttendees: csvData.june.combined.dedupeCount,
+      },
+      {
+        name: "ASPIRE AI Fluency + Build Day",
+        date: "September 27, 2025",
+        type: "build-day",
+        icon: <GraduationCap className="h-5 w-5" />,
+        filterKey: "sept27BuildDay",
+        color: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
+        uniqueAttendees: csvData.sept27.dedupeCount,
+      },
+      {
+        name: "ASPIRE Workshop",
+        date: "December 6, 2025",
+        type: "workshop",
+        icon: <GraduationCap className="h-5 w-5" />,
+        filterKey: "dec6Workshop",
+        color: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30",
+        uniqueAttendees: csvData.dec6.dedupeCount,
+      },
+      {
+        name: "Lead The Future",
+        date: "December 13, 2025",
+        type: "training",
+        icon: <Sparkles className="h-5 w-5" />,
+        filterKey: "dec13LTF",
+        color: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30",
+        uniqueAttendees: csvData.ltf.dedupeCount,
+        isYouthEvent: true,
+      },
+    ];
+  }, [csvData]);
 
-  // Sort events by date (chronological order - oldest first)
-  const sortedEvents = useMemo(() => {
-    // Parse date strings to get sortable dates
-    const parseEventDate = (dateStr: string): Date => {
-      // Extract year and month from strings like "June 27-28, 2025" or "December 6, 2025"
-      const months: Record<string, number> = {
-        'January': 0, 'February': 1, 'March': 2, 'April': 3, 'May': 4, 'June': 5,
-        'July': 6, 'August': 7, 'September': 8, 'October': 9, 'November': 10, 'December': 11
-      };
-      
-      for (const [monthName, monthIndex] of Object.entries(months)) {
-        if (dateStr.includes(monthName)) {
-          const yearMatch = dateStr.match(/(\d{4})/);
-          const dayMatch = dateStr.match(/(\d{1,2})/);
-          const year = yearMatch ? parseInt(yearMatch[1]) : 2025;
-          const day = dayMatch ? parseInt(dayMatch[1]) : 1;
-          return new Date(year, monthIndex, day);
-        }
-      }
-      return new Date(dateStr);
-    };
-    
-    return [...eventStats].sort((a, b) => {
-      const dateA = parseEventDate(a.date);
-      const dateB = parseEventDate(b.date);
-      return dateA.getTime() - dateB.getTime();
-    });
-  }, [eventStats]);
+  const totalUniqueAttendees = useMemo(() => {
+    return events.reduce((sum, e) => sum + e.uniqueAttendees, 0);
+  }, [events]);
+
+  if (csvData.loading) {
+    return (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <Skeleton className="h-24" />
+          <Skeleton className="h-24" />
+          <Skeleton className="h-24" />
+        </div>
+        <Skeleton className="h-64" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center gap-3">
@@ -202,22 +105,8 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
                 <Calendar className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-2xl sm:text-3xl font-bold text-foreground">{EVENTS.length}</p>
+                <p className="text-2xl sm:text-3xl font-bold text-foreground">{events.length}</p>
                 <p className="text-sm text-muted-foreground">Total Events</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-amber-500/5 to-amber-500/10 border-amber-500/20">
-          <CardContent className="p-4 sm:p-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-amber-500/10">
-                <Users className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-              </div>
-              <div>
-                <p className="text-2xl sm:text-3xl font-bold text-foreground">{metrics.eventRegistered}</p>
-                <p className="text-sm text-muted-foreground">Registered</p>
               </div>
             </div>
           </CardContent>
@@ -230,22 +119,24 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
                 <UserCheck className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
               </div>
               <div>
-                <p className="text-2xl sm:text-3xl font-bold text-foreground">{metrics.eventActuallyAttended}</p>
-                <p className="text-sm text-muted-foreground">Attendees</p>
+                <p className="text-2xl sm:text-3xl font-bold text-foreground">{totalUniqueAttendees}</p>
+                <p className="text-sm text-muted-foreground">Total Unique Attendees</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-purple-500/5 to-purple-500/10 border-purple-500/20">
+        <Card className="bg-gradient-to-br from-amber-500/5 to-amber-500/10 border-amber-500/20">
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-purple-500/10">
-                <Sparkles className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              <div className="p-2.5 rounded-xl bg-amber-500/10">
+                <Users className="h-5 w-5 text-amber-600 dark:text-amber-400" />
               </div>
               <div>
-                <p className="text-2xl sm:text-3xl font-bold text-foreground">{metrics.multiEventAttendees}</p>
-                <p className="text-sm text-muted-foreground">Multi-Event</p>
+                <p className="text-2xl sm:text-3xl font-bold text-foreground">
+                  {csvData.sept27All.rsvps + csvData.dec6All.rsvps}
+                </p>
+                <p className="text-sm text-muted-foreground">Total RSVPs</p>
               </div>
             </div>
           </CardContent>
@@ -259,18 +150,17 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
             <Calendar className="h-5 w-5 text-primary" />
             Events Timeline
           </CardTitle>
-          <CardDescription>All tracked events with registration and attendance</CardDescription>
+          <CardDescription>All tracked events with attendance from CSV data</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {sortedEvents.map((event, index) => (
+            {events.map((event, index) => (
               <div
-                key={event.id}
+                key={event.filterKey}
                 className={`relative flex items-center gap-4 p-4 rounded-xl border ${event.color} cursor-pointer hover:scale-[1.01] transition-all duration-200`}
                 onClick={() => navigate(`/events/${event.filterKey}`)}
               >
-                {/* Timeline connector */}
-                {index < sortedEvents.length - 1 && (
+                {index < events.length - 1 && (
                   <div className="absolute left-[2.1rem] top-full h-4 w-0.5 bg-border z-0" />
                 )}
                 
@@ -284,40 +174,25 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
                     <Badge variant="outline" className="text-xs">
                       {EVENT_TYPE_LABELS[event.type]}
                     </Badge>
+                    {event.isYouthEvent && (
+                      <Badge variant="secondary" className="text-xs">Youth</Badge>
+                    )}
                   </div>
                   <p className="text-sm text-muted-foreground">{event.date}</p>
                 </div>
-                
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <span className="text-sm">View Details</span>
-                  <ExternalLink className="h-4 w-4" />
+
+                <div className="flex items-center gap-3">
+                  <div className="text-right">
+                    <p className="text-lg font-bold text-foreground">{event.uniqueAttendees}</p>
+                    <p className="text-xs text-muted-foreground">Unique</p>
+                  </div>
+                  <ExternalLink className="h-4 w-4 text-muted-foreground" />
                 </div>
               </div>
             ))}
           </div>
         </CardContent>
       </Card>
-
-      {/* Event Type Breakdown */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-        {Object.entries(EVENT_TYPE_LABELS).map(([type, label]) => {
-          const eventsOfType = eventStats.filter(e => e.type === type);
-          const totalRegistered = eventsOfType.reduce((sum, e) => sum + e.registeredCount, 0);
-          const totalAttended = eventsOfType.reduce((sum, e) => sum + e.attendedCount, 0);
-          
-          return (
-            <Card key={type} className="bg-card/50">
-              <CardContent className="p-4 text-center">
-                <p className="text-lg font-bold text-foreground">{eventsOfType.length}</p>
-                <p className="text-sm text-muted-foreground">{label}s</p>
-                <p className="text-xs text-muted-foreground mt-2">
-                  {totalRegistered} registered
-                </p>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
     </div>
   );
 }
