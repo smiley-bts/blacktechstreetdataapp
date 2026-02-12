@@ -1,109 +1,120 @@
 
 
-# CSV-First Event Attendance System with Actual vs. Non-Duplicate Tabs
+# AI Data Assistant for the CRM
 
-## Overview
+## What You'll Get
 
-Since the CRM was wiped clean, we're rebuilding event tracking from the ground up using the uploaded CSV files as the **source of truth**. Each event will have its own attendance data parsed directly from CSV, with a tab system showing "Actual" (raw rows) vs "Non-Duplicate" (deduplicated unique individuals).
+A ChatGPT-style AI assistant tab in the CRM that can answer natural language questions about your program data -- sign-ups, attendance, demographics, and the G-ACE quarterly report. It will know the difference between registrants (who signed up) and attendees (who actually showed up).
 
-## Data Files to Import
+Examples of questions it can answer:
+- "How many people signed up for the June ASPIRE but didn't attend?"
+- "What's the racial breakdown of Dec 6 attendees?"
+- "How many unique individuals achieved AI fluency?" (G-ACE Q25)
+- "What percentage of Sept 27 registrants were working professionals?"
+- "Show me the income distribution of all registrants across events"
 
-| File | Event | Format | Key Details |
-|------|-------|--------|-------------|
-| `June_ASPIRE_Day_1.csv` | June ASPIRE Day 1 | First Name, Last Name, Attendance (Yes) | 109 raw rows, has dupes (e.g., Tiffany Brown, Phillipa Rosman appear twice) |
-| `June_ASPIRE_2nd_Day_Attendance-2.xlsx` | June ASPIRE Day 2 | First Name, Last Name, Day 2 Attendance | ~80 raw rows, has dupes |
-| `All_Attendance_No_Duplicates_.xlsx_-_June_ASPIRE_Day_2.csv` | June ASPIRE Day 2 (NonDupe) | First Name, Last Name, Attendance | 8 unique-to-Day-2 attendees |
-| `Sept_27th_Attendance_...csv` | Sept 27 Build Day | Full check-in format with emails | 208 RSVPs, `Total check-ins >= 1` = attended |
-| `ASPIRE_December_6th_Check_In_...csv` | Dec 6 Workshop | Full check-in format with emails | 144 rows, `Total check-ins >= 1` = attended |
-| `ASPIRE_Lead_the_Future_...csv` | Dec 13 LTF | Student feedback submissions | 25 responses (youth event) |
+## Data Architecture
 
-## What "Actual vs NonDupe" Means
+### Sign-Up CSVs (New -- Registrants who may or may not have attended)
 
-For each event, two views:
-- **Actual**: Total raw attendance rows (including people who signed in multiple times or appear on multiple sheets)
-- **Non-Duplicate**: Unique individuals only, deduplicated by name (case-insensitive, trimmed). For files with emails, deduplication is by email.
+| File | Event | Records |
+|------|-------|---------|
+| June sign-up CSV | June ASPIRE | ~350 registrants |
+| Sept 27 sign-up CSV | Sept 27 Build Day | ~155 registrants |
+| Dec 6 registration CSV | Dec 6 Workshop | ~183 registrants |
 
-## Architecture
+These will be stored in `public/signups/` separately from the attendance files in `public/attendance/`.
 
-### New Files
+### Existing Attendance CSVs (Already uploaded)
+- June Day 1, Day 2, Day 2 NoDupe
+- Sept 27 check-in
+- Dec 6 check-in
+- Dec 13 LTF feedback
 
-1. **`src/hooks/useEventAttendanceCSV.ts`** -- A single hook that loads and parses all event attendance CSVs. Returns per-event data with both raw counts and deduplicated lists.
+### G-ACE Quarterly Report
+The PDF content (questions 24-73 about community impact, demographics, cohorts, workforce readiness) will be embedded as a text file for the AI to reference.
 
-2. **`src/components/crm/EventAttendanceTabs.tsx`** -- A reusable component that renders "Actual" and "Non-Duplicate" tabs for any event, showing:
-   - KPI cards (Actual count, NonDupe count, Duplicate rate)
-   - Attendee name list in each tab
+## How It Works
 
-3. **Copy uploaded files to `public/attendance/`** -- All 6 files stored as CSVs in the public directory for client-side parsing.
+1. When a user asks a question, the frontend sends their message to a backend function
+2. The backend function loads all the CSV/text data, builds a structured context summary, and sends it along with the user's question to the AI
+3. The AI streams back a response token-by-token, displayed in real time
+4. The chatbot maintains conversation history so follow-up questions work naturally
 
-### Modified Files
+## New Files
 
-4. **`src/pages/EventBreakdown.tsx`** -- Refactor the event configs to pull from CSV data instead of the now-empty contacts table. Add the Actual/NonDupe tab component to each event view.
+### 1. `public/signups/june-aspire-signup.csv`
+Copy of the uploaded June sign-up file.
 
-5. **`src/components/crm/EventsDashboard.tsx`** -- Update summary counts to use CSV-sourced data instead of contacts.
+### 2. `public/signups/sept27-signup.csv`
+Copy of the uploaded Sept 27 sign-up file.
 
-## Deduplication Logic
+### 3. `public/signups/dec6-registration.csv`
+Copy of the uploaded Dec 6 registration file.
 
-- **June Day 1**: Deduplicate by `(firstName + lastName)` lowercased/trimmed. Rows with "Attendance" in the third column are duplicates of existing "Yes" rows.
-- **June Day 2**: Same name-based dedup. The separate "No Duplicates" file provides the 8 people who attended Day 2 but NOT Day 1 (cross-event dedup).
-- **Sept 27**: Deduplicate by email (lowercased). Attended = `Total check-ins >= 1`.
-- **Dec 6**: Deduplicate by email (lowercased). Attended = `Total check-ins >= 1`.
-- **Dec 13 LTF**: Each feedback submission = 1 attendee (25 students). Already unique by Submission ID.
+### 4. `public/signups/g-ace-quarterly-report.txt`
+Plain text extraction of the G-ACE PDF (questions 24-73 about participant demographics, AI fluency, digital literacy, cohorts, workforce readiness).
 
-## Tab UI Per Event
+### 5. `supabase/functions/chat/index.ts`
+Backend function that:
+- Receives user messages
+- Loads and summarizes all CSV data (sign-ups, attendance) into a structured context
+- Pre-computes key metrics: registrant counts, attendee counts, no-show counts, demographic breakdowns per event
+- Sends context + conversation to the Lovable AI Gateway (google/gemini-3-flash-preview)
+- Streams the response back via SSE
+- Handles 429/402 rate limit errors gracefully
 
-Each event breakdown page will show:
+### 6. `src/components/crm/AIChatPanel.tsx`
+A ChatGPT-style UI component with:
+- Message history display with user/assistant bubbles
+- Markdown rendering for AI responses (tables, lists, bold)
+- Streaming token-by-token display
+- Text input with send button
+- Loading indicator while AI is thinking
+- Suggested starter questions (e.g., "Who signed up but didn't attend June ASPIRE?")
 
-```text
-+------------------+--------------------+
-| Actual (109)     | Non-Duplicate (87) |
-+------------------+--------------------+
+### 7. `src/hooks/useAIChat.ts`
+React hook managing:
+- Message state (conversation history)
+- SSE streaming logic
+- Loading/error states
+- Rate limit error handling with toast notifications
 
-KPI Cards:
-- Total Sign-ins: 109
-- Unique Attendees: 87  
-- Duplicate Rate: 20%
+## Modified Files
 
-[Attendee List Table]
+### 8. `src/components/crm/CRMDashboard.tsx`
+- Add an "AI Assistant" tab (8th tab) with a Bot/Sparkles icon
+- Position it after Reports tab
+- Renders `<AIChatPanel />`
+
+### 9. `supabase/config.toml`
+- Register the new `chat` function with `verify_jwt = false`
+
+## AI Context Strategy
+
+The backend function will pre-compute a data summary before each AI call. This avoids sending raw CSV rows (which would blow up the context window) and instead sends a structured briefing like:
+
+```
+ASPIRE PROGRAM DATA SUMMARY:
+
+JUNE ASPIRE (June 27-28, 2025):
+- Registrants: 348 unique sign-ups
+- Day 1 Attendees: 87 unique
+- Day 2 Attendees: 72 unique  
+- No-shows: 261 (75% drop-off)
+- Demographics (Registrants): 
+  Age: 25-34 (28%), 35-44 (35%), 45-54 (22%)...
+  Race: Black/African American (72%), White (8%)...
+  Role: Working Professional (40%), Entrepreneur (25%)...
+  Income: $25k-$49k (30%), $50k-$74k (25%)...
+
+SEPT 27 BUILD DAY:
+- Registrants: 155 sign-ups
+- Attendees: 68 unique (check-ins >= 1)
+...
+
+G-ACE QUARTERLY REPORT (Q24-73):
+[Full text of questions and answers]
 ```
 
-For multi-day events (June ASPIRE), sub-tabs for Day 1 and Day 2:
-
-```text
-+--------+--------+
-| Day 1  | Day 2  |
-+--------+--------+
-
-Within each day:
-+------------------+--------------------+
-| Actual (109)     | Non-Duplicate (87) |
-+------------------+--------------------+
-```
-
-## Technical Details
-
-### File: `src/hooks/useEventAttendanceCSV.ts`
-- Uses Papa Parse to load CSVs from `public/attendance/`
-- Uses xlsx library for the June Day 2 xlsx file (converted to CSV first)
-- Returns a structured object per event with `{ rawRows, deduplicatedRows, rawCount, dedupeCount }`
-- Dedup key: email when available, otherwise `firstName+lastName` normalized
-
-### File: `src/components/crm/EventAttendanceTabs.tsx`
-- Takes `rawRows` and `deduplicatedRows` as props
-- Renders Tabs component with "Actual" and "Non-Duplicate" triggers
-- Each tab shows a simple table of names (and emails when available)
-- KPI summary at top
-
-### File: `src/pages/EventBreakdown.tsx`
-- Remove dependency on `useContacts()` for attendance counts
-- Import `useEventAttendanceCSV()` instead
-- Integrate `EventAttendanceTabs` into each event's detail view
-- Keep existing event configs but source counts from CSV data
-
-### File: `public/attendance/` (new directory)
-- `june-aspire-day1.csv`
-- `june-aspire-day2.csv` (converted from xlsx)
-- `june-aspire-day2-nodupe.csv`
-- `sept27-attendance.csv`
-- `dec6-attendance.csv`
-- `ltf-dec13-feedback.csv`
-
+This keeps the AI context efficient (~3-5K tokens) while giving it everything it needs to answer questions accurately.
