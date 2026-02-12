@@ -233,18 +233,39 @@ export interface ExportableData {
   attendance: any[];
   projects: any[];
   mergeHistory: any[];
+  contacts: any[];
+  contactTags: any[];
+  contactNotes: any[];
+  contactOverrides: any[];
   exportedAt: string;
   version: string;
 }
 
 export async function exportAllData(): Promise<ExportableData> {
-  const [participants, emails, attendance, projects, mergeHistory] = await Promise.all([
+  // Fetch all tables including legacy contacts tables
+  // Note: contacts may exceed 1000 rows, so we paginate
+  const [participants, emails, attendance, projects, mergeHistory, contactTags, contactNotes, contactOverrides] = await Promise.all([
     supabase.from("participants").select("*"),
     supabase.from("participant_emails").select("*"),
     supabase.from("event_attendance").select("*"),
     supabase.from("project_archives").select("*"),
     supabase.from("merge_history").select("*"),
+    supabase.from("contact_tags").select("*"),
+    supabase.from("contact_notes").select("*"),
+    supabase.from("contact_overrides").select("*"),
   ]);
+
+  // Paginate contacts (may have 3000+ rows)
+  const allContacts: any[] = [];
+  let from = 0;
+  const pageSize = 1000;
+  while (true) {
+    const { data, error } = await supabase.from("contacts").select("*").range(from, from + pageSize - 1);
+    if (error || !data || data.length === 0) break;
+    allContacts.push(...data);
+    if (data.length < pageSize) break;
+    from += pageSize;
+  }
 
   return {
     participants: participants.data || [],
@@ -252,8 +273,12 @@ export async function exportAllData(): Promise<ExportableData> {
     attendance: attendance.data || [],
     projects: projects.data || [],
     mergeHistory: mergeHistory.data || [],
+    contacts: allContacts,
+    contactTags: contactTags.data || [],
+    contactNotes: contactNotes.data || [],
+    contactOverrides: contactOverrides.data || [],
     exportedAt: new Date().toISOString(),
-    version: "1.0",
+    version: "2.0",
   };
 }
 

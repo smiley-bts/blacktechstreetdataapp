@@ -19,6 +19,17 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   AlertTriangle,
   AlertCircle,
   Info,
@@ -33,10 +44,12 @@ import {
   Calendar,
   ClipboardList,
   PieChart,
+  Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const SEVERITY_CONFIG: Record<IssueSeverity, { icon: typeof AlertCircle; color: string; bg: string }> = {
   critical: {
@@ -67,6 +80,40 @@ const CATEGORY_ICONS: Record<string, typeof Users> = {
 export function DataIntegrityPanel() {
   const { data: integrity, isLoading, refetch, isRefetching } = useDataIntegrity();
   const [exporting, setExporting] = useState(false);
+  const [wiping, setWiping] = useState(false);
+
+  const handleWipeAllData = async () => {
+    setWiping(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error("You must be logged in");
+        return;
+      }
+
+      const response = await supabase.functions.invoke("wipe-crm-data", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+
+      if (response.error) {
+        toast.error(`Wipe failed: ${response.error.message}`);
+        return;
+      }
+
+      const result = response.data;
+      if (result.success) {
+        const total = Object.values(result.deleted as Record<string, number>).reduce((a: number, b: number) => a + b, 0);
+        toast.success(`Wiped ${total} records across all CRM tables`);
+        refetch();
+      } else {
+        toast.error(result.error || "Wipe failed");
+      }
+    } catch (error) {
+      toast.error("Wipe failed unexpectedly");
+    } finally {
+      setWiping(false);
+    }
+  };
 
   const handleExportJSON = async () => {
     setExporting(true);
@@ -297,6 +344,52 @@ export function DataIntegrityPanel() {
               </div>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Danger Zone: Wipe All Data */}
+      <Card className="border-destructive/50">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base flex items-center gap-2 text-destructive">
+            <Trash2 className="h-4 w-4" />
+            Danger Zone
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground mb-4">
+            Permanently delete all contact and attendee data from every CRM table. Project archives will NOT be affected. 
+            <strong> Make sure you export a backup first!</strong>
+          </p>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" disabled={wiping}>
+                <Trash2 className="h-4 w-4 mr-2" />
+                {wiping ? "Wiping..." : "Wipe All CRM Data"}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will permanently delete ALL data from: contacts, contact_tags, contact_notes, 
+                  contact_overrides, participants, participant_emails, event_attendance, and merge_history.
+                  <br /><br />
+                  <strong>Project archives will NOT be deleted.</strong>
+                  <br /><br />
+                  This action cannot be undone. Make sure you've exported a backup first.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleWipeAllData}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Yes, Wipe Everything
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </CardContent>
       </Card>
     </div>
