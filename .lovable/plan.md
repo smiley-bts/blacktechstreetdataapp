@@ -1,120 +1,112 @@
 
+# CRM Homepage and Tab Redesign
 
-# AI Data Assistant for the CRM
+## The Problem
 
-## What You'll Get
+The CRM currently has 8 tabs, but most of them show empty data because the database was wiped. The Overview, Contacts, and Attendees tabs all query empty database tables while the real data lives in CSV files. This creates a confusing experience where some tabs work (Events, AI Assistant) and others show zeros.
 
-A ChatGPT-style AI assistant tab in the CRM that can answer natural language questions about your program data -- sign-ups, attendance, demographics, and the G-ACE quarterly report. It will know the difference between registrants (who signed up) and attendees (who actually showed up).
+## Verified Data Counts
 
-Examples of questions it can answer:
-- "How many people signed up for the June ASPIRE but didn't attend?"
-- "What's the racial breakdown of Dec 6 attendees?"
-- "How many unique individuals achieved AI fluency?" (G-ACE Q25)
-- "What percentage of Sept 27 registrants were working professionals?"
-- "Show me the income distribution of all registrants across events"
+Here are the confirmed numbers from the actual CSV files:
 
-## Data Architecture
+### Sign-Up / Registration Data (public/signups/)
+| Event | File Lines | Registrants (approx) |
+|-------|-----------|---------------------|
+| June ASPIRE (June 27-28) | 351 lines | ~307 unique registrants |
+| Sept 27 Build Day | 156 lines | ~152 registrants |
+| Dec 6 Workshop | 184 lines | ~180 registrants |
 
-### Sign-Up CSVs (New -- Registrants who may or may not have attended)
+### Attendance Data (public/attendance/)
+| Event | File Lines | Notes |
+|-------|-----------|-------|
+| June Day 1 | 110 lines | Name-based dedup (~109 sign-ins) |
+| June Day 2 | Separate file | Name-based dedup |
+| June Combined | Both days merged | ~79 unique attendees (name dedup) |
+| Sept 27 | 209 lines | Email-based dedup, checkins >= 1 filter |
+| Dec 6 | Separate file | Email-based dedup, checkins >= 1 filter |
+| LTF Dec 13 | Feedback submissions | Each submission = 1 attendee |
 
-| File | Event | Records |
-|------|-------|---------|
-| June sign-up CSV | June ASPIRE | ~350 registrants |
-| Sept 27 sign-up CSV | Sept 27 Build Day | ~155 registrants |
-| Dec 6 registration CSV | Dec 6 Workshop | ~183 registrants |
+### Cross-Referenced (Registrants vs Attendees)
+These numbers are computed at runtime by matching sign-up emails/names against attendance records. The AI Assistant previously confirmed:
+- June: ~307 registrants, ~79 unique attendees, ~228 no-shows
+- Dec 6: ~151 registrants with demographic data, ~58% Black/African American
 
-These will be stored in `public/signups/` separately from the attendance files in `public/attendance/`.
+## Redesigned Tab Structure
 
-### Existing Attendance CSVs (Already uploaded)
-- June Day 1, Day 2, Day 2 NoDupe
-- Sept 27 check-in
-- Dec 6 check-in
-- Dec 13 LTF feedback
+Simplify from 8 tabs down to 5 focused tabs:
 
-### G-ACE Quarterly Report
-The PDF content (questions 24-73 about community impact, demographics, cohorts, workforce readiness) will be embedded as a text file for the AI to reference.
-
-## How It Works
-
-1. When a user asks a question, the frontend sends their message to a backend function
-2. The backend function loads all the CSV/text data, builds a structured context summary, and sends it along with the user's question to the AI
-3. The AI streams back a response token-by-token, displayed in real time
-4. The chatbot maintains conversation history so follow-up questions work naturally
-
-## New Files
-
-### 1. `public/signups/june-aspire-signup.csv`
-Copy of the uploaded June sign-up file.
-
-### 2. `public/signups/sept27-signup.csv`
-Copy of the uploaded Sept 27 sign-up file.
-
-### 3. `public/signups/dec6-registration.csv`
-Copy of the uploaded Dec 6 registration file.
-
-### 4. `public/signups/g-ace-quarterly-report.txt`
-Plain text extraction of the G-ACE PDF (questions 24-73 about participant demographics, AI fluency, digital literacy, cohorts, workforce readiness).
-
-### 5. `supabase/functions/chat/index.ts`
-Backend function that:
-- Receives user messages
-- Loads and summarizes all CSV data (sign-ups, attendance) into a structured context
-- Pre-computes key metrics: registrant counts, attendee counts, no-show counts, demographic breakdowns per event
-- Sends context + conversation to the Lovable AI Gateway (google/gemini-3-flash-preview)
-- Streams the response back via SSE
-- Handles 429/402 rate limit errors gracefully
-
-### 6. `src/components/crm/AIChatPanel.tsx`
-A ChatGPT-style UI component with:
-- Message history display with user/assistant bubbles
-- Markdown rendering for AI responses (tables, lists, bold)
-- Streaming token-by-token display
-- Text input with send button
-- Loading indicator while AI is thinking
-- Suggested starter questions (e.g., "Who signed up but didn't attend June ASPIRE?")
-
-### 7. `src/hooks/useAIChat.ts`
-React hook managing:
-- Message state (conversation history)
-- SSE streaming logic
-- Loading/error states
-- Rate limit error handling with toast notifications
-
-## Modified Files
-
-### 8. `src/components/crm/CRMDashboard.tsx`
-- Add an "AI Assistant" tab (8th tab) with a Bot/Sparkles icon
-- Position it after Reports tab
-- Renders `<AIChatPanel />`
-
-### 9. `supabase/config.toml`
-- Register the new `chat` function with `verify_jwt = false`
-
-## AI Context Strategy
-
-The backend function will pre-compute a data summary before each AI call. This avoids sending raw CSV rows (which would blow up the context window) and instead sends a structured briefing like:
-
-```
-ASPIRE PROGRAM DATA SUMMARY:
-
-JUNE ASPIRE (June 27-28, 2025):
-- Registrants: 348 unique sign-ups
-- Day 1 Attendees: 87 unique
-- Day 2 Attendees: 72 unique  
-- No-shows: 261 (75% drop-off)
-- Demographics (Registrants): 
-  Age: 25-34 (28%), 35-44 (35%), 45-54 (22%)...
-  Race: Black/African American (72%), White (8%)...
-  Role: Working Professional (40%), Entrepreneur (25%)...
-  Income: $25k-$49k (30%), $50k-$74k (25%)...
-
-SEPT 27 BUILD DAY:
-- Registrants: 155 sign-ups
-- Attendees: 68 unique (check-ins >= 1)
-...
-
-G-ACE QUARTERLY REPORT (Q24-73):
-[Full text of questions and answers]
+```text
+[ Dashboard ]  [ Events ]  [ People ]  [ AI Assistant ]  [ Reports ]
 ```
 
-This keeps the AI context efficient (~3-5K tokens) while giving it everything it needs to answer questions accurately.
+### Tab 1: Dashboard (replaces "Overview")
+The homepage. Pulls all KPIs directly from CSV data instead of the empty database.
+
+**New KPI cards (CSV-sourced):**
+- Total Registrants (across all 3 events)
+- Total Unique Attendees (across all events)
+- Overall Attendance Rate (attendees / registrants)
+- Total Events Held (4)
+
+**Charts section:**
+- Attendance funnel: Registrants -> Attendees per event (horizontal bar)
+- Demographic snapshot: Top-level race and role breakdown across all registrants
+
+**Quick links:** Jump to any event, open AI Assistant
+
+### Tab 2: Events (keep as-is, mostly working)
+The existing EventsDashboard with the timeline cards. Already CSV-sourced and functional. Each card links to /events/{eventKey} for breakdowns with demographic comparison charts.
+
+One addition: show registrant count alongside attendee count on each event card (currently only shows attendees).
+
+### Tab 3: People (merge of Contacts + Attendees)
+A single searchable table combining:
+- Registrant data from sign-up CSVs (name, email, phone, demographics)
+- Attendance status per event (attended/no-show)
+- Source tag (which sign-up form they came from)
+
+This replaces the broken "Contacts" and "Attendees" tabs. Filter by event, by attendance status (attended vs no-show), by demographic fields.
+
+### Tab 4: AI Assistant (keep as-is, working)
+The existing AIChatPanel. No changes needed.
+
+### Tab 5: Reports (keep, but simplify)
+Keep the SavedReports component and add a quick "Grant Summary" card that shows key G-ACE metrics pulled from the quarterly report text file.
+
+## Removed/Merged Tabs
+- **Attendees tab** -> merged into People
+- **Contacts tab** -> merged into People
+- **Feedback tab** -> accessible from event breakdown pages (already works at /dec6aspire, etc.)
+- **Projects tab** -> accessible from event breakdown pages and Reports
+
+## Technical Changes
+
+### New Files
+1. **src/hooks/useCSVDashboardMetrics.ts** - Hook that loads all sign-up and attendance CSVs, computes aggregate KPIs (total registrants, total attendees, attendance rates, demographic summaries) using Papa Parse. Single source of truth for the Dashboard tab.
+
+2. **src/components/crm/CSVDashboardHero.tsx** - Replacement for DashboardHero that renders KPI cards from useCSVDashboardMetrics instead of querying the empty database.
+
+3. **src/components/crm/AttendanceFunnelChart.tsx** - Recharts horizontal bar chart showing registrants vs attendees per event.
+
+4. **src/components/crm/PeopleDashboard.tsx** - New unified people table. Loads all 3 sign-up CSVs, cross-references with attendance CSVs, and displays a searchable/filterable table with columns: Name, Email, Events Registered, Events Attended, Role, Age, Race. Includes filters for event and attendance status.
+
+### Modified Files
+5. **src/components/crm/CRMDashboard.tsx** - Major refactor:
+   - Remove tabs: attendees, contacts, feedback, projects
+   - Rename "overview" to "dashboard"
+   - Add "people" tab
+   - Simplify header (remove broken database-dependent actions: Sync All, Auto-merge, Import, Deduplication)
+   - Remove dependencies on useContacts, useAutoDeduplication, useEventAutoSync (database-dependent hooks)
+   - Reduce TabsList from 8 columns to 5
+
+6. **src/components/crm/EventsDashboard.tsx** - Add registrant count from sign-up CSVs alongside existing attendee count on each event card. Show "X registered, Y attended" format.
+
+7. **src/components/crm/QuickStats.tsx** - Refactor to use useCSVDashboardMetrics instead of useParticipantMetrics (which queries empty database).
+
+### Unchanged Files
+- AIChatPanel.tsx (working)
+- useAIChat.ts (working)
+- useEventAttendanceCSV.ts (working)
+- useSignupDemographics.ts (working)
+- DemographicComparisonCharts.tsx (working)
+- All event breakdown pages (working)
