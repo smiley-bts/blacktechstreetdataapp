@@ -386,7 +386,17 @@ export function TechHubsReportContent() {
             >
               <h3 className="text-lg font-semibold text-foreground mb-2">{project.name}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">{project.description}</p>
-              {project.file && (
+              {project.file && project.file.endsWith('.pptx') ? (
+                <div className="mt-4">
+                  <iframe
+                    src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(window.location.origin + project.file)}`}
+                    className="w-full rounded-lg border border-border"
+                    style={{ height: '400px' }}
+                    title={`${project.name} presentation`}
+                    allowFullScreen
+                  />
+                </div>
+              ) : project.file ? (
                 <a
                   href={project.file}
                   target="_blank"
@@ -395,7 +405,7 @@ export function TechHubsReportContent() {
                 >
                   <ExternalLink className="h-3 w-3" /> View Project File
                 </a>
-              )}
+              ) : null}
             </div>
           ))}
         </div>
