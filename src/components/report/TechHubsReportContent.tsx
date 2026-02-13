@@ -167,6 +167,11 @@ export function TechHubsReportContent() {
         name: "LaTisha N.",
         question: "On the most valuable thing they learned",
       },
+      {
+        text: "The prompt making and hands on experience was incredible! Being able to practice this in real time was so helpful to understanding the overall workshop.",
+        name: "Tiyahna Garrett",
+        question: "On the most valuable thing they learned",
+      },
     ];
 
     const seen = new Set<string>();
