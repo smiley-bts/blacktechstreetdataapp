@@ -445,9 +445,6 @@ export function TechHubsReportContent() {
         <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-6 pb-2 border-b border-border">
           ASPIRE Innovation Projects
         </h2>
-        <p className="text-muted-foreground mb-6 text-sm">
-          Highlighted projects from the ASPIRE Build Day cohort
-        </p>
         <div className="space-y-6">
           {INNOVATION_PROJECTS.map((project) => {
             const placeLabels = ["1st Place", "2nd Place", "3rd Place"];
