@@ -23,7 +23,7 @@ interface AttendanceRow {
 const TOC_ITEMS = [
   { id: "nps", label: "Net Promoter Score" },
   { id: "verbatims", label: "ASPIRE Verbatims" },
-  { id: "projects", label: "ASPIRE Innovation Day Projects" },
+  { id: "projects", label: "ASPIRE Innovation Projects" },
   { id: "gallery", label: "Gallery" },
 ];
 
