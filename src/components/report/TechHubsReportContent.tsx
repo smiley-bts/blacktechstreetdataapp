@@ -162,6 +162,11 @@ export function TechHubsReportContent() {
         name: "Gretchen M.",
         question: "On the most valuable thing they learned",
       },
+      {
+        text: "I enjoyed learning about the ways to use AI prompts effectively, most of all the Advanced Prompting Techniques.",
+        name: "LaTisha N.",
+        question: "On the most valuable thing they learned",
+      },
     ];
 
     const seen = new Set<string>();
