@@ -66,7 +66,7 @@ const GALLERY_IMAGES = [
   "/images/gallery/techhubs-q1-15.jpg",
   "/images/gallery/techhubs-q1-16.jpg",
   "/images/gallery/techhubs-q1-17.jpg",
-  "/images/gallery/techhubs-q1-18.jpg",
+  
   "/images/gallery/techhubs-q1-19.jpg",
   "/images/gallery/techhubs-q1-20.jpg",
   "/images/gallery/techhubs-q1-21.jpg",
