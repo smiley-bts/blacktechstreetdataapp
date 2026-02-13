@@ -177,6 +177,11 @@ export function TechHubsReportContent() {
         name: "Natalie Brown",
         question: "On the most valuable thing they learned",
       },
+      {
+        text: "Enjoyed working with a team and creating a website & slide deck.",
+        name: "Kisha Jefferson",
+        question: "On the most valuable thing they learned",
+      },
     ];
 
     const seen = new Set<string>();
