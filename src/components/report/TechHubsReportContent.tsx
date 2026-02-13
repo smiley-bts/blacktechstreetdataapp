@@ -186,7 +186,7 @@ export function TechHubsReportContent() {
       },
     ];
 
-    const blocklist = new Set(["This is the BEST", "Prompt writing & workflow design", "The importance of prompt writing", "Spotting bias or using AI ethically", "great prompting framework", "I loved the positive tone!", "the pocket guide", "Third one and each one is smoother than the last", "Third one and each one is smoother than the previous one."]);
+    const blocklist = new Set(["This is the BEST", "Prompt writing & workflow design", "The importance of prompt writing", "Spotting bias or using AI ethically", "great prompting framework", "I loved the positive tone!", "the pocket guide", "Third one and each one is smoother than the last", "Third one and each one is smoother than the previous one.", "Hands-on experience using AI tools"]);
     const seen = new Set<string>();
     const unique = quotes.filter((q) => {
       if (blocklist.has(q.text)) return false;
