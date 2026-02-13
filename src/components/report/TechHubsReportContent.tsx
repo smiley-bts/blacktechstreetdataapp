@@ -33,16 +33,22 @@ const INNOVATION_PROJECTS = [
     description: "An AI-powered educational platform designed to provide personalized learning pathways for underserved communities, connecting learners with mentors and resources tailored to their goals.",
     file: "/project-files/Rise_Up_Learning_Hub.pptx",
     cloudUrl: "https://woqjbwotxaaczkptnjfd.supabase.co/storage/v1/object/public/project-files/Rise_Up_Learning_Hub.pptx",
-  },
-  {
-    name: "RV Revive Tulsa",
-    description: "A community-driven initiative leveraging AI to match volunteers with RV restoration projects, creating affordable mobile housing solutions for Tulsa residents experiencing housing instability.",
-    file: null,
+    place: 1,
+    medal: "🥇",
   },
   {
     name: "Thrive Access Network",
     description: "A digital resource hub using AI to connect individuals with social services, healthcare, and employment opportunities — streamlining access to community support systems.",
     file: null,
+    place: 2,
+    medal: "🥈",
+  },
+  {
+    name: "RV Revive Tulsa",
+    description: "A community-driven initiative leveraging AI to match volunteers with RV restoration projects, creating affordable mobile housing solutions for Tulsa residents experiencing housing instability.",
+    file: null,
+    place: 3,
+    medal: "🥉",
   },
 ];
 
@@ -436,36 +442,53 @@ export function TechHubsReportContent() {
         <p className="text-muted-foreground mb-6 text-sm">
           Highlighted projects from the ASPIRE Build Day cohort
         </p>
-        <div className="space-y-4">
-          {INNOVATION_PROJECTS.map((project) => (
-            <div
-              key={project.name}
-              className="p-5 rounded-lg border border-border bg-card hover:border-primary/40 transition-colors"
-            >
-              <h3 className="text-lg font-semibold text-foreground mb-2">{project.name}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{project.description}</p>
-              {project.file && project.file.endsWith('.pptx') ? (
-                <div className="mt-4">
-                  <iframe
-                    src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(project.cloudUrl || (window.location.origin + project.file))}`}
-                    className="w-full rounded-lg border border-border"
-                    style={{ height: '400px' }}
-                    title={`${project.name} presentation`}
-                    allowFullScreen
-                  />
+        <div className="space-y-6">
+          {INNOVATION_PROJECTS.map((project) => {
+            const placeLabels = ["1st Place", "2nd Place", "3rd Place"];
+            const borderColors = [
+              "border-yellow-500/60 bg-yellow-500/5",
+              "border-gray-400/60 bg-gray-400/5",
+              "border-amber-700/60 bg-amber-700/5",
+            ];
+            return (
+              <div
+                key={project.name}
+                className={`relative p-6 rounded-xl border-2 transition-all hover:shadow-lg ${borderColors[project.place - 1] || "border-border bg-card"}`}
+              >
+                {/* Medal & Place */}
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="text-4xl">{project.medal}</span>
+                  <div>
+                    <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                      {placeLabels[project.place - 1]}
+                    </span>
+                    <h3 className="text-xl font-bold text-foreground">{project.name}</h3>
+                  </div>
                 </div>
-              ) : project.file ? (
-                <a
-                  href={project.file}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 mt-3 text-xs text-primary hover:underline"
-                >
-                  <ExternalLink className="h-3 w-3" /> View Project File
-                </a>
-              ) : null}
-            </div>
-          ))}
+                <p className="text-sm text-muted-foreground leading-relaxed ml-[52px]">{project.description}</p>
+                {project.file && project.file.endsWith('.pptx') ? (
+                  <div className="mt-4 ml-[52px]">
+                    <iframe
+                      src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(project.cloudUrl || (window.location.origin + project.file))}`}
+                      className="w-full rounded-lg border border-border"
+                      style={{ height: '400px' }}
+                      title={`${project.name} presentation`}
+                      allowFullScreen
+                    />
+                  </div>
+                ) : project.file ? (
+                  <a
+                    href={project.file}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 mt-3 ml-[52px] text-xs text-primary hover:underline"
+                  >
+                    <ExternalLink className="h-3 w-3" /> View Project File
+                  </a>
+                ) : null}
+              </div>
+            );
+          })}
         </div>
       </section>
 
