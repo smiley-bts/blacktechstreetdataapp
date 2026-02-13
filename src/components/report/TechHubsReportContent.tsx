@@ -415,7 +415,7 @@ export function TechHubsReportContent() {
       {/* Net Promoter Score - Dec 6 ASPIRE Only */}
       <section id="nps" className="mb-16 scroll-mt-8">
         <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-6 pb-2 border-b border-border">
-          <span className="text-primary">Net</span> Promoter <span className="text-primary">Score</span>
+          <span className="text-primary">Net</span> Promoter Score
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <div className="bg-muted/40 rounded-lg p-4 text-center">
@@ -443,7 +443,7 @@ export function TechHubsReportContent() {
       {/* ASPIRE Verbatims Carousel */}
       <section id="verbatims" className="mb-16 scroll-mt-8">
         <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-6 pb-2 border-b border-border">
-          ASPIRE <span className="text-primary">Verbatims</span>
+          <span className="text-primary">ASPIRE</span> Verbatims
         </h2>
         <VerbatimCarousel quotes={verbatims} />
       </section>
@@ -452,7 +452,7 @@ export function TechHubsReportContent() {
       {/* ASPIRE Innovation Projects */}
       <section id="projects" className="mb-16 scroll-mt-8">
         <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-6 pb-2 border-b border-border">
-          ASPIRE <span className="text-primary">Innovation</span> <span className="text-primary">Projects</span>
+          <span className="text-primary">ASPIRE</span> Innovation Projects
         </h2>
         <div className="space-y-6">
           {INNOVATION_PROJECTS.map((project) => {
