@@ -1,112 +1,88 @@
 
-# CRM Homepage and Tab Redesign
 
-## The Problem
+# Tech Hubs Q1 2026 Report Page (`/techhubsq12026`)
 
-The CRM currently has 8 tabs, but most of them show empty data because the database was wiped. The Overview, Contacts, and Attendees tabs all query empty database tables while the real data lives in CSV files. This creates a confusing experience where some tabs work (Events, AI Assistant) and others show zeros.
+## Overview
 
-## Verified Data Counts
+A new standalone permalink page at `/techhubsq12026` that consolidates reporting data from the **December 6 ASPIRE Workshop** and **December 13 LTF (Lead the Future)** student event into a single, clean, Notion-inspired report. This page is designed to be shared with stakeholders and grant partners.
 
-Here are the confirmed numbers from the actual CSV files:
+## Page Structure (matching the Notion layout)
 
-### Sign-Up / Registration Data (public/signups/)
-| Event | File Lines | Registrants (approx) |
-|-------|-----------|---------------------|
-| June ASPIRE (June 27-28) | 351 lines | ~307 unique registrants |
-| Sept 27 Build Day | 156 lines | ~152 registrants |
-| Dec 6 Workshop | 184 lines | ~180 registrants |
+The page will be a single, long-scroll document with a sticky table of contents sidebar (or anchor-link TOC on mobile), styled with a clean light/dark Notion aesthetic -- white/off-white cards, generous whitespace, readable typography.
 
-### Attendance Data (public/attendance/)
-| Event | File Lines | Notes |
-|-------|-----------|-------|
-| June Day 1 | 110 lines | Name-based dedup (~109 sign-ins) |
-| June Day 2 | Separate file | Name-based dedup |
-| June Combined | Both days merged | ~79 unique attendees (name dedup) |
-| Sept 27 | 209 lines | Email-based dedup, checkins >= 1 filter |
-| Dec 6 | Separate file | Email-based dedup, checkins >= 1 filter |
-| LTF Dec 13 | Feedback submissions | Each submission = 1 attendee |
+### Sections (in order):
 
-### Cross-Referenced (Registrants vs Attendees)
-These numbers are computed at runtime by matching sign-up emails/names against attendance records. The AI Assistant previously confirmed:
-- June: ~307 registrants, ~79 unique attendees, ~228 no-shows
-- Dec 6: ~151 registrants with demographic data, ~58% Black/African American
+1. **Hero Banner** -- Circuit-art-style header image (reuse existing BTS assets like `tulsa-skyline-banner.png` or the gallery circuit image), with "Tech Hubs Q1 2026 Report" title and Black Tech Street logo.
 
-## Redesigned Tab Structure
+2. **Table of Contents** -- Clickable anchor links to each section below:
+   - ASPIRE Verbatims
+   - Net Promoter Score
+   - December 6 ASPIRE Workshop
+   - December 13 LTF Student Workshop
+   - ASPIRE Innovation Day Projects
+   - Gallery
 
-Simplify from 8 tabs down to 5 focused tabs:
+3. **ASPIRE Verbatims** -- Styled blockquote cards with participant testimonials pulled from the Dec 6 ASPIRE feedback CSV (the open-ended text fields). Each quote shows the text in italic with an attribution line ("- FirstName L.").
 
-```text
-[ Dashboard ]  [ Events ]  [ People ]  [ AI Assistant ]  [ Reports ]
-```
+4. **Net Promoter Score (Combined)** -- A summary table showing NPS across the Dec events:
+   - Row 1: Dec 6 ASPIRE Workshop (computed from `aspire-feedback-survey.csv` or the Dec 6 registration confidence data)
+   - Row 2: Dec 13 LTF Student Workshop (computed from `aspire-ltf-feedback.csv`)
+   - Each row shows: Score 5 count, Score 4 count, Score 3 count, Total Responses, NPS percentage
+   - Uses the existing `NPSCard` component pattern but rendered as a clean table
 
-### Tab 1: Dashboard (replaces "Overview")
-The homepage. Pulls all KPIs directly from CSV data instead of the empty database.
+5. **December 6 ASPIRE Workshop** -- Key metrics card (registrants, participants, attendance rate) pulled from the existing `Dec6AspireDashboard` data sources (`aspire-dec6-registration.csv` + `aspire-dec6-attendance.xlsx`). Compact version -- just the KPI cards and attendance rate, no full demographic drilldown.
 
-**New KPI cards (CSV-sourced):**
-- Total Registrants (across all 3 events)
-- Total Unique Attendees (across all events)
-- Overall Attendance Rate (attendees / registrants)
-- Total Events Held (4)
+6. **December 13 LTF Student Workshop** -- Key metrics (overall rating, engagement, content clarity, confidence before/after shift) from the existing `LTFDashboard` data source (`aspire-ltf-feedback.csv`). Compact version with the headline numbers.
 
-**Charts section:**
-- Attendance funnel: Registrants -> Attendees per event (horizontal bar)
-- Demographic snapshot: Top-level race and role breakdown across all registrants
+7. **ASPIRE Innovation Day Projects** -- Cards for the 3 highlighted projects from the Notion page (Rise-Up Learning Hub, RV Revive Tulsa, Thrive Access Network). Static content cards with project name, brief description, and link to project files if available in `public/project-files/`.
 
-**Quick links:** Jump to any event, open AI Assistant
+8. **Gallery** -- Photo grid using existing Dec 6 gallery images (`aspire-dec6-01.jpg` through `aspire-dec6-05.jpg`).
 
-### Tab 2: Events (keep as-is, mostly working)
-The existing EventsDashboard with the timeline cards. Already CSV-sourced and functional. Each card links to /events/{eventKey} for breakdowns with demographic comparison charts.
+## Design Style
 
-One addition: show registrant count alongside attendee count on each event card (currently only shows attendees).
+- **Notion-inspired**: Clean, minimal, generous padding and whitespace
+- Subtle card borders instead of heavy shadows
+- Serif or display font for headings, clean sans-serif for body
+- Uses the existing dark/light theme toggle
+- Blockquote styling for verbatims (left border accent, slightly tinted background)
+- Table styling for NPS comparison (clean borders, alternating row tint)
 
-### Tab 3: People (merge of Contacts + Attendees)
-A single searchable table combining:
-- Registrant data from sign-up CSVs (name, email, phone, demographics)
-- Attendance status per event (attended/no-show)
-- Source tag (which sign-up form they came from)
-
-This replaces the broken "Contacts" and "Attendees" tabs. Filter by event, by attendance status (attended vs no-show), by demographic fields.
-
-### Tab 4: AI Assistant (keep as-is, working)
-The existing AIChatPanel. No changes needed.
-
-### Tab 5: Reports (keep, but simplify)
-Keep the SavedReports component and add a quick "Grant Summary" card that shows key G-ACE metrics pulled from the quarterly report text file.
-
-## Removed/Merged Tabs
-- **Attendees tab** -> merged into People
-- **Contacts tab** -> merged into People
-- **Feedback tab** -> accessible from event breakdown pages (already works at /dec6aspire, etc.)
-- **Projects tab** -> accessible from event breakdown pages and Reports
-
-## Technical Changes
+## Technical Details
 
 ### New Files
-1. **src/hooks/useCSVDashboardMetrics.ts** - Hook that loads all sign-up and attendance CSVs, computes aggregate KPIs (total registrants, total attendees, attendance rates, demographic summaries) using Papa Parse. Single source of truth for the Dashboard tab.
 
-2. **src/components/crm/CSVDashboardHero.tsx** - Replacement for DashboardHero that renders KPI cards from useCSVDashboardMetrics instead of querying the empty database.
+1. **`src/pages/TechHubsQ1Report.tsx`** -- Page component at `/techhubsq12026`. Renders the full report layout. Loads data from:
+   - `aspire-dec6-registration.csv` + `aspire-dec6-attendance.xlsx` (Dec 6 metrics)
+   - `aspire-ltf-feedback.csv` (LTF metrics and NPS)
+   - Extracts verbatim quotes from feedback CSVs (open-ended response columns)
 
-3. **src/components/crm/AttendanceFunnelChart.tsx** - Recharts horizontal bar chart showing registrants vs attendees per event.
-
-4. **src/components/crm/PeopleDashboard.tsx** - New unified people table. Loads all 3 sign-up CSVs, cross-references with attendance CSVs, and displays a searchable/filterable table with columns: Name, Email, Events Registered, Events Attended, Role, Age, Race. Includes filters for event and attendance status.
+2. **`src/components/report/TechHubsReportContent.tsx`** -- Main content component containing all sections. Uses Papa Parse for CSV parsing and XLSX for the attendance spreadsheet (same pattern as existing dashboards).
 
 ### Modified Files
-5. **src/components/crm/CRMDashboard.tsx** - Major refactor:
-   - Remove tabs: attendees, contacts, feedback, projects
-   - Rename "overview" to "dashboard"
-   - Add "people" tab
-   - Simplify header (remove broken database-dependent actions: Sync All, Auto-merge, Import, Deduplication)
-   - Remove dependencies on useContacts, useAutoDeduplication, useEventAutoSync (database-dependent hooks)
-   - Reduce TabsList from 8 columns to 5
 
-6. **src/components/crm/EventsDashboard.tsx** - Add registrant count from sign-up CSVs alongside existing attendee count on each event card. Show "X registered, Y attended" format.
+3. **`src/App.tsx`** -- Add route: `<Route path="/techhubsq12026" element={<TechHubsQ1Report />} />`
 
-7. **src/components/crm/QuickStats.tsx** - Refactor to use useCSVDashboardMetrics instead of useParticipantMetrics (which queries empty database).
+### Data Sources and NPS Calculation
 
-### Unchanged Files
-- AIChatPanel.tsx (working)
-- useAIChat.ts (working)
-- useEventAttendanceCSV.ts (working)
-- useSignupDemographics.ts (working)
-- DemographicComparisonCharts.tsx (working)
-- All event breakdown pages (working)
+The NPS for each event will be calculated using the same method as the existing dashboards:
+- **Dec 6 ASPIRE**: Uses the overall rating question from feedback data. Rating 5 = Promoter, 4 = Passive, 1-3 = Detractor. NPS = %Promoters - %Detractors.
+- **Dec 13 LTF**: Already calculated in `LTFDashboard` from `aspire-ltf-feedback.csv` using the same 5-point scale mapping.
+
+Both NPS scores are displayed in a single comparison table, similar to the Notion page's NPS table format.
+
+### Reused Patterns
+
+- `Papa.parse` for CSV loading (same as all existing dashboards)
+- `XLSX.read` for the Dec 6 attendance XLSX (same as `Dec6AspireDashboard`)
+- `NPSCard` component styling for individual NPS display
+- `MetricCard` component for KPI cards
+- `ThemeToggle` for dark/light mode
+- BTS logo header pattern (same as `Dec6Aspire.tsx`, `AspireLeadJan2026.tsx`)
+
+### Verbatim Quote Extraction
+
+The component will parse the feedback CSVs and extract non-empty values from open-ended columns (e.g., "What was the most valuable thing you learned?", "Any additional comments?"). It will display up to 8-10 curated quotes with first name + last initial attribution.
+
+### Innovation Day Projects
+
+Static content section with 3 project cards. Project names and descriptions are hardcoded based on the Notion page content (Rise-Up Learning Hub, RV Revive Tulsa, Thrive Access Network). Links to existing project files in `public/project-files/` where available.
