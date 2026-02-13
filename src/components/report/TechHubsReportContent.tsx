@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
+import { createPortal } from "react-dom";
 import Papa from "papaparse";
 import * as XLSX from "xlsx";
 import { Users, TrendingUp, Star, BookOpen, Award, ArrowUp, ExternalLink, X, ChevronLeft, ChevronRight } from "lucide-react";
@@ -436,10 +437,11 @@ export function TechHubsReportContent() {
       </section>
 
       {/* Lightbox */}
-      {lightboxIndex !== null && (
+      {lightboxIndex !== null && createPortal(
         <div
-          className="fixed inset-0 z-50 bg-black/95 flex flex-col items-center justify-center"
+          className="fixed inset-0 z-[9999] bg-black/95 flex flex-col items-center justify-center"
           onClick={closeLightbox}
+          style={{ touchAction: 'none' }}
         >
           {/* Close button */}
           <button
@@ -469,7 +471,7 @@ export function TechHubsReportContent() {
           <img
             src={GALLERY_IMAGES[lightboxIndex]}
             alt={`ASPIRE event photo ${lightboxIndex + 1}`}
-            className="max-h-[80dvh] sm:max-h-[85vh] max-w-[calc(100vw-5rem)] sm:max-w-[90vw] object-contain rounded-lg select-none"
+            className="max-h-[75dvh] sm:max-h-[85vh] max-w-[calc(100vw-4rem)] sm:max-w-[90vw] object-contain rounded-lg select-none"
             onClick={(e) => e.stopPropagation()}
             draggable={false}
           />
@@ -478,7 +480,8 @@ export function TechHubsReportContent() {
           <div className="absolute bottom-4 sm:bottom-6 text-white/60 text-xs sm:text-sm font-medium bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">
             {lightboxIndex + 1} / {GALLERY_IMAGES.length}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Footer */}
