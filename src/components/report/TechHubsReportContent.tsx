@@ -317,18 +317,12 @@ export function TechHubsReportContent() {
         <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-6 pb-2 border-b border-border">
           ASPIRE Verbatims
         </h2>
-        <p className="text-muted-foreground mb-6 text-sm">
-          Direct feedback from December 6 ASPIRE Workshop participants
-        </p>
         <div className="space-y-4">
           {verbatims.map((q, i) => (
             <blockquote
               key={i}
               className="border-l-4 border-primary/60 bg-muted/40 rounded-r-lg px-5 py-4"
             >
-              <p className="text-xs font-medium text-primary/80 uppercase tracking-wide mb-2">
-                {q.question}
-              </p>
               <p className="italic text-foreground text-sm sm:text-base leading-relaxed">
                 "{q.text}"
               </p>
