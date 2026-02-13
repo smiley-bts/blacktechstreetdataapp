@@ -1,0 +1,433 @@
+import { useState, useEffect, useMemo } from "react";
+import Papa from "papaparse";
+import * as XLSX from "xlsx";
+import { Users, TrendingUp, Star, BookOpen, Award, ArrowUp, ExternalLink } from "lucide-react";
+
+interface FeedbackRow {
+  [key: string]: string;
+}
+
+interface LTFRow {
+  [key: string]: string;
+}
+
+interface RegistrationRow {
+  [key: string]: string;
+}
+
+interface AttendanceRow {
+  [key: string]: string;
+}
+
+const TOC_ITEMS = [
+  { id: "verbatims", label: "ASPIRE Verbatims" },
+  { id: "nps", label: "Net Promoter Score" },
+  { id: "dec6-workshop", label: "December 6 ASPIRE Workshop" },
+  { id: "ltf-workshop", label: "December 13 LTF Student Workshop" },
+  { id: "projects", label: "ASPIRE Innovation Day Projects" },
+  { id: "gallery", label: "Gallery" },
+];
+
+const INNOVATION_PROJECTS = [
+  {
+    name: "Rise-Up Learning Hub",
+    description: "An AI-powered educational platform designed to provide personalized learning pathways for underserved communities, connecting learners with mentors and resources tailored to their goals.",
+    file: "/project-files/Rise_Up_Learning_Hub.pptx",
+  },
+  {
+    name: "RV Revive Tulsa",
+    description: "A community-driven initiative leveraging AI to match volunteers with RV restoration projects, creating affordable mobile housing solutions for Tulsa residents experiencing housing instability.",
+    file: null,
+  },
+  {
+    name: "Thrive Access Network",
+    description: "A digital resource hub using AI to connect individuals with social services, healthcare, and employment opportunities — streamlining access to community support systems.",
+    file: null,
+  },
+];
+
+const GALLERY_IMAGES = [
+  "/images/gallery/aspire-dec6-01.jpg",
+  "/images/gallery/aspire-dec6-02.jpg",
+  "/images/gallery/aspire-dec6-03.jpg",
+  "/images/gallery/aspire-dec6-04.jpg",
+  "/images/gallery/aspire-dec6-05.jpg",
+];
+
+export function TechHubsReportContent() {
+  const [feedbackData, setFeedbackData] = useState<FeedbackRow[]>([]);
+  const [ltfData, setLtfData] = useState<LTFRow[]>([]);
+  const [registrationData, setRegistrationData] = useState<RegistrationRow[]>([]);
+  const [attendanceData, setAttendanceData] = useState<AttendanceRow[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let completed = 0;
+    const checkDone = () => { completed++; if (completed >= 4) setLoading(false); };
+
+    Papa.parse("/aspire-feedback-survey.csv", {
+      download: true, header: true, skipEmptyLines: true,
+      complete: (r) => { setFeedbackData(r.data as FeedbackRow[]); checkDone(); },
+      error: () => checkDone(),
+    });
+
+    Papa.parse("/aspire-ltf-feedback.csv", {
+      download: true, header: true, skipEmptyLines: true,
+      complete: (r) => { setLtfData(r.data as LTFRow[]); checkDone(); },
+      error: () => checkDone(),
+    });
+
+    Papa.parse("/aspire-dec6-registration.csv", {
+      download: true, header: true, skipEmptyLines: true,
+      complete: (r) => { setRegistrationData(r.data as RegistrationRow[]); checkDone(); },
+      error: () => checkDone(),
+    });
+
+    // Load XLSX attendance
+    fetch("/aspire-dec6-attendance.xlsx")
+      .then((res) => res.arrayBuffer())
+      .then((buf) => {
+        const wb = XLSX.read(buf, { type: "array" });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json<AttendanceRow>(ws);
+        setAttendanceData(rows);
+        checkDone();
+      })
+      .catch(() => checkDone());
+  }, []);
+
+  // Extract verbatim quotes from feedback
+  const verbatims = useMemo(() => {
+    const quoteColumns = [
+      "Please share a highlight or takeaway from your experience today.",
+      "What is the most valuable thing you learned today?",
+    ];
+    const quotes: { text: string; name: string }[] = [];
+
+    feedbackData.forEach((row) => {
+      const firstName = (row["What's your first name?"] || "").trim();
+      const lastName = (row["What's your last name?"] || "").trim();
+      const attribution = lastName ? `${firstName} ${lastName.charAt(0)}.` : firstName;
+
+      quoteColumns.forEach((col) => {
+        const text = (row[col] || "").trim();
+        if (text && text.length > 15 && attribution) {
+          quotes.push({ text, name: attribution });
+        }
+      });
+    });
+
+    // Deduplicate and take up to 10
+    const seen = new Set<string>();
+    return quotes.filter((q) => {
+      if (seen.has(q.text)) return false;
+      seen.add(q.text);
+      return true;
+    }).slice(0, 10);
+  }, [feedbackData]);
+
+  // NPS Calculation for Dec 6 ASPIRE
+  const dec6NPS = useMemo(() => {
+    const col = "How likely are you to recommend this event to someone else?";
+    let promoters = 0, passives = 0, detractors = 0;
+    feedbackData.forEach((row) => {
+      const val = row[col] || "";
+      const score = parseInt(val.charAt(0));
+      if (isNaN(score)) return;
+      if (score === 5) promoters++;
+      else if (score === 4) passives++;
+      else detractors++;
+    });
+    const total = promoters + passives + detractors;
+    const nps = total > 0 ? Math.round(((promoters - detractors) / total) * 100) : 0;
+    return { promoters, passives, detractors, total, nps };
+  }, [feedbackData]);
+
+  // NPS Calculation for LTF
+  const ltfNPS = useMemo(() => {
+    const col = "Overall, how would you rate your experience in the ASPIRE: Lead the Future with AI workshop?";
+    let promoters = 0, passives = 0, detractors = 0;
+    ltfData.forEach((row) => {
+      const val = row[col] || "";
+      const score = parseInt(val);
+      if (isNaN(score)) return;
+      if (score === 5) promoters++;
+      else if (score === 4) passives++;
+      else detractors++;
+    });
+    const total = promoters + passives + detractors;
+    const nps = total > 0 ? Math.round(((promoters - detractors) / total) * 100) : 0;
+    return { promoters, passives, detractors, total, nps };
+  }, [ltfData]);
+
+  // Dec 6 Workshop Metrics
+  const dec6Metrics = useMemo(() => {
+    const registrants = registrationData.length;
+    const emailSet = new Set<string>();
+    registrationData.forEach((r) => {
+      const email = (r["What's your email?"] || "").trim().toLowerCase();
+      if (email) emailSet.add(email);
+    });
+    const uniqueRegistrants = emailSet.size || registrants;
+
+    // Attendance from XLSX - count those with check-ins >= 1
+    let attendees = 0;
+    const attendeeEmails = new Set<string>();
+    attendanceData.forEach((row) => {
+      const checkins = parseInt(String(row["Total check-ins"] || row["Total Check-ins"] || "0"));
+      const email = (String(row["Email"] || row["email"] || "")).trim().toLowerCase();
+      if (checkins >= 1 && email && !attendeeEmails.has(email)) {
+        attendeeEmails.add(email);
+        attendees++;
+      }
+    });
+
+    const rate = uniqueRegistrants > 0 ? Math.round((attendees / uniqueRegistrants) * 100) : 0;
+    return { registrants: uniqueRegistrants, attendees, rate };
+  }, [registrationData, attendanceData]);
+
+  // LTF Workshop Metrics
+  const ltfMetrics = useMemo(() => {
+    const total = ltfData.length;
+    const ratingCol = "Overall, how would you rate your experience in the ASPIRE: Lead the Future with AI workshop?";
+    const engagementCol = "The workshop was engaging and held my attention.";
+    const clarityCol = "The content was explained in a way I could understand.";
+    const beforeCol = "BEFORE today's workshop, how confident were you in using AI tools like ChatGPT?";
+    const afterCol = "AFTER today's workshop, how confident do you feel using AI tools like ChatGPT?";
+
+    const avg = (col: string) => {
+      let sum = 0, count = 0;
+      ltfData.forEach((r) => { const v = parseInt(r[col]); if (!isNaN(v)) { sum += v; count++; } });
+      return count > 0 ? (sum / count).toFixed(1) : "N/A";
+    };
+
+    const avgBefore = avg(beforeCol);
+    const avgAfter = avg(afterCol);
+    const shift = avgBefore !== "N/A" && avgAfter !== "N/A"
+      ? (parseFloat(avgAfter) - parseFloat(avgBefore)).toFixed(1)
+      : "N/A";
+
+    return {
+      total,
+      overallRating: avg(ratingCol),
+      engagement: avg(engagementCol),
+      clarity: avg(clarityCol),
+      confidenceBefore: avgBefore,
+      confidenceAfter: avgAfter,
+      confidenceShift: shift,
+    };
+  }, [ltfData]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 max-w-4xl">
+      {/* Table of Contents */}
+      <nav className="mb-12 p-6 rounded-lg border border-border bg-card">
+        <h2 className="text-lg font-semibold text-foreground mb-4">Contents</h2>
+        <ul className="space-y-2">
+          {TOC_ITEMS.map((item) => (
+            <li key={item.id}>
+              <a
+                href={`#${item.id}`}
+                className="text-primary hover:underline text-sm sm:text-base"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      {/* ASPIRE Verbatims */}
+      <section id="verbatims" className="mb-16 scroll-mt-8">
+        <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-6 pb-2 border-b border-border">
+          ASPIRE Verbatims
+        </h2>
+        <p className="text-muted-foreground mb-6 text-sm">
+          Direct feedback from December 6 ASPIRE Workshop participants
+        </p>
+        <div className="space-y-4">
+          {verbatims.map((q, i) => (
+            <blockquote
+              key={i}
+              className="border-l-4 border-primary/60 bg-muted/40 rounded-r-lg px-5 py-4"
+            >
+              <p className="italic text-foreground text-sm sm:text-base leading-relaxed">
+                "{q.text}"
+              </p>
+              <footer className="mt-2 text-xs text-muted-foreground font-medium">
+                — {q.name}
+              </footer>
+            </blockquote>
+          ))}
+        </div>
+      </section>
+
+      {/* Net Promoter Score */}
+      <section id="nps" className="mb-16 scroll-mt-8">
+        <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-6 pb-2 border-b border-border">
+          Net Promoter Score
+        </h2>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm border border-border rounded-lg overflow-hidden">
+            <thead>
+              <tr className="bg-muted/60">
+                <th className="text-left px-4 py-3 font-semibold text-foreground">Event</th>
+                <th className="text-center px-4 py-3 font-semibold text-foreground">Score 5<br/><span className="text-xs text-muted-foreground font-normal">Promoters</span></th>
+                <th className="text-center px-4 py-3 font-semibold text-foreground">Score 4<br/><span className="text-xs text-muted-foreground font-normal">Passive</span></th>
+                <th className="text-center px-4 py-3 font-semibold text-foreground">Score 1-3<br/><span className="text-xs text-muted-foreground font-normal">Detractors</span></th>
+                <th className="text-center px-4 py-3 font-semibold text-foreground">Total</th>
+                <th className="text-center px-4 py-3 font-semibold text-foreground">NPS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="border-t border-border">
+                <td className="px-4 py-3 font-medium text-foreground">Dec 6 ASPIRE Workshop</td>
+                <td className="text-center px-4 py-3 text-foreground">{dec6NPS.promoters}</td>
+                <td className="text-center px-4 py-3 text-foreground">{dec6NPS.passives}</td>
+                <td className="text-center px-4 py-3 text-foreground">{dec6NPS.detractors}</td>
+                <td className="text-center px-4 py-3 text-foreground">{dec6NPS.total}</td>
+                <td className="text-center px-4 py-3 font-bold text-primary">{dec6NPS.nps}%</td>
+              </tr>
+              <tr className="border-t border-border bg-muted/20">
+                <td className="px-4 py-3 font-medium text-foreground">Dec 13 LTF Student Workshop</td>
+                <td className="text-center px-4 py-3 text-foreground">{ltfNPS.promoters}</td>
+                <td className="text-center px-4 py-3 text-foreground">{ltfNPS.passives}</td>
+                <td className="text-center px-4 py-3 text-foreground">{ltfNPS.detractors}</td>
+                <td className="text-center px-4 py-3 text-foreground">{ltfNPS.total}</td>
+                <td className="text-center px-4 py-3 font-bold text-primary">{ltfNPS.nps}%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* December 6 ASPIRE Workshop */}
+      <section id="dec6-workshop" className="mb-16 scroll-mt-8">
+        <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-6 pb-2 border-b border-border">
+          December 6 ASPIRE Workshop
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <MetricCard icon={<Users className="h-5 w-5" />} label="Registrants" value={dec6Metrics.registrants} />
+          <MetricCard icon={<BookOpen className="h-5 w-5" />} label="Participants" value={dec6Metrics.attendees} />
+          <MetricCard icon={<TrendingUp className="h-5 w-5" />} label="Attendance Rate" value={`${dec6Metrics.rate}%`} />
+        </div>
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <MetricCard icon={<Star className="h-5 w-5" />} label="Survey Responses" value={feedbackData.length} />
+          <MetricCard icon={<Award className="h-5 w-5" />} label="NPS Score" value={`${dec6NPS.nps}%`} />
+        </div>
+      </section>
+
+      {/* December 13 LTF Student Workshop */}
+      <section id="ltf-workshop" className="mb-16 scroll-mt-8">
+        <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-6 pb-2 border-b border-border">
+          December 13 LTF Student Workshop
+        </h2>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <MetricCard icon={<Users className="h-5 w-5" />} label="Respondents" value={ltfMetrics.total} />
+          <MetricCard icon={<Star className="h-5 w-5" />} label="Overall Rating" value={`${ltfMetrics.overallRating}/5`} />
+          <MetricCard icon={<TrendingUp className="h-5 w-5" />} label="Engagement" value={`${ltfMetrics.engagement}/5`} />
+          <MetricCard icon={<BookOpen className="h-5 w-5" />} label="Content Clarity" value={`${ltfMetrics.clarity}/5`} />
+        </div>
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <MetricCard label="Confidence Before" value={`${ltfMetrics.confidenceBefore}/5`} />
+          <MetricCard label="Confidence After" value={`${ltfMetrics.confidenceAfter}/5`} />
+          <MetricCard
+            icon={<ArrowUp className="h-5 w-5 text-primary" />}
+            label="Confidence Shift"
+            value={`+${ltfMetrics.confidenceShift}`}
+            highlight
+          />
+        </div>
+      </section>
+
+      {/* ASPIRE Innovation Day Projects */}
+      <section id="projects" className="mb-16 scroll-mt-8">
+        <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-6 pb-2 border-b border-border">
+          ASPIRE Innovation Day Projects
+        </h2>
+        <p className="text-muted-foreground mb-6 text-sm">
+          Highlighted projects from the ASPIRE Build Day cohort
+        </p>
+        <div className="space-y-4">
+          {INNOVATION_PROJECTS.map((project) => (
+            <div
+              key={project.name}
+              className="p-5 rounded-lg border border-border bg-card hover:border-primary/40 transition-colors"
+            >
+              <h3 className="text-lg font-semibold text-foreground mb-2">{project.name}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">{project.description}</p>
+              {project.file && (
+                <a
+                  href={project.file}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 mt-3 text-xs text-primary hover:underline"
+                >
+                  <ExternalLink className="h-3 w-3" /> View Project File
+                </a>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Gallery */}
+      <section id="gallery" className="mb-16 scroll-mt-8">
+        <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-6 pb-2 border-b border-border">
+          Gallery
+        </h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {GALLERY_IMAGES.map((src, i) => (
+            <div key={i} className="aspect-[4/3] overflow-hidden rounded-lg border border-border">
+              <img
+                src={src}
+                alt={`ASPIRE Dec 6 event photo ${i + 1}`}
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+              />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="text-center py-8 border-t border-border">
+        <p className="text-xs text-muted-foreground">
+          © {new Date().getFullYear()} Black Tech Street • ASPIRE Program Report
+        </p>
+      </footer>
+    </div>
+  );
+}
+
+function MetricCard({
+  icon,
+  label,
+  value,
+  highlight,
+}: {
+  icon?: React.ReactNode;
+  label: string;
+  value: string | number;
+  highlight?: boolean;
+}) {
+  return (
+    <div className={`p-4 rounded-lg border ${highlight ? "border-primary/50 bg-primary/5" : "border-border bg-card"}`}>
+      <div className="flex items-center gap-2 mb-1">
+        {icon && <span className="text-muted-foreground">{icon}</span>}
+        <span className="text-xs text-muted-foreground uppercase tracking-wide">{label}</span>
+      </div>
+      <p className={`text-2xl font-bold ${highlight ? "text-primary" : "text-foreground"}`}>
+        {value}
+      </p>
+    </div>
+  );
+}

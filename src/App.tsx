@@ -22,6 +22,7 @@ import Timeline from "./pages/Timeline";
 import AspireEnterprise from "./pages/AspireEnterprise";
 import InvestNorth from "./pages/InvestNorth";
 import Dec6Aspire from "./pages/Dec6Aspire";
+import TechHubsQ1Report from "./pages/TechHubsQ1Report";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -49,6 +50,7 @@ function AnimatedRoutes() {
         <Route path="/aspireenterprise" element={<AspireEnterprise />} />
         <Route path="/investnorth" element={<InvestNorth />} />
         <Route path="/dec6aspire" element={<Dec6Aspire />} />
+        <Route path="/techhubsq12026" element={<TechHubsQ1Report />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
