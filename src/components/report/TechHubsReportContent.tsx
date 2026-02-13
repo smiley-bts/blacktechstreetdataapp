@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import Papa from "papaparse";
 import * as XLSX from "xlsx";
-import { Users, TrendingUp, Star, BookOpen, Award, ArrowUp, ExternalLink } from "lucide-react";
+import { Users, TrendingUp, Star, BookOpen, Award, ArrowUp, ExternalLink, X, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface FeedbackRow {
   [key: string]: string;
@@ -64,7 +64,23 @@ export function TechHubsReportContent() {
   const [ltfData, setLtfData] = useState<LTFRow[]>([]);
   const [registrationData, setRegistrationData] = useState<RegistrationRow[]>([]);
   const [attendanceData, setAttendanceData] = useState<AttendanceRow[]>([]);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const closeLightbox = useCallback(() => setLightboxIndex(null), []);
+  const prevImage = useCallback(() => setLightboxIndex((i) => (i !== null ? (i - 1 + GALLERY_IMAGES.length) % GALLERY_IMAGES.length : null)), []);
+  const nextImage = useCallback(() => setLightboxIndex((i) => (i !== null ? (i + 1) % GALLERY_IMAGES.length : null)), []);
+
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeLightbox();
+      if (e.key === "ArrowLeft") prevImage();
+      if (e.key === "ArrowRight") nextImage();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [lightboxIndex, closeLightbox, prevImage, nextImage]);
 
   useEffect(() => {
     let completed = 0;
@@ -390,17 +406,57 @@ export function TechHubsReportContent() {
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {GALLERY_IMAGES.map((src, i) => (
-            <div key={i} className="aspect-[4/3] overflow-hidden rounded-lg border border-border">
+            <button
+              key={i}
+              onClick={() => setLightboxIndex(i)}
+              className="aspect-[4/3] overflow-hidden rounded-lg border border-border cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
+            >
               <img
                 src={src}
-                alt={`ASPIRE Dec 6 event photo ${i + 1}`}
+                alt={`ASPIRE event photo ${i + 1}`}
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                 loading="lazy"
               />
-            </div>
+            </button>
           ))}
         </div>
       </section>
+
+      {/* Lightbox */}
+      {lightboxIndex !== null && (
+        <div
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+          onClick={closeLightbox}
+        >
+          <button
+            onClick={(e) => { e.stopPropagation(); closeLightbox(); }}
+            className="absolute top-4 right-4 text-white/80 hover:text-white z-50 p-2"
+          >
+            <X className="h-7 w-7" />
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); prevImage(); }}
+            className="absolute left-2 sm:left-6 text-white/70 hover:text-white p-2 z-50"
+          >
+            <ChevronLeft className="h-10 w-10" />
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); nextImage(); }}
+            className="absolute right-2 sm:right-6 text-white/70 hover:text-white p-2 z-50"
+          >
+            <ChevronRight className="h-10 w-10" />
+          </button>
+          <img
+            src={GALLERY_IMAGES[lightboxIndex]}
+            alt={`ASPIRE event photo ${lightboxIndex + 1}`}
+            className="max-h-[90vh] max-w-[95vw] object-contain rounded-lg"
+            onClick={(e) => e.stopPropagation()}
+          />
+          <div className="absolute bottom-4 text-white/60 text-sm">
+            {lightboxIndex + 1} / {GALLERY_IMAGES.length}
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <footer className="text-center py-8 border-t border-border">
