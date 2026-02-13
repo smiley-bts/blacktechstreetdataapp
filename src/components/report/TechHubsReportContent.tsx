@@ -177,15 +177,12 @@ export function TechHubsReportContent() {
         name: "Natalie Brown",
         question: "On the most valuable thing they learned",
       },
-      {
-        text: "Enjoyed working with a team and creating a website & slide deck.",
-        name: "Kisha Jefferson",
-        question: "On the most valuable thing they learned",
-      },
     ];
 
+    const blocklist = new Set(["This is the BEST", "Prompt writing & workflow design"]);
     const seen = new Set<string>();
     const unique = quotes.filter((q) => {
+      if (blocklist.has(q.text)) return false;
       if (seen.has(q.text)) return false;
       seen.add(q.text);
       return true;
