@@ -440,10 +440,10 @@ export function TechHubsReportContent() {
       </section>
 
 
-      {/* ASPIRE Innovation Day Projects */}
+      {/* ASPIRE Innovation Projects */}
       <section id="projects" className="mb-16 scroll-mt-8">
         <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-6 pb-2 border-b border-border">
-          ASPIRE Innovation Day Projects
+          ASPIRE Innovation Projects
         </h2>
         <p className="text-muted-foreground mb-6 text-sm">
           Highlighted projects from the ASPIRE Build Day cohort
