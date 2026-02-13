@@ -60,6 +60,16 @@ const GALLERY_IMAGES = [
   "/images/gallery/techhubs-q1-06.jpg",
   "/images/gallery/techhubs-q1-09.jpg",
   "/images/gallery/techhubs-q1-10.jpg",
+  "/images/gallery/techhubs-q1-11.jpg",
+  "/images/gallery/techhubs-q1-12.jpg",
+  "/images/gallery/techhubs-q1-13.jpg",
+  "/images/gallery/techhubs-q1-14.jpg",
+  "/images/gallery/techhubs-q1-15.jpg",
+  "/images/gallery/techhubs-q1-16.jpg",
+  "/images/gallery/techhubs-q1-17.jpg",
+  "/images/gallery/techhubs-q1-18.jpg",
+  "/images/gallery/techhubs-q1-19.jpg",
+  "/images/gallery/techhubs-q1-20.jpg",
 ];
 
 export function TechHubsReportContent() {
