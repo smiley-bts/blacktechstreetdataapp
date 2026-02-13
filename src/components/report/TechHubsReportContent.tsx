@@ -319,10 +319,9 @@ export function TechHubsReportContent() {
         <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-6 pb-2 border-b border-border">
           December 6 ASPIRE Workshop
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <MetricCard icon={<Users className="h-5 w-5" />} label="Registrants" value={dec6Metrics.registrants} />
           <MetricCard icon={<BookOpen className="h-5 w-5" />} label="Participants" value={dec6Metrics.attendees} />
-          <MetricCard icon={<TrendingUp className="h-5 w-5" />} label="Attendance Rate" value={`${dec6Metrics.rate}%`} />
         </div>
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
           <MetricCard icon={<Star className="h-5 w-5" />} label="Survey Responses" value={feedbackData.length} />
