@@ -66,6 +66,7 @@ export function TechHubsReportContent() {
   const [ltfData, setLtfData] = useState<LTFRow[]>([]);
   const [registrationData, setRegistrationData] = useState<RegistrationRow[]>([]);
   const [attendanceData, setAttendanceData] = useState<AttendanceRow[]>([]);
+  const [preSurveyData, setPreSurveyData] = useState<Record<string, string>[]>([]);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -86,7 +87,7 @@ export function TechHubsReportContent() {
 
   useEffect(() => {
     let completed = 0;
-    const checkDone = () => { completed++; if (completed >= 4) setLoading(false); };
+    const checkDone = () => { completed++; if (completed >= 5) setLoading(false); };
 
     Papa.parse("/aspire-feedback-survey.csv", {
       download: true, header: true, skipEmptyLines: true,
@@ -103,6 +104,12 @@ export function TechHubsReportContent() {
     Papa.parse("/aspire-dec6-registration.csv", {
       download: true, header: true, skipEmptyLines: true,
       complete: (r) => { setRegistrationData(r.data as RegistrationRow[]); checkDone(); },
+      error: () => checkDone(),
+    });
+
+    Papa.parse("/aspire-dec6-pre-survey.csv", {
+      download: true, header: true, skipEmptyLines: true,
+      complete: (r) => { setPreSurveyData(r.data as Record<string, string>[]); checkDone(); },
       error: () => checkDone(),
     });
 
@@ -192,9 +199,20 @@ export function TechHubsReportContent() {
 
   // NPS Calculation for Dec 6 ASPIRE
   const dec6NPS = useMemo(() => {
+    // Build set of pre-survey emails
+    const preEmails = new Set<string>();
+    preSurveyData.forEach((row) => {
+      const email = (row["What's your email?"] || "").trim().toLowerCase();
+      if (email) preEmails.add(email);
+    });
+
     const col = "How likely are you to recommend this event to someone else?";
     let promoters = 0, passives = 0, detractors = 0;
     feedbackData.forEach((row) => {
+      // Only count if they also filled out the pre-survey
+      const email = (row["What's your email?"] || "").trim().toLowerCase();
+      if (!email || !preEmails.has(email)) return;
+
       const val = row[col] || "";
       const score = parseInt(val.charAt(0));
       if (isNaN(score)) return;
@@ -205,7 +223,7 @@ export function TechHubsReportContent() {
     const total = promoters + passives + detractors;
     const nps = total > 0 ? Math.round(((promoters - detractors) / total) * 100) : 0;
     return { promoters, passives, detractors, total, nps };
-  }, [feedbackData]);
+  }, [feedbackData, preSurveyData]);
 
   // NPS Calculation for LTF
   const ltfNPS = useMemo(() => {
@@ -409,7 +427,7 @@ export function TechHubsReportContent() {
           </div>
         </div>
         <p className="text-xs text-muted-foreground mt-3 text-center">
-          Based on {dec6NPS.total} responses from the December 6 ASPIRE Workshop
+          Based on {dec6NPS.total} matched participants who completed both the pre-survey and post-survey
         </p>
       </section>
 
