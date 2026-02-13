@@ -77,6 +77,8 @@ const GALLERY_IMAGES = [
   "/images/gallery/techhubs-q1-25.jpg",
   "/images/gallery/techhubs-q1-26.jpg",
   "/images/gallery/techhubs-q1-27.jpg",
+  "/images/gallery/techhubs-q1-28.jpg",
+  "/images/gallery/techhubs-q1-29.jpg",
 ];
 
 export function TechHubsReportContent() {
