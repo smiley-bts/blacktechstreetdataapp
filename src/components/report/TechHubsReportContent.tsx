@@ -147,6 +147,11 @@ export function TechHubsReportContent() {
         name: "Participant",
         question: "On their highlight or takeaway",
       },
+      {
+        text: "I really want to thank Tyrance for being a great teacher. He went back and covered things if we asked. He engaged the crowd. He was encouraging and VERY informative. I am looking forward to practicing the Prompting Framework at home and also try building out the workflow chart. My initial fear of AI has been conquered thanks to the ASPIRE workshop.",
+        name: "Participant",
+        question: "On their highlight or takeaway",
+      },
     ];
 
     const seen = new Set<string>();
