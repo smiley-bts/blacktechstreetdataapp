@@ -53,7 +53,6 @@ const INNOVATION_PROJECTS = [
 ];
 
 const GALLERY_IMAGES = [
-  "/images/gallery/techhubs-q1-01.jpg",
   "/images/gallery/techhubs-q1-03.jpg",
   "/images/gallery/techhubs-q1-05.jpg",
   "/images/gallery/techhubs-q1-06.jpg",
