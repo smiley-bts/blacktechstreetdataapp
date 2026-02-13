@@ -22,10 +22,10 @@ const TechHubsQ1Report = () => {
               Black Tech Street
             </p>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-foreground mb-3">
-              Tech Hubs Q1 2026 Report
+              G-ACE Quarterly Report
             </h1>
             <p className="text-base sm:text-lg text-muted-foreground">
-              ASPIRE Program Impact • December 2025
+              Q4 2025
             </p>
           </div>
         </div>
