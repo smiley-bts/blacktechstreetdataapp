@@ -380,21 +380,27 @@ export function TechHubsReportContent() {
 
   return (
     <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 max-w-4xl">
-      {/* Table of Contents */}
-      <nav className="mb-12 p-6 rounded-lg border border-border bg-card">
-        <h2 className="text-lg font-semibold text-foreground mb-4">Contents</h2>
-        <ul className="space-y-2">
-          {TOC_ITEMS.map((item) => (
-            <li key={item.id}>
+      {/* Horizontal Interactive TOC Bar */}
+      <nav className="mb-12 sticky top-0 z-40">
+        <div className="relative overflow-hidden rounded-xl border border-primary/20 bg-card/80 backdrop-blur-xl shadow-lg shadow-primary/5">
+          {/* Subtle animated glow line */}
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+          <div className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-4 py-3">
+            {TOC_ITEMS.map((item, idx) => (
               <a
+                key={item.id}
                 href={`#${item.id}`}
-                className="text-primary hover:underline text-sm sm:text-base"
+                className="group relative flex items-center gap-2 px-3 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-medium tracking-wide uppercase transition-all duration-300 text-muted-foreground hover:text-primary-foreground hover:bg-primary/90 hover:shadow-md hover:shadow-primary/20 hover:scale-[1.03] active:scale-95"
               >
-                {item.label}
+                <span className="relative z-10">{item.label}</span>
+                {idx < TOC_ITEMS.length - 1 && (
+                  <span className="hidden sm:block absolute -right-1 top-1/2 -translate-y-1/2 w-px h-4 bg-border/40" />
+                )}
               </a>
-            </li>
-          ))}
-        </ul>
+            ))}
+          </div>
+          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+        </div>
       </nav>
 
       {/* Net Promoter Score - Dec 6 ASPIRE Only */}
