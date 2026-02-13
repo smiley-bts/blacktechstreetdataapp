@@ -23,8 +23,6 @@ interface AttendanceRow {
 const TOC_ITEMS = [
   { id: "nps", label: "Net Promoter Score" },
   { id: "verbatims", label: "ASPIRE Verbatims" },
-  { id: "dec6-workshop", label: "December 6 ASPIRE Workshop" },
-  { id: "ltf-workshop", label: "December 13 LTF Student Workshop" },
   { id: "projects", label: "ASPIRE Innovation Day Projects" },
   { id: "gallery", label: "Gallery" },
 ];
@@ -428,43 +426,6 @@ export function TechHubsReportContent() {
         <VerbatimCarousel quotes={verbatims} />
       </section>
 
-      {/* December 6 ASPIRE Workshop */}
-      <section id="dec6-workshop" className="mb-16 scroll-mt-8">
-        <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-6 pb-2 border-b border-border">
-          December 6 ASPIRE Workshop
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <MetricCard icon={<Users className="h-5 w-5" />} label="Registrants" value={dec6Metrics.registrants} />
-          <MetricCard icon={<BookOpen className="h-5 w-5" />} label="Participants" value={dec6Metrics.attendees} />
-        </div>
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <MetricCard icon={<Star className="h-5 w-5" />} label="Survey Responses" value={feedbackData.length} />
-          <MetricCard icon={<Award className="h-5 w-5" />} label="NPS Score" value={`${dec6NPS.nps}%`} />
-        </div>
-      </section>
-
-      {/* December 13 LTF Student Workshop */}
-      <section id="ltf-workshop" className="mb-16 scroll-mt-8">
-        <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-6 pb-2 border-b border-border">
-          December 13 LTF Student Workshop
-        </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <MetricCard icon={<Users className="h-5 w-5" />} label="Respondents" value={ltfMetrics.total} />
-          <MetricCard icon={<Star className="h-5 w-5" />} label="Overall Rating" value={`${ltfMetrics.overallRating}/5`} />
-          <MetricCard icon={<TrendingUp className="h-5 w-5" />} label="Engagement" value={`${ltfMetrics.engagement}/5`} />
-          <MetricCard icon={<BookOpen className="h-5 w-5" />} label="Content Clarity" value={`${ltfMetrics.clarity}/5`} />
-        </div>
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <MetricCard label="Confidence Before" value={`${ltfMetrics.confidenceBefore}/5`} />
-          <MetricCard label="Confidence After" value={`${ltfMetrics.confidenceAfter}/5`} />
-          <MetricCard
-            icon={<ArrowUp className="h-5 w-5 text-primary" />}
-            label="Confidence Shift"
-            value={`+${ltfMetrics.confidenceShift}`}
-            highlight
-          />
-        </div>
-      </section>
 
       {/* ASPIRE Innovation Day Projects */}
       <section id="projects" className="mb-16 scroll-mt-8">
