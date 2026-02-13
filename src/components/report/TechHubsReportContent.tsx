@@ -438,34 +438,44 @@ export function TechHubsReportContent() {
       {/* Lightbox */}
       {lightboxIndex !== null && (
         <div
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+          className="fixed inset-0 z-50 bg-black/95 flex flex-col items-center justify-center"
           onClick={closeLightbox}
         >
+          {/* Close button */}
           <button
             onClick={(e) => { e.stopPropagation(); closeLightbox(); }}
-            className="absolute top-4 right-4 text-white/80 hover:text-white z-50 p-2"
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 text-white/80 hover:text-white z-50 p-2 bg-black/40 rounded-full backdrop-blur-sm"
           >
-            <X className="h-7 w-7" />
+            <X className="h-6 w-6 sm:h-7 sm:w-7" />
           </button>
+
+          {/* Previous button */}
           <button
             onClick={(e) => { e.stopPropagation(); prevImage(); }}
-            className="absolute left-2 sm:left-6 text-white/70 hover:text-white p-2 z-50"
+            className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 text-white/80 hover:text-white p-2 sm:p-3 z-50 bg-black/40 rounded-full backdrop-blur-sm"
           >
-            <ChevronLeft className="h-10 w-10" />
+            <ChevronLeft className="h-7 w-7 sm:h-10 sm:w-10" />
           </button>
+
+          {/* Next button */}
           <button
             onClick={(e) => { e.stopPropagation(); nextImage(); }}
-            className="absolute right-2 sm:right-6 text-white/70 hover:text-white p-2 z-50"
+            className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 text-white/80 hover:text-white p-2 sm:p-3 z-50 bg-black/40 rounded-full backdrop-blur-sm"
           >
-            <ChevronRight className="h-10 w-10" />
+            <ChevronRight className="h-7 w-7 sm:h-10 sm:w-10" />
           </button>
+
+          {/* Image */}
           <img
             src={GALLERY_IMAGES[lightboxIndex]}
             alt={`ASPIRE event photo ${lightboxIndex + 1}`}
-            className="max-h-[90vh] max-w-[95vw] object-contain rounded-lg"
+            className="max-h-[80dvh] sm:max-h-[85vh] max-w-[calc(100vw-5rem)] sm:max-w-[90vw] object-contain rounded-lg select-none"
             onClick={(e) => e.stopPropagation()}
+            draggable={false}
           />
-          <div className="absolute bottom-4 text-white/60 text-sm">
+
+          {/* Counter */}
+          <div className="absolute bottom-4 sm:bottom-6 text-white/60 text-xs sm:text-sm font-medium bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">
             {lightboxIndex + 1} / {GALLERY_IMAGES.length}
           </div>
         </div>
