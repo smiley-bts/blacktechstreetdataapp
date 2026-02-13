@@ -33,6 +33,7 @@ const INNOVATION_PROJECTS = [
     name: "Rise-Up Learning Hub",
     description: "An AI-powered educational platform designed to provide personalized learning pathways for underserved communities, connecting learners with mentors and resources tailored to their goals.",
     file: "/project-files/Rise_Up_Learning_Hub.pptx",
+    cloudUrl: "https://woqjbwotxaaczkptnjfd.supabase.co/storage/v1/object/public/project-files/Rise_Up_Learning_Hub.pptx",
   },
   {
     name: "RV Revive Tulsa",
@@ -389,7 +390,7 @@ export function TechHubsReportContent() {
               {project.file && project.file.endsWith('.pptx') ? (
                 <div className="mt-4">
                   <iframe
-                    src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(window.location.origin + project.file)}`}
+                    src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(project.cloudUrl || (window.location.origin + project.file))}`}
                     className="w-full rounded-lg border border-border"
                     style={{ height: '400px' }}
                     title={`${project.name} presentation`}
