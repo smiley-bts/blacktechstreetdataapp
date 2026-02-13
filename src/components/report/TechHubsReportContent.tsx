@@ -149,17 +149,17 @@ export function TechHubsReportContent() {
       },
       {
         text: "I really want to thank Tyrance for being a great teacher. He went back and covered things if we asked. He engaged the crowd. He was encouraging and VERY informative. I am looking forward to practicing the Prompting Framework at home and also try building out the workflow chart. My initial fear of AI has been conquered thanks to the ASPIRE workshop.",
-        name: "Participant",
+        name: "Karra D.",
         question: "On their highlight or takeaway",
       },
       {
         text: "This is going to change my life. My organization's success. Our impact on those we serve. Awesome! Thank you.",
-        name: "Participant",
+        name: "Katie P.",
         question: "On their highlight or takeaway",
       },
       {
         text: "It is not as hard as I thought it was!",
-        name: "Participant",
+        name: "Gretchen M.",
         question: "On the most valuable thing they learned",
       },
     ];
