@@ -144,7 +144,7 @@ export function TechHubsReportContent() {
     const curated: { text: string; name: string; question: string }[] = [
       {
         text: "I really enjoyed learning AI prompting. Understanding how to communicate the task, the role, and the outcomes that you want really made me feel confident in generating my idea.",
-        name: "Tania Garza",
+        name: "Tania G.",
         question: "On their highlight or takeaway",
       },
       {
@@ -169,12 +169,12 @@ export function TechHubsReportContent() {
       },
       {
         text: "The prompt making and hands on experience was incredible! Being able to practice this in real time was so helpful to understanding the overall workshop.",
-        name: "Tiyahna Garrett",
+        name: "Tiyahna G.",
         question: "On the most valuable thing they learned",
       },
       {
         text: "Walking through engineer design and realizing how \"easy\" it can be with a template and practice. The process removed the intimidation of creating workflows.",
-        name: "Natalie Brown",
+        name: "Natalie B.",
         question: "On the most valuable thing they learned",
       },
     ];
