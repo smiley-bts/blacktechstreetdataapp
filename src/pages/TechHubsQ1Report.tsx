@@ -13,9 +13,7 @@ const TechHubsQ1Report = () => {
           style={{ backgroundImage: "url('/images/tulsa-skyline-banner.png')" }}
         />
         <div className="relative container mx-auto py-10 sm:py-16 px-4 sm:px-6">
-          <div className="flex items-center justify-between mb-6">
-            <div />
-            <img src={btsLogo} alt="Black Tech Street Logo" className="h-12 sm:h-16 w-auto" />
+          <div className="flex items-center justify-end mb-6">
             <ThemeToggle />
           </div>
            <div className="text-center max-w-3xl mx-auto">
