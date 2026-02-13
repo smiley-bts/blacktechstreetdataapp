@@ -47,11 +47,16 @@ const INNOVATION_PROJECTS = [
 ];
 
 const GALLERY_IMAGES = [
-  "/images/gallery/aspire-dec6-01.jpg",
-  "/images/gallery/aspire-dec6-02.jpg",
-  "/images/gallery/aspire-dec6-03.jpg",
-  "/images/gallery/aspire-dec6-04.jpg",
-  "/images/gallery/aspire-dec6-05.jpg",
+  "/images/gallery/techhubs-q1-01.jpg",
+  "/images/gallery/techhubs-q1-02.jpg",
+  "/images/gallery/techhubs-q1-03.jpg",
+  "/images/gallery/techhubs-q1-04.jpg",
+  "/images/gallery/techhubs-q1-05.jpg",
+  "/images/gallery/techhubs-q1-06.jpg",
+  "/images/gallery/techhubs-q1-07.jpg",
+  "/images/gallery/techhubs-q1-08.jpg",
+  "/images/gallery/techhubs-q1-09.jpg",
+  "/images/gallery/techhubs-q1-10.jpg",
 ];
 
 export function TechHubsReportContent() {
