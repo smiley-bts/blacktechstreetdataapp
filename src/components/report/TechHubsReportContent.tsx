@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 import Papa from "papaparse";
 import * as XLSX from "xlsx";
@@ -290,6 +290,61 @@ export function TechHubsReportContent() {
     );
   }
 
+  // --- Verbatim Carousel Component ---
+  const VerbatimCarousel = ({ quotes: vQuotes }: { quotes: { text: string; name: string; question: string }[] }) => {
+    const [active, setActive] = useState(0);
+    const [paused, setPaused] = useState(false);
+    const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+    useEffect(() => {
+      if (paused || vQuotes.length <= 1) return;
+      timerRef.current = setInterval(() => {
+        setActive((prev) => (prev + 1) % vQuotes.length);
+      }, 5000);
+      return () => { if (timerRef.current) clearInterval(timerRef.current); };
+    }, [paused, vQuotes.length]);
+
+    if (vQuotes.length === 0) return null;
+
+    return (
+      <div
+        className="relative"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+      >
+        <div className="overflow-hidden rounded-lg border border-border bg-muted/30 min-h-[140px] sm:min-h-[120px]">
+          {vQuotes.map((q, i) => (
+            <div
+              key={i}
+              className={`px-6 py-6 sm:px-8 sm:py-8 transition-all duration-500 ease-in-out ${
+                i === active ? "block animate-fade-in" : "hidden"
+              }`}
+            >
+              <p className="italic text-foreground text-base sm:text-lg leading-relaxed text-center">
+                &ldquo;{q.text}&rdquo;
+              </p>
+              <footer className="mt-4 text-sm text-muted-foreground font-medium text-center">
+                — {q.name}
+              </footer>
+            </div>
+          ))}
+        </div>
+        <div className="flex justify-center gap-2 mt-4">
+          {vQuotes.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setActive(i)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                i === active ? "bg-primary w-6" : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
+              }`}
+              aria-label={`Go to quote ${i + 1}`}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 max-w-4xl">
       {/* Table of Contents */}
@@ -309,26 +364,12 @@ export function TechHubsReportContent() {
         </ul>
       </nav>
 
-      {/* ASPIRE Verbatims */}
+      {/* ASPIRE Verbatims Carousel */}
       <section id="verbatims" className="mb-16 scroll-mt-8">
         <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-6 pb-2 border-b border-border">
           ASPIRE Verbatims
         </h2>
-        <div className="space-y-4">
-          {verbatims.map((q, i) => (
-            <blockquote
-              key={i}
-              className="border-l-4 border-primary/60 bg-muted/40 rounded-r-lg px-5 py-4"
-            >
-              <p className="italic text-foreground text-sm sm:text-base leading-relaxed">
-                "{q.text}"
-              </p>
-              <footer className="mt-2 text-xs text-muted-foreground font-medium">
-                — {q.name}
-              </footer>
-            </blockquote>
-          ))}
-        </div>
+        <VerbatimCarousel quotes={verbatims} />
       </section>
 
       {/* Net Promoter Score */}
