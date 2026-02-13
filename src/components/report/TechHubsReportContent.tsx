@@ -199,20 +199,9 @@ export function TechHubsReportContent() {
 
   // NPS Calculation for Dec 6 ASPIRE
   const dec6NPS = useMemo(() => {
-    // Build set of pre-survey emails
-    const preEmails = new Set<string>();
-    preSurveyData.forEach((row) => {
-      const email = (row["What's your email?"] || "").trim().toLowerCase();
-      if (email) preEmails.add(email);
-    });
-
     const col = "How likely are you to recommend this event to someone else?";
     let promoters = 0, passives = 0, detractors = 0;
     feedbackData.forEach((row) => {
-      // Only count if they also filled out the pre-survey
-      const email = (row["What's your email?"] || "").trim().toLowerCase();
-      if (!email || !preEmails.has(email)) return;
-
       const val = row[col] || "";
       const score = parseInt(val.charAt(0));
       if (isNaN(score)) return;
@@ -223,7 +212,7 @@ export function TechHubsReportContent() {
     const total = promoters + passives + detractors;
     const nps = total > 0 ? Math.round(((promoters - detractors) / total) * 100) : 0;
     return { promoters, passives, detractors, total, nps };
-  }, [feedbackData, preSurveyData]);
+  }, [feedbackData]);
 
   // NPS Calculation for LTF
   const ltfNPS = useMemo(() => {
@@ -427,7 +416,7 @@ export function TechHubsReportContent() {
           </div>
         </div>
         <p className="text-xs text-muted-foreground mt-3 text-center">
-          Based on {dec6NPS.total} matched participants who completed both the pre-survey and post-survey
+          Based on {dec6NPS.total} post-survey responses from the December 6 ASPIRE Workshop
         </p>
       </section>
 
