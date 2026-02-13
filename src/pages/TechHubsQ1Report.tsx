@@ -13,17 +13,17 @@ const TechHubsQ1Report = () => {
           style={{ backgroundImage: "url('/images/tulsa-skyline-banner.png')" }}
         />
         <div className="relative container mx-auto py-10 sm:py-16 px-4 sm:px-6">
-          <div className="flex items-center justify-end mb-6">
+          <div className="flex items-center justify-between mb-6">
+            <div />
+            <img src={btsBLogo} alt="BTS" className="h-12 sm:h-16 w-auto" />
             <ThemeToggle />
           </div>
            <div className="text-center max-w-3xl mx-auto">
              <p className="text-sm font-medium tracking-widest uppercase text-muted-foreground mb-2">
                Black Tech Street
              </p>
-             <h1 className="flex items-center justify-center gap-3 text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-foreground mb-3">
-               <span>G-ACE</span>
-               <img src={btsBLogo} alt="BTS" className="h-9 sm:h-12 md:h-14 w-auto inline-block" />
-               <span>Quarterly Report</span>
+             <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-foreground mb-3">
+               G-ACE Quarterly Report
              </h1>
             <p className="text-base sm:text-lg text-muted-foreground">
               Q4 2025
