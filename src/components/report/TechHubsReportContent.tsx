@@ -578,7 +578,7 @@ export function TechHubsReportContent() {
       {/* Footer */}
       <footer className="text-center py-8 border-t border-border">
         <p className="text-xs text-muted-foreground">
-          © {new Date().getFullYear()} Black Tech Street • ASPIRE Program Report
+          © {new Date().getFullYear()} Black Tech Street • G-ACE Program Report
         </p>
       </footer>
     </div>
