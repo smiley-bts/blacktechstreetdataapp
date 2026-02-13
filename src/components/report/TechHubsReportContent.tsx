@@ -20,11 +20,11 @@ interface AttendanceRow {
   [key: string]: string;
 }
 
-const TOC_ITEMS = [
-  { id: "nps", label: "Net Promoter Score" },
-  { id: "verbatims", label: "ASPIRE Verbatims" },
-  { id: "projects", label: "ASPIRE Innovation Projects" },
-  { id: "gallery", label: "Gallery" },
+const TOC_ITEMS: { id: string; label: string; greenWords?: string[] }[] = [
+  { id: "nps", label: "Net Promoter Score", greenWords: ["Net", "Score"] },
+  { id: "verbatims", label: "ASPIRE Verbatims", greenWords: ["Verbatims"] },
+  { id: "projects", label: "ASPIRE Innovation Projects", greenWords: ["Innovation", "Projects"] },
+  { id: "gallery", label: "Photo Gallery", greenWords: ["Photo"] },
 ];
 
 const INNOVATION_PROJECTS = [
@@ -401,7 +401,18 @@ export function TechHubsReportContent() {
                 href={`#${item.id}`}
                 className="group relative flex items-center gap-2 px-3 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-medium tracking-wide uppercase transition-all duration-300 text-white hover:text-primary-foreground hover:bg-primary/90 hover:shadow-md hover:shadow-primary/20 hover:scale-[1.03] active:scale-95"
               >
-                <span className="relative z-10">{item.label}</span>
+                <span className="relative z-10">
+                  {item.greenWords
+                    ? item.label.split(' ').map((word, i) => (
+                        <span key={i}>
+                          {i > 0 && ' '}
+                          {item.greenWords!.includes(word) ? (
+                            <span className="text-primary">{word}</span>
+                          ) : word}
+                        </span>
+                      ))
+                    : item.label}
+                </span>
                 {idx < TOC_ITEMS.length - 1 && (
                   <span className="hidden sm:block absolute -right-1 top-1/2 -translate-y-1/2 w-px h-4 bg-border/40" />
                 )}
