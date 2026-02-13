@@ -306,13 +306,34 @@ export function TechHubsReportContent() {
 
     if (vQuotes.length === 0) return null;
 
+    const prev = () => setActive((a) => (a - 1 + vQuotes.length) % vQuotes.length);
+    const next = () => setActive((a) => (a + 1) % vQuotes.length);
+
     return (
       <div
         className="relative"
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
       >
-        <div className="overflow-hidden rounded-lg border border-border bg-muted/30 min-h-[140px] sm:min-h-[120px]">
+        {/* Left Arrow */}
+        <button
+          onClick={prev}
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 sm:-translate-x-3 z-10 bg-muted/80 hover:bg-muted backdrop-blur-sm rounded-full p-2 text-foreground/70 hover:text-foreground transition-colors"
+          aria-label="Previous quote"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </button>
+
+        {/* Right Arrow */}
+        <button
+          onClick={next}
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 sm:translate-x-3 z-10 bg-muted/80 hover:bg-muted backdrop-blur-sm rounded-full p-2 text-foreground/70 hover:text-foreground transition-colors"
+          aria-label="Next quote"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </button>
+
+        <div className="overflow-hidden rounded-lg border border-border bg-muted/30 min-h-[140px] sm:min-h-[120px] mx-6 sm:mx-8">
           {vQuotes.map((q, i) => (
             <div
               key={i}
