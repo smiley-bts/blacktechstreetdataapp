@@ -401,18 +401,7 @@ export function TechHubsReportContent() {
                 href={`#${item.id}`}
                 className="group relative flex items-center gap-2 px-2 sm:px-3 py-2 rounded-lg text-[10px] sm:text-xs font-medium tracking-wide uppercase transition-all duration-300 text-white hover:text-primary-foreground hover:bg-primary/90 hover:shadow-md hover:shadow-primary/20 hover:scale-[1.03] active:scale-95 whitespace-nowrap"
               >
-                <span className="relative z-10">
-                  {item.greenWords
-                    ? item.label.split(' ').map((word, i) => (
-                        <span key={i}>
-                          {i > 0 && ' '}
-                          {item.greenWords!.includes(word) ? (
-                            <span className="text-primary">{word}</span>
-                          ) : word}
-                        </span>
-                      ))
-                    : item.label}
-                </span>
+                <span className="relative z-10">{item.label}</span>
                 {idx < TOC_ITEMS.length - 1 && (
                   <span className="hidden sm:block absolute -right-1 top-1/2 -translate-y-1/2 w-px h-4 bg-border/40" />
                 )}
@@ -426,7 +415,7 @@ export function TechHubsReportContent() {
       {/* Net Promoter Score - Dec 6 ASPIRE Only */}
       <section id="nps" className="mb-16 scroll-mt-8">
         <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-6 pb-2 border-b border-border">
-          Net Promoter Score
+          <span className="text-primary">Net</span> Promoter <span className="text-primary">Score</span>
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <div className="bg-muted/40 rounded-lg p-4 text-center">
@@ -454,7 +443,7 @@ export function TechHubsReportContent() {
       {/* ASPIRE Verbatims Carousel */}
       <section id="verbatims" className="mb-16 scroll-mt-8">
         <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-6 pb-2 border-b border-border">
-          ASPIRE Verbatims
+          ASPIRE <span className="text-primary">Verbatims</span>
         </h2>
         <VerbatimCarousel quotes={verbatims} />
       </section>
@@ -463,7 +452,7 @@ export function TechHubsReportContent() {
       {/* ASPIRE Innovation Projects */}
       <section id="projects" className="mb-16 scroll-mt-8">
         <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-6 pb-2 border-b border-border">
-          ASPIRE Innovation Projects
+          ASPIRE <span className="text-primary">Innovation</span> <span className="text-primary">Projects</span>
         </h2>
         <div className="space-y-6">
           {INNOVATION_PROJECTS.map((project) => {
@@ -518,7 +507,7 @@ export function TechHubsReportContent() {
       {/* Gallery */}
       <section id="gallery" className="mb-16 scroll-mt-8">
         <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-6 pb-2 border-b border-border">
-          Gallery
+          <span className="text-primary">Photo</span> Gallery
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {GALLERY_IMAGES.map((src, i) => (
