@@ -152,6 +152,11 @@ export function TechHubsReportContent() {
         name: "Participant",
         question: "On their highlight or takeaway",
       },
+      {
+        text: "This is going to change my life. My organization's success. Our impact on those we serve. Awesome! Thank you.",
+        name: "Participant",
+        question: "On their highlight or takeaway",
+      },
     ];
 
     const seen = new Set<string>();
