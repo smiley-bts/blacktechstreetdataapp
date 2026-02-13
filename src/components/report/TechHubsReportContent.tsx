@@ -157,6 +157,11 @@ export function TechHubsReportContent() {
         name: "Participant",
         question: "On their highlight or takeaway",
       },
+      {
+        text: "It is not as hard as I thought it was!",
+        name: "Participant",
+        question: "On the most valuable thing they learned",
+      },
     ];
 
     const seen = new Set<string>();
