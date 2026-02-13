@@ -172,6 +172,11 @@ export function TechHubsReportContent() {
         name: "Tiyahna Garrett",
         question: "On the most valuable thing they learned",
       },
+      {
+        text: "Walking through engineer design and realizing how \"easy\" it can be with a template and practice. The process removed the intimidation of creating workflows.",
+        name: "Natalie Brown",
+        question: "On the most valuable thing they learned",
+      },
     ];
 
     const seen = new Set<string>();
