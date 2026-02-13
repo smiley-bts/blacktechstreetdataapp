@@ -144,7 +144,7 @@ export function TechHubsReportContent() {
     const curated: { text: string; name: string; question: string }[] = [
       {
         text: "I really enjoyed learning AI prompting. Understanding how to communicate the task, the role, and the outcomes that you want really made me feel confident in generating my idea.",
-        name: "Participant",
+        name: "Tania Garza",
         question: "On their highlight or takeaway",
       },
       {
