@@ -119,26 +119,25 @@ export function TechHubsReportContent() {
 
   // Extract verbatim quotes from feedback
   const verbatims = useMemo(() => {
-    const quoteColumns = [
-      "Please share a highlight or takeaway from your experience today.",
-      "What is the most valuable thing you learned today?",
+    const quoteColumns: { col: string; label: string }[] = [
+      { col: "Please share a highlight or takeaway from your experience today.", label: "On their highlight or takeaway" },
+      { col: "What is the most valuable thing you learned today?", label: "On the most valuable thing they learned" },
     ];
-    const quotes: { text: string; name: string }[] = [];
+    const quotes: { text: string; name: string; question: string }[] = [];
 
     feedbackData.forEach((row) => {
       const firstName = (row["What's your first name?"] || "").trim();
       const lastName = (row["What's your last name?"] || "").trim();
       const attribution = lastName ? `${firstName} ${lastName.charAt(0)}.` : firstName;
 
-      quoteColumns.forEach((col) => {
+      quoteColumns.forEach(({ col, label }) => {
         const text = (row[col] || "").trim();
         if (text && text.length > 15 && attribution) {
-          quotes.push({ text, name: attribution });
+          quotes.push({ text, name: attribution, question: label });
         }
       });
     });
 
-    // Deduplicate and take up to 10
     const seen = new Set<string>();
     return quotes.filter((q) => {
       if (seen.has(q.text)) return false;
@@ -280,6 +279,9 @@ export function TechHubsReportContent() {
               key={i}
               className="border-l-4 border-primary/60 bg-muted/40 rounded-r-lg px-5 py-4"
             >
+              <p className="text-xs font-medium text-primary/80 uppercase tracking-wide mb-2">
+                {q.question}
+              </p>
               <p className="italic text-foreground text-sm sm:text-base leading-relaxed">
                 "{q.text}"
               </p>
