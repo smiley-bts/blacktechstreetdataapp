@@ -1,6 +1,7 @@
 import { TechHubsReportContent } from "@/components/report/TechHubsReportContent";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import btsLogo from "@/assets/black-tech-street-logo.png";
+import btsBLogo from "@/assets/logos/bts-b-logo.png";
 
 const TechHubsQ1Report = () => {
   return (
@@ -17,13 +18,15 @@ const TechHubsQ1Report = () => {
             <img src={btsLogo} alt="Black Tech Street Logo" className="h-12 sm:h-16 w-auto" />
             <ThemeToggle />
           </div>
-          <div className="text-center max-w-3xl mx-auto">
-            <p className="text-sm font-medium tracking-widest uppercase text-muted-foreground mb-2">
-              Black Tech Street
-            </p>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-foreground mb-3">
-              G-ACE Quarterly Report
-            </h1>
+           <div className="text-center max-w-3xl mx-auto">
+             <p className="text-sm font-medium tracking-widest uppercase text-muted-foreground mb-2">
+               Black Tech Street
+             </p>
+             <h1 className="flex items-center justify-center gap-3 text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-foreground mb-3">
+               <span>G-ACE</span>
+               <img src={btsBLogo} alt="BTS" className="h-9 sm:h-12 md:h-14 w-auto inline-block" />
+               <span>Quarterly Report</span>
+             </h1>
             <p className="text-base sm:text-lg text-muted-foreground">
               Q4 2025
             </p>
