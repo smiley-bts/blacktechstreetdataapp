@@ -140,12 +140,22 @@ export function TechHubsReportContent() {
       });
     });
 
+    // Curated featured quotes
+    const curated: { text: string; name: string; question: string }[] = [
+      {
+        text: "I really enjoyed learning AI prompting. Understanding how to communicate the task, the role, and the outcomes that you want really made me feel confident in generating my idea.",
+        name: "Participant",
+        question: "On their highlight or takeaway",
+      },
+    ];
+
     const seen = new Set<string>();
-    return quotes.filter((q) => {
+    const unique = quotes.filter((q) => {
       if (seen.has(q.text)) return false;
       seen.add(q.text);
       return true;
-    }).slice(0, 10);
+    });
+    return [...curated, ...unique].slice(0, 10);
   }, [feedbackData]);
 
   // NPS Calculation for Dec 6 ASPIRE
