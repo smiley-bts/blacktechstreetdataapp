@@ -399,7 +399,7 @@ export function TechHubsReportContent() {
               <a
                 key={item.id}
                 href={`#${item.id}`}
-                className="group relative flex items-center gap-2 px-3 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-medium tracking-wide uppercase transition-all duration-300 text-muted-foreground hover:text-primary-foreground hover:bg-primary/90 hover:shadow-md hover:shadow-primary/20 hover:scale-[1.03] active:scale-95"
+                className="group relative flex items-center gap-2 px-3 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-medium tracking-wide uppercase transition-all duration-300 text-white hover:text-primary-foreground hover:bg-primary/90 hover:shadow-md hover:shadow-primary/20 hover:scale-[1.03] active:scale-95"
               >
                 <span className="relative z-10">{item.label}</span>
                 {idx < TOC_ITEMS.length - 1 && (
