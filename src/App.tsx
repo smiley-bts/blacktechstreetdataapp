@@ -50,7 +50,7 @@ function AnimatedRoutes() {
         <Route path="/aspireenterprise" element={<AspireEnterprise />} />
         <Route path="/investnorth" element={<InvestNorth />} />
         <Route path="/dec6aspire" element={<Dec6Aspire />} />
-        <Route path="/techhubsq12026" element={<TechHubsQ1Report />} />
+        <Route path="/g-acereport" element={<TechHubsQ1Report />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
