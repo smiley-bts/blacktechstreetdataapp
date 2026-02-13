@@ -21,8 +21,8 @@ interface AttendanceRow {
 }
 
 const TOC_ITEMS = [
-  { id: "verbatims", label: "ASPIRE Verbatims" },
   { id: "nps", label: "Net Promoter Score" },
+  { id: "verbatims", label: "ASPIRE Verbatims" },
   { id: "dec6-workshop", label: "December 6 ASPIRE Workshop" },
   { id: "ltf-workshop", label: "December 13 LTF Student Workshop" },
   { id: "projects", label: "ASPIRE Innovation Day Projects" },
@@ -364,51 +364,51 @@ export function TechHubsReportContent() {
         </ul>
       </nav>
 
+      {/* Net Promoter Score - Combined */}
+      <section id="nps" className="mb-16 scroll-mt-8">
+        <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-6 pb-2 border-b border-border">
+          Net Promoter Score
+        </h2>
+        {(() => {
+          const combined = {
+            promoters: dec6NPS.promoters + ltfNPS.promoters,
+            passives: dec6NPS.passives + ltfNPS.passives,
+            detractors: dec6NPS.detractors + ltfNPS.detractors,
+            total: dec6NPS.total + ltfNPS.total,
+          };
+          const nps = combined.total > 0 ? Math.round(((combined.promoters - combined.detractors) / combined.total) * 100) : 0;
+          return (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="bg-muted/40 rounded-lg p-4 text-center">
+                <p className="text-2xl sm:text-3xl font-bold text-primary">{nps}%</p>
+                <p className="text-xs text-muted-foreground mt-1">Combined NPS</p>
+              </div>
+              <div className="bg-muted/40 rounded-lg p-4 text-center">
+                <p className="text-2xl sm:text-3xl font-bold text-foreground">{combined.promoters}</p>
+                <p className="text-xs text-muted-foreground mt-1">Promoters</p>
+              </div>
+              <div className="bg-muted/40 rounded-lg p-4 text-center">
+                <p className="text-2xl sm:text-3xl font-bold text-foreground">{combined.passives}</p>
+                <p className="text-xs text-muted-foreground mt-1">Passives</p>
+              </div>
+              <div className="bg-muted/40 rounded-lg p-4 text-center">
+                <p className="text-2xl sm:text-3xl font-bold text-foreground">{combined.detractors}</p>
+                <p className="text-xs text-muted-foreground mt-1">Detractors</p>
+              </div>
+            </div>
+          );
+        })()}
+        <p className="text-xs text-muted-foreground mt-3 text-center">
+          Based on {dec6NPS.total + ltfNPS.total} total responses across Dec 6 ASPIRE Workshop &amp; Dec 13 LTF Student Workshop
+        </p>
+      </section>
+
       {/* ASPIRE Verbatims Carousel */}
       <section id="verbatims" className="mb-16 scroll-mt-8">
         <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-6 pb-2 border-b border-border">
           ASPIRE Verbatims
         </h2>
         <VerbatimCarousel quotes={verbatims} />
-      </section>
-
-      {/* Net Promoter Score */}
-      <section id="nps" className="mb-16 scroll-mt-8">
-        <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-6 pb-2 border-b border-border">
-          Net Promoter Score
-        </h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm border border-border rounded-lg overflow-hidden">
-            <thead>
-              <tr className="bg-muted/60">
-                <th className="text-left px-4 py-3 font-semibold text-foreground">Event</th>
-                <th className="text-center px-4 py-3 font-semibold text-foreground">Score 5<br/><span className="text-xs text-muted-foreground font-normal">Promoters</span></th>
-                <th className="text-center px-4 py-3 font-semibold text-foreground">Score 4<br/><span className="text-xs text-muted-foreground font-normal">Passive</span></th>
-                <th className="text-center px-4 py-3 font-semibold text-foreground">Score 1-3<br/><span className="text-xs text-muted-foreground font-normal">Detractors</span></th>
-                <th className="text-center px-4 py-3 font-semibold text-foreground">Total</th>
-                <th className="text-center px-4 py-3 font-semibold text-foreground">NPS</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-t border-border">
-                <td className="px-4 py-3 font-medium text-foreground">Dec 6 ASPIRE Workshop</td>
-                <td className="text-center px-4 py-3 text-foreground">{dec6NPS.promoters}</td>
-                <td className="text-center px-4 py-3 text-foreground">{dec6NPS.passives}</td>
-                <td className="text-center px-4 py-3 text-foreground">{dec6NPS.detractors}</td>
-                <td className="text-center px-4 py-3 text-foreground">{dec6NPS.total}</td>
-                <td className="text-center px-4 py-3 font-bold text-primary">{dec6NPS.nps}%</td>
-              </tr>
-              <tr className="border-t border-border bg-muted/20">
-                <td className="px-4 py-3 font-medium text-foreground">Dec 13 LTF Student Workshop</td>
-                <td className="text-center px-4 py-3 text-foreground">{ltfNPS.promoters}</td>
-                <td className="text-center px-4 py-3 text-foreground">{ltfNPS.passives}</td>
-                <td className="text-center px-4 py-3 text-foreground">{ltfNPS.detractors}</td>
-                <td className="text-center px-4 py-3 text-foreground">{ltfNPS.total}</td>
-                <td className="text-center px-4 py-3 font-bold text-primary">{ltfNPS.nps}%</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
       </section>
 
       {/* December 6 ASPIRE Workshop */}
