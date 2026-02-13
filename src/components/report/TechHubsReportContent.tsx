@@ -56,6 +56,7 @@ const GALLERY_IMAGES = [
   "/images/gallery/techhubs-q1-05.jpg",
   "/images/gallery/techhubs-q1-10.jpg",
   "/images/gallery/techhubs-q1-03.jpg",
+  "/images/gallery/techhubs-q1-27.jpg",
   "/images/gallery/techhubs-q1-11.jpg",
   "/images/gallery/techhubs-q1-12.jpg",
   "/images/gallery/techhubs-q1-13.jpg",
@@ -69,7 +70,6 @@ const GALLERY_IMAGES = [
   "/images/gallery/techhubs-q1-24.jpg",
   "/images/gallery/techhubs-q1-25.jpg",
   "/images/gallery/techhubs-q1-26.jpg",
-  "/images/gallery/techhubs-q1-27.jpg",
   "/images/gallery/techhubs-q1-29.jpg",
   "/images/gallery/techhubs-q1-28.jpg",
 ];
