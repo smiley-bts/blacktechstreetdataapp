@@ -364,42 +364,31 @@ export function TechHubsReportContent() {
         </ul>
       </nav>
 
-      {/* Net Promoter Score - Combined */}
+      {/* Net Promoter Score - Dec 6 ASPIRE Only */}
       <section id="nps" className="mb-16 scroll-mt-8">
         <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-6 pb-2 border-b border-border">
           Net Promoter Score
         </h2>
-        {(() => {
-          const combined = {
-            promoters: dec6NPS.promoters + ltfNPS.promoters,
-            passives: dec6NPS.passives + ltfNPS.passives,
-            detractors: dec6NPS.detractors + ltfNPS.detractors,
-            total: dec6NPS.total + ltfNPS.total,
-          };
-          const nps = combined.total > 0 ? Math.round(((combined.promoters - combined.detractors) / combined.total) * 100) : 0;
-          return (
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="bg-muted/40 rounded-lg p-4 text-center">
-                <p className="text-2xl sm:text-3xl font-bold text-primary">{nps}%</p>
-                <p className="text-xs text-muted-foreground mt-1">Combined NPS</p>
-              </div>
-              <div className="bg-muted/40 rounded-lg p-4 text-center">
-                <p className="text-2xl sm:text-3xl font-bold text-foreground">{combined.promoters}</p>
-                <p className="text-xs text-muted-foreground mt-1">Promoters</p>
-              </div>
-              <div className="bg-muted/40 rounded-lg p-4 text-center">
-                <p className="text-2xl sm:text-3xl font-bold text-foreground">{combined.passives}</p>
-                <p className="text-xs text-muted-foreground mt-1">Passives</p>
-              </div>
-              <div className="bg-muted/40 rounded-lg p-4 text-center">
-                <p className="text-2xl sm:text-3xl font-bold text-foreground">{combined.detractors}</p>
-                <p className="text-xs text-muted-foreground mt-1">Detractors</p>
-              </div>
-            </div>
-          );
-        })()}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="bg-muted/40 rounded-lg p-4 text-center">
+            <p className="text-2xl sm:text-3xl font-bold text-primary">{dec6NPS.nps}%</p>
+            <p className="text-xs text-muted-foreground mt-1">NPS</p>
+          </div>
+          <div className="bg-muted/40 rounded-lg p-4 text-center">
+            <p className="text-2xl sm:text-3xl font-bold text-foreground">{dec6NPS.promoters}</p>
+            <p className="text-xs text-muted-foreground mt-1">Promoters</p>
+          </div>
+          <div className="bg-muted/40 rounded-lg p-4 text-center">
+            <p className="text-2xl sm:text-3xl font-bold text-foreground">{dec6NPS.passives}</p>
+            <p className="text-xs text-muted-foreground mt-1">Passives</p>
+          </div>
+          <div className="bg-muted/40 rounded-lg p-4 text-center">
+            <p className="text-2xl sm:text-3xl font-bold text-foreground">{dec6NPS.detractors}</p>
+            <p className="text-xs text-muted-foreground mt-1">Detractors</p>
+          </div>
+        </div>
         <p className="text-xs text-muted-foreground mt-3 text-center">
-          Based on {dec6NPS.total + ltfNPS.total} total responses across Dec 6 ASPIRE Workshop &amp; Dec 13 LTF Student Workshop
+          Based on {dec6NPS.total} responses from the December 6 ASPIRE Workshop
         </p>
       </section>
 
