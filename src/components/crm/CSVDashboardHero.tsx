@@ -1,4 +1,4 @@
-import { Users, UserCheck, TrendingUp, CalendarDays, ArrowRight } from "lucide-react";
+import { Users, UserCheck, CalendarDays, ArrowRight } from "lucide-react";
 import { useCSVDashboardMetrics } from "@/hooks/useCSVDashboardMetrics";
 import { CountUp } from "@/components/ui/count-up";
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,7 @@ export function CSVDashboardHero({ onViewEvents, onViewPeople, onViewAI }: CSVDa
       bgColor: "bg-amber-500/10",
     },
     {
-      label: "Certificate Holders",
+      label: "Event Attendees",
       value: metrics.totalAttendees,
       icon: UserCheck,
       color: "text-emerald-500",
@@ -31,15 +31,7 @@ export function CSVDashboardHero({ onViewEvents, onViewPeople, onViewAI }: CSVDa
       isPrimary: true,
     },
     {
-      label: "Attendance Rate",
-      value: metrics.overallRate,
-      icon: TrendingUp,
-      color: "text-purple-500",
-      bgColor: "bg-purple-500/10",
-      isPercentage: true,
-    },
-    {
-      label: "Events Held",
+      label: "Workshops Held",
       value: metrics.totalEvents,
       icon: CalendarDays,
       color: "text-blue-500",
@@ -91,7 +83,6 @@ export function CSVDashboardHero({ onViewEvents, onViewPeople, onViewAI }: CSVDa
               </div>
               <p className={cn("font-bold text-foreground", stat.isPrimary ? "text-3xl sm:text-4xl" : "text-2xl sm:text-3xl")}>
                 <CountUp end={stat.value} duration={600} />
-                {stat.isPercentage && <span className="text-lg">%</span>}
               </p>
               <p className="text-sm text-muted-foreground">{stat.label}</p>
             </div>
