@@ -1,6 +1,6 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { Users, UserCheck, TrendingDown } from "lucide-react";
+import { Users, UserCheck } from "lucide-react";
 import { EventAttendanceData, AttendeeRow } from "@/hooks/useEventAttendanceCSV";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -62,7 +62,7 @@ export function EventAttendanceTabs({ data, showEmail = false, label, activeTab,
       {label && <h3 className="text-lg font-semibold text-foreground">{label}</h3>}
 
       {/* KPI Cards — clickable to switch list */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 gap-3">
         <button
           onClick={() => onTabChange?.("actual")}
           className={cn(
@@ -102,14 +102,6 @@ export function EventAttendanceTabs({ data, showEmail = false, label, activeTab,
             <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1 font-medium">Showing list ↓</p>
           )}
         </button>
-
-        <div className="rounded-xl border p-4 bg-gradient-to-br from-red-500/5 to-red-500/10 border-red-500/20">
-          <div className="flex items-center gap-2">
-            <TrendingDown className="h-4 w-4 text-red-600 dark:text-red-400" />
-            <span className="text-sm text-muted-foreground">Returning Rate</span>
-          </div>
-          <p className="text-2xl font-bold text-foreground mt-1">{data.duplicateRate}%</p>
-        </div>
       </div>
 
       {/* Attendee list — synced with card selection */}
