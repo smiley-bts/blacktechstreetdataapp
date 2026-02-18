@@ -110,13 +110,25 @@ export function useEventAttendanceCSV() {
           loadCSV("/attendance/ltf-dec13-feedback.csv"),
         ]);
 
-        // June Day 1: columns are unnamed (index-based) - the CSV has no proper headers
-        // Format: ,FirstName,LastName,Yes/Attendance,Totals
+        // June Day 1: the CSV has NO real headers — the first data row (Carlos A Moreno)
+        // is consumed by PapaParse as column headers. Format: ,FirstName,LastName,Yes/Attendance,Totals
+        // Fix: reconstruct the first attendee from the field names, then read vals[1]/vals[2] for the rest.
         const day1Rows: AttendeeRow[] = [];
+
+        // Recover the first attendee whose row became the headers
+        if (day1Res.meta.fields && day1Res.meta.fields.length >= 3) {
+          const firstName = (day1Res.meta.fields[1] || "").trim();
+          const lastName = (day1Res.meta.fields[2] || "").trim();
+          if (firstName && lastName) {
+            day1Rows.push({ firstName, lastName });
+          }
+        }
+
         for (const row of day1Res.data) {
           const vals = Object.values(row);
-          const firstName = (vals[0] || "").toString().trim();
-          const lastName = (vals[1] || "").toString().trim();
+          // vals[0] = blank first column, vals[1] = first name, vals[2] = last name
+          const firstName = (vals[1] || "").toString().trim();
+          const lastName = (vals[2] || "").toString().trim();
           if (firstName && lastName) {
             day1Rows.push({ firstName, lastName });
           }
