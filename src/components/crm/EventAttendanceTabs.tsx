@@ -67,7 +67,7 @@ export function EventAttendanceTabs({ data, showEmail = false, label }: EventAtt
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
               <UserCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-              <span className="text-sm text-muted-foreground">Unique Attendees</span>
+              <span className="text-sm text-muted-foreground">New Attendees</span>
             </div>
             <p className="text-2xl font-bold text-foreground mt-1">{data.dedupeCount}</p>
           </CardContent>
@@ -76,7 +76,7 @@ export function EventAttendanceTabs({ data, showEmail = false, label }: EventAtt
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
               <TrendingDown className="h-4 w-4 text-red-600 dark:text-red-400" />
-              <span className="text-sm text-muted-foreground">Duplicate Rate</span>
+              <span className="text-sm text-muted-foreground">Returning Rate</span>
             </div>
             <p className="text-2xl font-bold text-foreground mt-1">{data.duplicateRate}%</p>
           </CardContent>
@@ -90,7 +90,7 @@ export function EventAttendanceTabs({ data, showEmail = false, label }: EventAtt
             Actual ({data.rawCount})
           </TabsTrigger>
           <TabsTrigger value="nodupe" className="flex-1">
-            Non-Duplicate ({data.dedupeCount})
+            New Attendees ({data.dedupeCount})
           </TabsTrigger>
         </TabsList>
         <TabsContent value="actual">
