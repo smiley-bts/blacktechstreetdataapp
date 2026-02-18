@@ -25,6 +25,10 @@ function dedupeByEmail(rows: Row[], emailField: string): Row[] {
   });
 }
 
+function hasName(r: Row, firstField: string, lastField: string): boolean {
+  return !!(r[firstField] || r[lastField] || "").trim();
+}
+
 export interface EventMetric {
   name: string;
   registrants: number;
@@ -44,7 +48,7 @@ export interface CSVDashboardMetrics {
 export function useCSVDashboardMetrics(): CSVDashboardMetrics {
   const [data, setData] = useState<{
     juneSignup: Row[];
-    juneMaster: Row[];  // authoritative attendance file
+    juneMaster: Row[];
     septSignup: Row[];
     decSignup: Row[];
     septAtt: Row[];
@@ -57,7 +61,7 @@ export function useCSVDashboardMetrics(): CSVDashboardMetrics {
       try {
         const [juneSignup, juneMaster, septSignup, decSignup, septAtt, decAtt] = await Promise.all([
           loadCSV("/signups/june-aspire-signup.csv"),
-          loadCSV("/aspire-june2025-attendance.csv"),  // master file is source of truth
+          loadCSV("/aspire-june2025-attendance.csv"),
           loadCSV("/signups/sept27-signup.csv"),
           loadCSV("/signups/dec6-registration.csv"),
           loadCSV("/attendance/sept27-attendance.csv"),
@@ -78,27 +82,45 @@ export function useCSVDashboardMetrics(): CSVDashboardMetrics {
       return { totalRegistrants: 0, totalAttendees: 0, overallRate: 0, totalEvents: 4, events: [], loading };
     }
 
-    // June: use master attendance file as source of truth
-    // Master file has Day1 Attendance + Day2 Attendance columns
-    const juneReg = data.juneSignup.length;
-    const juneAttendees = data.juneMaster.filter(r => {
+    // ── June ──────────────────────────────────────────────────────────────────
+    // Registrants: signup rows that have a name (filters out empty/partial rows)
+    const juneRegistrants = data.juneSignup.filter(r =>
+      (r["What's Your Full Name?"] || r["First Name"] || r["Last Name"] || "").trim()
+    );
+    const juneReg = juneRegistrants.length;
+
+    // Attendees: master file rows where Day1 OR Day2 = "Yes"
+    const juneAtt = data.juneMaster.filter(r => {
       const d1 = (r["Day1 Attendance"] || "").toLowerCase() === "yes";
       const d2 = (r["Day2 Attendance"] || "").toLowerCase() === "yes";
       return d1 || d2;
-    });
-    const juneAtt = juneAttendees.length;
+    }).length;
 
-    // Sept: email-based dedup, checkins >= 1
-    const septReg = data.septSignup.length;
-    const septAttended = data.septAtt.filter(r => parseInt(r["Total check-ins"] || "0", 10) >= 1);
-    const septDeduped = dedupeByEmail(septAttended, "Email");
-    const septAtt = septDeduped.length;
+    // ── Sept 27 ───────────────────────────────────────────────────────────────
+    // Registrants: signup rows with a first or last name (deduped by email)
+    const septValidSignups = data.septSignup.filter(r =>
+      hasName(r, "What's your first name?", "What's your last name?")
+    );
+    const septDeduped = dedupeByEmail(septValidSignups, "What's your email?");
+    const septReg = septDeduped.length;
 
-    // Dec: email-based dedup, checkins >= 1
-    const decReg = data.decSignup.length;
-    const decAttended = data.decAtt.filter(r => parseInt(r["Total check-ins"] || "0", 10) >= 1);
-    const decDeduped = dedupeByEmail(decAttended, "Email");
-    const decAtt = decDeduped.length;
+    // Attendees: check-in file, checked in >= 1, deduped by email
+    const septCheckedIn = data.septAtt.filter(r => parseInt(r["Total check-ins"] || "0", 10) >= 1);
+    const septAttDeduped = dedupeByEmail(septCheckedIn, "Email");
+    const septAtt = septAttDeduped.length;
+
+    // ── Dec 6 ─────────────────────────────────────────────────────────────────
+    // Registrants: signup rows with a first or last name (deduped by email)
+    const decValidSignups = data.decSignup.filter(r =>
+      hasName(r, "What's your first name?", "What's your last name?")
+    );
+    const decDeduped = dedupeByEmail(decValidSignups, "What's your email?");
+    const decReg = decDeduped.length;
+
+    // Attendees: check-in file, checked in >= 1, deduped by email
+    const decCheckedIn = data.decAtt.filter(r => parseInt(r["Total check-ins"] || "0", 10) >= 1);
+    const decAttDeduped = dedupeByEmail(decCheckedIn, "Email");
+    const decAtt = decAttDeduped.length;
 
     const events: EventMetric[] = [
       { name: "June ASPIRE", registrants: juneReg, attendees: juneAtt, rate: juneReg > 0 ? Math.round((juneAtt / juneReg) * 100) : 0 },
