@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Users, PartyPopper, GraduationCap, Sparkles, Rocket, UserCheck, ClipboardList, Wrench, ExternalLink } from "lucide-react";
 import { useEventAttendanceCSV } from "@/hooks/useEventAttendanceCSV";
+import { useCSVDashboardMetrics } from "@/hooks/useCSVDashboardMetrics";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface EventsDashboardProps {
@@ -33,6 +34,7 @@ const EVENT_TYPE_LABELS: Record<string, string> = {
 export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps) {
   const navigate = useNavigate();
   const csvData = useEventAttendanceCSV();
+  const dashboardMetrics = useCSVDashboardMetrics();
 
   const events: EventDisplayInfo[] = useMemo(() => {
     if (csvData.loading) return [];
@@ -134,9 +136,9 @@ export function EventsDashboard({ contacts, onEventClick }: EventsDashboardProps
               </div>
               <div>
                 <p className="text-2xl sm:text-3xl font-bold text-foreground">
-                  {csvData.sept27All.rsvps + csvData.dec6All.rsvps}
+                  {dashboardMetrics.totalRegistrants}
                 </p>
-                <p className="text-sm text-muted-foreground">Total RSVPs</p>
+                <p className="text-sm text-muted-foreground">Total Registrants</p>
               </div>
             </div>
           </CardContent>
