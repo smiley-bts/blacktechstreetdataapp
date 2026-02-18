@@ -1,11 +1,12 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ArrowLeft, Users, UserCheck, Calendar, Rocket, GraduationCap, PartyPopper, Sparkles, ClipboardList, Wrench, ShieldCheck } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { LTFDashboard } from "@/components/dashboard/LTFDashboard";
 import { EventAttendanceTabs } from "@/components/crm/EventAttendanceTabs";
 import { DemographicComparisonCharts } from "@/components/crm/DemographicComparisonCharts";
@@ -80,6 +81,28 @@ export default function EventBreakdown() {
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
   const csvData = useEventAttendanceCSV();
+  const listRef = useRef<HTMLDivElement>(null);
+
+  // June: which day tab is active
+  const [juneDayTab, setJuneDayTab] = useState<"day1" | "day2" | "combined">("day1");
+  // Per-day list tab
+  const [juneDay1Tab, setJuneDay1Tab] = useState<"actual" | "nodupe">("actual");
+  const [juneDay2Tab, setJuneDay2Tab] = useState<"actual" | "nodupe">("actual");
+  const [juneCombinedTab, setJuneCombinedTab] = useState<"actual" | "nodupe">("actual");
+  // Single-day events list tab
+  const [singleListTab, setSingleListTab] = useState<"actual" | "nodupe">("actual");
+
+  function scrollToList() {
+    setTimeout(() => listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+  }
+
+  function handleJuneKPI(day: "day1" | "day2" | "combined", tab: "actual" | "nodupe") {
+    setJuneDayTab(day);
+    if (day === "day1") setJuneDay1Tab(tab);
+    else if (day === "day2") setJuneDay2Tab(tab);
+    else setJuneCombinedTab(tab);
+    scrollToList();
+  }
 
   const event = eventId ? EVENTS[eventId] : null;
 
@@ -207,66 +230,82 @@ export default function EventBreakdown() {
             </div>
           </div>
 
-          {/* Combined KPIs */}
+          {/* Combined KPIs — clickable to jump to relevant list */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <Card className="bg-gradient-to-br from-amber-500/5 to-amber-500/10 border-amber-500/20">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                  <span className="text-sm text-muted-foreground">Total Sign-ins</span>
-                </div>
-                <p className="text-2xl font-bold text-foreground mt-1">{csvData.june.combined.rawCount}</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-gradient-to-br from-emerald-500/5 to-emerald-500/10 border-emerald-500/20">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2">
-                  <UserCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-                  <span className="text-sm text-muted-foreground">Unique (Both Days)</span>
-                </div>
-                <p className="text-2xl font-bold text-foreground mt-1">{csvData.june.combined.dedupeCount}</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-gradient-to-br from-cyan-500/5 to-cyan-500/10 border-cyan-500/20">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
-                  <span className="text-sm text-muted-foreground">Day 1 Unique</span>
-                </div>
-                <p className="text-2xl font-bold text-foreground mt-1">{csvData.june.day1.dedupeCount}</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-gradient-to-br from-cyan-500/5 to-cyan-500/10 border-cyan-500/20">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
-                  <span className="text-sm text-muted-foreground">Day 2 Unique</span>
-                </div>
-                <p className="text-2xl font-bold text-foreground mt-1">{csvData.june.day2.dedupeCount}</p>
-              </CardContent>
-            </Card>
+            <button
+              onClick={() => handleJuneKPI("combined", "actual")}
+              className={cn("text-left rounded-xl border p-4 transition-all duration-200 bg-gradient-to-br from-amber-500/5 to-amber-500/10 border-amber-500/20",
+                juneDayTab === "combined" && juneCombinedTab === "actual" ? "ring-2 ring-amber-500 shadow-md" : "hover:ring-1 hover:ring-amber-500/50")}
+            >
+              <div className="flex items-center gap-2">
+                <Users className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                <span className="text-sm text-muted-foreground">Total Sign-ins</span>
+              </div>
+              <p className="text-2xl font-bold text-foreground mt-1">{csvData.june.combined.rawCount}</p>
+            </button>
+
+            <button
+              onClick={() => handleJuneKPI("combined", "nodupe")}
+              className={cn("text-left rounded-xl border p-4 transition-all duration-200 bg-gradient-to-br from-emerald-500/5 to-emerald-500/10 border-emerald-500/20",
+                juneDayTab === "combined" && juneCombinedTab === "nodupe" ? "ring-2 ring-emerald-500 shadow-md" : "hover:ring-1 hover:ring-emerald-500/50")}
+            >
+              <div className="flex items-center gap-2">
+                <UserCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                <span className="text-sm text-muted-foreground">Unique (Both Days)</span>
+              </div>
+              <p className="text-2xl font-bold text-foreground mt-1">{csvData.june.combined.dedupeCount}</p>
+            </button>
+
+            <button
+              onClick={() => handleJuneKPI("day1", "nodupe")}
+              className={cn("text-left rounded-xl border p-4 transition-all duration-200 bg-gradient-to-br from-cyan-500/5 to-cyan-500/10 border-cyan-500/20",
+                juneDayTab === "day1" ? "ring-2 ring-cyan-500 shadow-md" : "hover:ring-1 hover:ring-cyan-500/50")}
+            >
+              <div className="flex items-center gap-2">
+                <Users className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
+                <span className="text-sm text-muted-foreground">Day 1 Unique</span>
+              </div>
+              <p className="text-2xl font-bold text-foreground mt-1">{csvData.june.day1.dedupeCount}</p>
+            </button>
+
+            <button
+              onClick={() => handleJuneKPI("day2", "nodupe")}
+              className={cn("text-left rounded-xl border p-4 transition-all duration-200 bg-gradient-to-br from-cyan-500/5 to-cyan-500/10 border-cyan-500/20",
+                juneDayTab === "day2" ? "ring-2 ring-cyan-500 shadow-md" : "hover:ring-1 hover:ring-cyan-500/50")}
+            >
+              <div className="flex items-center gap-2">
+                <Users className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
+                <span className="text-sm text-muted-foreground">Day 2 Unique</span>
+              </div>
+              <p className="text-2xl font-bold text-foreground mt-1">{csvData.june.day2.dedupeCount}</p>
+            </button>
           </div>
 
           {/* Demographic Comparison Charts */}
           <DemographicComparisonCharts eventKey="june2025Event" eventName={event.name} />
 
-          {/* Day tabs with Actual/NonDupe inside */}
-          <Tabs defaultValue="day1" className="w-full">
-            <TabsList>
-              <TabsTrigger value="day1">Day 1</TabsTrigger>
-              <TabsTrigger value="day2">Day 2</TabsTrigger>
-              <TabsTrigger value="combined">Combined</TabsTrigger>
-            </TabsList>
-            <TabsContent value="day1">
-              <EventAttendanceTabs data={csvData.june.day1} label="Day 1 — June 27, 2025" />
-            </TabsContent>
-            <TabsContent value="day2">
-              <EventAttendanceTabs data={csvData.june.day2} label="Day 2 — June 28, 2025" />
-            </TabsContent>
-            <TabsContent value="combined">
-              <EventAttendanceTabs data={csvData.june.combined} label="Combined (Both Days)" />
-            </TabsContent>
-          </Tabs>
+          {/* Day tabs — controlled by KPI cards above */}
+          <div ref={listRef}>
+            <Tabs value={juneDayTab} onValueChange={(v) => setJuneDayTab(v as "day1" | "day2" | "combined")} className="w-full">
+              <TabsList>
+                <TabsTrigger value="day1">Day 1</TabsTrigger>
+                <TabsTrigger value="day2">Day 2</TabsTrigger>
+                <TabsTrigger value="combined">Combined</TabsTrigger>
+              </TabsList>
+              <TabsContent value="day1">
+                <EventAttendanceTabs data={csvData.june.day1} label="Day 1 — June 27, 2025"
+                  activeTab={juneDay1Tab} onTabChange={setJuneDay1Tab} />
+              </TabsContent>
+              <TabsContent value="day2">
+                <EventAttendanceTabs data={csvData.june.day2} label="Day 2 — June 28, 2025"
+                  activeTab={juneDay2Tab} onTabChange={setJuneDay2Tab} />
+              </TabsContent>
+              <TabsContent value="combined">
+                <EventAttendanceTabs data={csvData.june.combined} label="Combined (Both Days)"
+                  activeTab={juneCombinedTab} onTabChange={setJuneCombinedTab} />
+              </TabsContent>
+            </Tabs>
+          </div>
         </div>
       </div>
     );
@@ -305,35 +344,39 @@ export default function EventBreakdown() {
           </div>
         </div>
 
-        {/* RSVP summary if available */}
+        {/* RSVP summary — clickable KPI cards */}
         {rsvpInfo && (
           <div className="grid grid-cols-2 gap-4">
-            <Card className="bg-gradient-to-br from-amber-500/5 to-amber-500/10 border-amber-500/20">
-              <CardContent className="p-4 sm:p-6">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-amber-500/10">
-                    <Users className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-                  </div>
-                  <div>
-                    <p className="text-2xl sm:text-3xl font-bold text-foreground">{rsvpInfo.rsvps}</p>
-                    <p className="text-sm text-muted-foreground">RSVPs</p>
-                  </div>
+            <button
+              onClick={() => { setSingleListTab("actual"); scrollToList(); }}
+              className={cn("text-left rounded-xl border p-4 sm:p-6 transition-all duration-200 bg-gradient-to-br from-amber-500/5 to-amber-500/10 border-amber-500/20",
+                singleListTab === "actual" ? "ring-2 ring-amber-500 shadow-md" : "hover:ring-1 hover:ring-amber-500/50")}
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-amber-500/10">
+                  <Users className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                 </div>
-              </CardContent>
-            </Card>
-            <Card className="bg-gradient-to-br from-emerald-500/5 to-emerald-500/10 border-emerald-500/20">
-              <CardContent className="p-4 sm:p-6">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-emerald-500/10">
-                    <UserCheck className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-                  </div>
-                  <div>
-                    <p className="text-2xl sm:text-3xl font-bold text-foreground">{singleDayData.dedupeCount}</p>
-                    <p className="text-sm text-muted-foreground">Unique Attendees</p>
-                  </div>
+                <div>
+                  <p className="text-2xl sm:text-3xl font-bold text-foreground">{rsvpInfo.rsvps}</p>
+                  <p className="text-sm text-muted-foreground">RSVPs</p>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </button>
+            <button
+              onClick={() => { setSingleListTab("nodupe"); scrollToList(); }}
+              className={cn("text-left rounded-xl border p-4 sm:p-6 transition-all duration-200 bg-gradient-to-br from-emerald-500/5 to-emerald-500/10 border-emerald-500/20",
+                singleListTab === "nodupe" ? "ring-2 ring-emerald-500 shadow-md" : "hover:ring-1 hover:ring-emerald-500/50")}
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-emerald-500/10">
+                  <UserCheck className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <div>
+                  <p className="text-2xl sm:text-3xl font-bold text-foreground">{singleDayData.dedupeCount}</p>
+                  <p className="text-sm text-muted-foreground">New Attendees</p>
+                </div>
+              </div>
+            </button>
           </div>
         )}
         {/* Demographic Comparison Charts */}
@@ -341,8 +384,11 @@ export default function EventBreakdown() {
           <DemographicComparisonCharts eventKey={eventId as EventKey} eventName={event.name} />
         )}
 
-        {/* Actual/NonDupe Tabs */}
-        <EventAttendanceTabs data={singleDayData} showEmail={event.showEmail} />
+        {/* Attendee list — controlled by KPI cards above */}
+        <div ref={listRef}>
+          <EventAttendanceTabs data={singleDayData} showEmail={event.showEmail}
+            activeTab={singleListTab} onTabChange={setSingleListTab} />
+        </div>
       </div>
     </div>
   );
