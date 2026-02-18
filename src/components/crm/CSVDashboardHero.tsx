@@ -23,7 +23,7 @@ export function CSVDashboardHero({ onViewEvents, onViewPeople, onViewAI }: CSVDa
       bgColor: "bg-amber-500/10",
     },
     {
-      label: "Total Attendees",
+      label: "Certificate Holders",
       value: metrics.totalAttendees,
       icon: UserCheck,
       color: "text-emerald-500",

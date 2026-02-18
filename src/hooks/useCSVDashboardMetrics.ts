@@ -15,35 +15,12 @@ async function loadCSV(path: string): Promise<Row[]> {
   }
 }
 
-function findField(rows: Row[], ...candidates: string[]): string {
-  if (!rows[0]) return candidates[0] || "";
-  const headers = Object.keys(rows[0]);
-  for (const c of candidates) {
-    const match = headers.find(h => h.trim().toLowerCase() === c.toLowerCase());
-    if (match) return match;
-  }
-  return candidates[0] || "";
-}
-
 function dedupeByEmail(rows: Row[], emailField: string): Row[] {
   const seen = new Set<string>();
   return rows.filter(r => {
     const e = (r[emailField] || "").toLowerCase().trim();
     if (!e || seen.has(e)) return false;
     seen.add(e);
-    return true;
-  });
-}
-
-function dedupeByName(rows: Row[]): Row[] {
-  const seen = new Set<string>();
-  return rows.filter(r => {
-    const vals = Object.values(r);
-    const fn = (r["First Name"] || vals[0] || "").toLowerCase().trim();
-    const ln = (r["Last Name"] || vals[1] || "").toLowerCase().trim();
-    const key = `${fn}_${ln}`;
-    if (seen.has(key)) return false;
-    seen.add(key);
     return true;
   });
 }
@@ -67,10 +44,9 @@ export interface CSVDashboardMetrics {
 export function useCSVDashboardMetrics(): CSVDashboardMetrics {
   const [data, setData] = useState<{
     juneSignup: Row[];
+    juneMaster: Row[];  // authoritative attendance file
     septSignup: Row[];
     decSignup: Row[];
-    juneAtt1: Row[];
-    juneAtt2: Row[];
     septAtt: Row[];
     decAtt: Row[];
   } | null>(null);
@@ -79,16 +55,15 @@ export function useCSVDashboardMetrics(): CSVDashboardMetrics {
   useEffect(() => {
     async function load() {
       try {
-        const [juneSignup, septSignup, decSignup, juneAtt1, juneAtt2, septAtt, decAtt] = await Promise.all([
+        const [juneSignup, juneMaster, septSignup, decSignup, septAtt, decAtt] = await Promise.all([
           loadCSV("/signups/june-aspire-signup.csv"),
+          loadCSV("/aspire-june2025-attendance.csv"),  // master file is source of truth
           loadCSV("/signups/sept27-signup.csv"),
           loadCSV("/signups/dec6-registration.csv"),
-          loadCSV("/attendance/june-aspire-day1.csv"),
-          loadCSV("/attendance/june-aspire-day2.csv"),
           loadCSV("/attendance/sept27-attendance.csv"),
           loadCSV("/attendance/dec6-attendance.csv"),
         ]);
-        setData({ juneSignup, septSignup, decSignup, juneAtt1, juneAtt2, septAtt, decAtt });
+        setData({ juneSignup, juneMaster, septSignup, decSignup, septAtt, decAtt });
       } catch (err) {
         console.error("Failed to load CSV metrics:", err);
       } finally {
@@ -103,19 +78,23 @@ export function useCSVDashboardMetrics(): CSVDashboardMetrics {
       return { totalRegistrants: 0, totalAttendees: 0, overallRate: 0, totalEvents: 4, events: [], loading };
     }
 
-    // June: name-based dedup
+    // June: use master attendance file as source of truth
+    // Master file has Day1 Attendance + Day2 Attendance columns
     const juneReg = data.juneSignup.length;
-    const juneCombined = [...data.juneAtt1, ...data.juneAtt2];
-    const juneDeduped = dedupeByName(juneCombined);
-    const juneAtt = juneDeduped.length;
+    const juneAttendees = data.juneMaster.filter(r => {
+      const d1 = (r["Day1 Attendance"] || "").toLowerCase() === "yes";
+      const d2 = (r["Day2 Attendance"] || "").toLowerCase() === "yes";
+      return d1 || d2;
+    });
+    const juneAtt = juneAttendees.length;
 
-    // Sept: email-based, checkins >= 1
+    // Sept: email-based dedup, checkins >= 1
     const septReg = data.septSignup.length;
     const septAttended = data.septAtt.filter(r => parseInt(r["Total check-ins"] || "0", 10) >= 1);
     const septDeduped = dedupeByEmail(septAttended, "Email");
     const septAtt = septDeduped.length;
 
-    // Dec: email-based, checkins >= 1
+    // Dec: email-based dedup, checkins >= 1
     const decReg = data.decSignup.length;
     const decAttended = data.decAtt.filter(r => parseInt(r["Total check-ins"] || "0", 10) >= 1);
     const decDeduped = dedupeByEmail(decAttended, "Email");
