@@ -10,9 +10,9 @@ export interface AttendeeRow {
 
 export interface EventAttendanceData {
   rawRows: AttendeeRow[];
-  deduplicatedRows: AttendeeRow[];
+  deduplicatedRows: AttendeeRow[];  // "New Attendees" = first-timers across all ASPIRE events
   rawCount: number;
-  dedupeCount: number;
+  dedupeCount: number;  // count of new attendees
   duplicateRate: number;
   loading: boolean;
 }
@@ -25,6 +25,10 @@ interface MultiDayEventData {
 
 function normalizeKey(firstName: string, lastName: string): string {
   return `${(firstName || "").toLowerCase().trim()}_${(lastName || "").toLowerCase().trim()}`;
+}
+
+function normalizeEmail(email: string): string {
+  return (email || "").toLowerCase().trim();
 }
 
 function deduplicateByName(rows: AttendeeRow[]): AttendeeRow[] {
@@ -41,7 +45,7 @@ function deduplicateByName(rows: AttendeeRow[]): AttendeeRow[] {
 function deduplicateByEmail(rows: AttendeeRow[]): AttendeeRow[] {
   const seen = new Map<string, AttendeeRow>();
   for (const row of rows) {
-    const key = (row.email || "").toLowerCase().trim();
+    const key = normalizeEmail(row.email || "");
     if (key && !seen.has(key)) {
       seen.set(key, row);
     }
@@ -49,11 +53,34 @@ function deduplicateByEmail(rows: AttendeeRow[]): AttendeeRow[] {
   return Array.from(seen.values());
 }
 
-function buildAttendanceData(raw: AttendeeRow[], deduped: AttendeeRow[]): EventAttendanceData {
+/**
+ * Filter rows to only "New Attendees" — people who have NOT appeared
+ * in any of the prior events' attendee sets.
+ * Uses email matching where available, falls back to name matching.
+ */
+function filterNewAttendees(rows: AttendeeRow[], priorAttendees: AttendeeRow[]): AttendeeRow[] {
+  const priorEmails = new Set<string>();
+  const priorNames = new Set<string>();
+
+  for (const p of priorAttendees) {
+    const email = normalizeEmail(p.email || "");
+    if (email) priorEmails.add(email);
+    priorNames.add(normalizeKey(p.firstName, p.lastName));
+  }
+
+  return rows.filter(row => {
+    const email = normalizeEmail(row.email || "");
+    if (email && priorEmails.has(email)) return false;
+    if (priorNames.has(normalizeKey(row.firstName, row.lastName))) return false;
+    return true;
+  });
+}
+
+function buildAttendanceData(raw: AttendeeRow[], newAttendees: AttendeeRow[]): EventAttendanceData {
   const rawCount = raw.length;
-  const dedupeCount = deduped.length;
+  const dedupeCount = newAttendees.length;
   const duplicateRate = rawCount > 0 ? Math.round(((rawCount - dedupeCount) / rawCount) * 100) : 0;
-  return { rawRows: raw, deduplicatedRows: deduped, rawCount, dedupeCount, duplicateRate, loading: false };
+  return { rawRows: raw, deduplicatedRows: newAttendees, rawCount, dedupeCount, duplicateRate, loading: false };
 }
 
 async function loadCSV(path: string): Promise<Papa.ParseResult<Record<string, string>>> {
@@ -162,47 +189,64 @@ export function useEventAttendanceCSV() {
     loadAll();
   }, []);
 
+  // ── June ASPIRE (first event — all unique attendees are "new") ──────────────
+  const juneAllAttendees = useMemo(() => {
+    if (loading) return [];
+    return deduplicateByName([...juneDay1Raw, ...juneDay2Raw]);
+  }, [juneDay1Raw, juneDay2Raw, loading]);
+
   const juneDay1 = useMemo<EventAttendanceData>(() => {
     if (loading) return { rawRows: [], deduplicatedRows: [], rawCount: 0, dedupeCount: 0, duplicateRate: 0, loading: true };
+    // June Day 1: first event ever — all unique attendees are new
     const deduped = deduplicateByName(juneDay1Raw);
     return buildAttendanceData(juneDay1Raw, deduped);
   }, [juneDay1Raw, loading]);
 
   const juneDay2 = useMemo<EventAttendanceData>(() => {
     if (loading) return { rawRows: [], deduplicatedRows: [], rawCount: 0, dedupeCount: 0, duplicateRate: 0, loading: true };
-    const deduped = deduplicateByName(juneDay2Raw);
-    return buildAttendanceData(juneDay2Raw, deduped);
-  }, [juneDay2Raw, loading]);
+    // June Day 2: new = not in Day 1
+    const newAttendees = filterNewAttendees(deduplicateByName(juneDay2Raw), juneDay1Raw);
+    return buildAttendanceData(juneDay2Raw, newAttendees);
+  }, [juneDay1Raw, juneDay2Raw, loading]);
 
   const juneCombined = useMemo<EventAttendanceData>(() => {
     if (loading) return { rawRows: [], deduplicatedRows: [], rawCount: 0, dedupeCount: 0, duplicateRate: 0, loading: true };
     const allRaw = [...juneDay1Raw, ...juneDay2Raw];
+    // Combined: unique individuals (June is the first event, so all uniques are "new")
     const deduped = deduplicateByName(allRaw);
     return buildAttendanceData(allRaw, deduped);
   }, [juneDay1Raw, juneDay2Raw, loading]);
 
   const june: MultiDayEventData = { day1: juneDay1, day2: juneDay2, combined: juneCombined };
 
+  // ── Sept Build Day (second event — new = not in any June attendance) ────────
   const sept27 = useMemo<EventAttendanceData>(() => {
     if (loading) return { rawRows: [], deduplicatedRows: [], rawCount: 0, dedupeCount: 0, duplicateRate: 0, loading: true };
-    // Only rows with checkins >= 1 are "actual" attendees
     const attended = sept27Raw.filter(r => (r.checkins || 0) >= 1);
-    const deduped = deduplicateByEmail(attended);
-    // Raw = all RSVPs, deduped = unique attendees
-    return buildAttendanceData(attended, deduped);
-  }, [sept27Raw, loading]);
+    const uniqueAttended = deduplicateByEmail(attended);
+    const newAttendees = filterNewAttendees(uniqueAttended, juneAllAttendees);
+    return buildAttendanceData(attended, newAttendees);
+  }, [sept27Raw, juneAllAttendees, loading]);
 
   const sept27All = useMemo(() => {
     if (loading) return { rsvps: 0, attended: 0 };
     return { rsvps: sept27Raw.length, attended: sept27Raw.filter(r => (r.checkins || 0) >= 1).length };
   }, [sept27Raw, loading]);
 
+  // ── Dec Workshop (third event — new = not in June OR Sept) ─────────────────
+  const septAllAttendees = useMemo(() => {
+    if (loading) return [];
+    return sept27Raw.filter(r => (r.checkins || 0) >= 1);
+  }, [sept27Raw, loading]);
+
   const dec6 = useMemo<EventAttendanceData>(() => {
     if (loading) return { rawRows: [], deduplicatedRows: [], rawCount: 0, dedupeCount: 0, duplicateRate: 0, loading: true };
     const attended = dec6Raw.filter(r => (r.checkins || 0) >= 1);
-    const deduped = deduplicateByEmail(attended);
-    return buildAttendanceData(attended, deduped);
-  }, [dec6Raw, loading]);
+    const uniqueAttended = deduplicateByEmail(attended);
+    const priorAttendees = [...juneAllAttendees, ...septAllAttendees];
+    const newAttendees = filterNewAttendees(uniqueAttended, priorAttendees);
+    return buildAttendanceData(attended, newAttendees);
+  }, [dec6Raw, juneAllAttendees, septAllAttendees, loading]);
 
   const dec6All = useMemo(() => {
     if (loading) return { rsvps: 0, attended: 0 };
@@ -211,7 +255,6 @@ export function useEventAttendanceCSV() {
 
   const ltf = useMemo<EventAttendanceData>(() => {
     if (loading) return { rawRows: [], deduplicatedRows: [], rawCount: 0, dedupeCount: 0, duplicateRate: 0, loading: true };
-    // Each submission is unique
     return buildAttendanceData(ltfRaw, ltfRaw);
   }, [ltfRaw, loading]);
 
