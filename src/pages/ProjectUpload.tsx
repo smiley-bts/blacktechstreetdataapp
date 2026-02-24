@@ -98,27 +98,23 @@ export default function ProjectUpload() {
     setLoading(true);
 
     try {
-      // ── Resolve registration by QR token ─────────────────
+      // ── Resolve registration by QR token (stubbed — tables not yet created) ──
       let registrationId: string | null = null;
       let email: string | null = null;
       let fullName: string | null = null;
 
-      if (qrToken) {
-        const { data: reg } = await supabase
-          .from("event_registrations")
-          .select("id, email, full_name")
-          .eq("qr_token", qrToken)
-          .eq("event_id", eventId)
-          .single();
+      // TODO: Uncomment when event_registrations table exists
+      // if (qrToken) {
+      //   const { data: reg } = await supabase
+      //     .from("event_registrations")
+      //     .select("id, email, full_name")
+      //     .eq("qr_token", qrToken)
+      //     .eq("event_id", eventId)
+      //     .single();
+      //   if (reg) { registrationId = reg.id; email = reg.email; fullName = reg.full_name; }
+      // }
 
-        if (reg) {
-          registrationId = reg.id;
-          email = reg.email;
-          fullName = reg.full_name;
-        }
-      }
-
-      // ── Upload file to Supabase Storage ───────────────────
+      // ── Upload file to storage ───────────────────
       let fileUrl: string | null = null;
       let storagePath: string | null = null;
       let fileName: string | null = null;
@@ -146,27 +142,11 @@ export default function ProjectUpload() {
         fileUrl = urlData?.publicUrl || null;
       }
 
-      // ── Insert project_submission ─────────────────────────
-      const { error: insertError } = await supabase
-        .from("project_submissions")
-        .insert({
-          event_id:            eventId,
-          registration_id:     registrationId,
-          email,
-          full_name:           fullName,
-          team_name:           teamName.trim() || null,
-          project_title:       title.trim(),
-          project_description: description.trim() || null,
-          project_category:    category || null,
-          file_url:            fileUrl,
-          file_name:           fileName,
-          file_type:           fileType,
-          file_size_bytes:     fileSizeBytes,
-          storage_path:        storagePath,
-          demo_url:            demoUrl.trim() || null,
-        });
-
-      if (insertError) throw insertError;
+      // ── Insert project submission (stubbed — table not yet created) ──
+      // TODO: Uncomment when project_submissions table exists
+      console.log("Project submission (stubbed):", {
+        eventId, registrationId, email, fullName, title, description, category, teamName, demoUrl, fileUrl,
+      });
 
       setSubmitted(true);
 
