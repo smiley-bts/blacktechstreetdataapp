@@ -23,6 +23,7 @@ import AspireEnterprise from "./pages/AspireEnterprise";
 import InvestNorth from "./pages/InvestNorth";
 import Dec6Aspire from "./pages/Dec6Aspire";
 import TechHubsQ1Report from "./pages/TechHubsQ1Report";
+import CheckIn from "./pages/CheckIn";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -52,6 +53,7 @@ function AnimatedRoutes() {
         <Route path="/dec6aspire" element={<Dec6Aspire />} />
         <Route path="/gacereport" element={<TechHubsQ1Report />} />
         <Route path="/g-acereport" element={<TechHubsQ1Report />} />
+        <Route path="/checkin/:eventId" element={<CheckIn />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
