@@ -25,6 +25,10 @@ import Dec6Aspire from "./pages/Dec6Aspire";
 import TechHubsQ1Report from "./pages/TechHubsQ1Report";
 import CheckIn from "./pages/CheckIn";
 import ProjectUpload from "./pages/ProjectUpload";
+import StaffHome from "./pages/StaffHome";
+import EventSelect from "./pages/EventSelect";
+import EventKiosk from "./pages/EventKiosk";
+import LaptopInventory from "./pages/LaptopInventory";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -56,6 +60,11 @@ function AnimatedRoutes() {
         <Route path="/g-acereport" element={<TechHubsQ1Report />} />
         <Route path="/checkin/:eventId" element={<CheckIn />} />
         <Route path="/upload/:eventId" element={<ProjectUpload />} />
+        {/* Staff routes */}
+        <Route path="/staff" element={<StaffHome />} />
+        <Route path="/staff/events" element={<EventSelect />} />
+        <Route path="/staff/checkin/:eventId" element={<EventKiosk />} />
+        <Route path="/staff/laptops" element={<LaptopInventory />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
