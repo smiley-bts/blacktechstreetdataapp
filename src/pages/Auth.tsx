@@ -194,6 +194,21 @@ export default function Auth() {
               {isLoading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
+          <div className="mt-4 pt-4 border-t border-border">
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => {
+                localStorage.setItem('demo-mode', 'true');
+                navigate('/admin-dashboard');
+              }}
+            >
+              Enter Demo Mode
+            </Button>
+            <p className="text-xs text-muted-foreground text-center mt-2">
+              No credentials required — UI preview only
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>
