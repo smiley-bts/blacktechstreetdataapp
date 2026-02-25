@@ -87,11 +87,51 @@ const clearRateLimit = (): void => {
   }
 };
 
+const DEMO_MODE_KEY = 'demo-mode';
+
+const DEMO_USER: User = {
+  id: 'demo-user-id',
+  email: 'demo@blacktechstreet.com',
+  aud: 'authenticated',
+  role: 'authenticated',
+  app_metadata: {},
+  user_metadata: { display_name: 'Demo Admin' },
+  created_at: new Date().toISOString(),
+} as User;
+
+const DEMO_PROFILE: UserProfile = {
+  id: 'demo-user-id',
+  username: 'demo-admin',
+  display_name: 'Demo Admin',
+  email: 'demo@blacktechstreet.com',
+  role: 'admin',
+};
+
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const isDemoMode = typeof window !== 'undefined' && localStorage.getItem(DEMO_MODE_KEY) === 'true';
+
+  // If demo mode, return synthetic data immediately
+  if (isDemoMode) {
+    return {
+      user: DEMO_USER,
+      session: null,
+      profile: DEMO_PROFILE,
+      loading: false,
+      signIn: async () => ({ error: null }),
+      signOut: async () => {
+        localStorage.removeItem(DEMO_MODE_KEY);
+        window.location.href = '/auth';
+      },
+      updatePassword: async () => ({ error: { message: 'Not available in demo mode' } }),
+      isOwner: false,
+      isAdmin: true,
+    };
+  }
 
   useEffect(() => {
     // Set up auth state listener FIRST
