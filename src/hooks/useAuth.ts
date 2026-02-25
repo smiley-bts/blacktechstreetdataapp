@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
-export type AppRole = 'admin' | 'owner';
+export type AppRole = 'admin' | 'owner' | 'staff';
 
 export interface UserProfile {
   id: string;
@@ -130,6 +130,8 @@ export function useAuth() {
       updatePassword: async () => ({ error: { message: 'Not available in demo mode' } }),
       isOwner: false,
       isAdmin: true,
+      isStaff: false,
+      canManageUsers: true,
     };
   }
 
@@ -258,6 +260,8 @@ export function useAuth() {
 
   const isOwner = profile?.role === 'owner';
   const isAdmin = profile?.role === 'admin' || profile?.role === 'owner';
+  const isStaff = profile?.role === 'staff';
+  const canManageUsers = isOwner || isAdmin;
 
   return {
     user,
@@ -269,5 +273,7 @@ export function useAuth() {
     updatePassword,
     isOwner,
     isAdmin,
+    isStaff,
+    canManageUsers,
   };
 }
