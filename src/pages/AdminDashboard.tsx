@@ -24,7 +24,7 @@ import { UserManagementSection } from '@/components/admin/UserManagementSection'
 import { CRMUsageAnalytics } from '@/components/admin/CRMUsageAnalytics';
 
 export default function AdminDashboard() {
-  const { user, profile, loading, signOut, isOwner, isAdmin } = useAuth();
+  const { user, profile, loading, signOut, isOwner, isAdmin, canManageUsers } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('profile');
 
@@ -51,6 +51,11 @@ export default function AdminDashboard() {
     return null;
   }
 
+  const roleName = isOwner ? 'Owner' : isAdmin ? 'Admin' : 'Staff';
+  const tabs = canManageUsers
+    ? ['profile', 'users', 'analytics', 'reports', 'activity', 'contacts']
+    : ['profile', 'analytics', 'reports', 'activity', 'contacts'];
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -73,8 +78,12 @@ export default function AdminDashboard() {
             <div className="flex items-center gap-3">
               <Badge variant={isOwner ? 'default' : 'secondary'} className="flex items-center gap-1">
                 <Shield className="h-3 w-3" />
-                {isOwner ? 'Owner' : 'Admin'}
+                {roleName}
               </Badge>
+              <Button variant="outline" size="sm" onClick={() => navigate('/staff')}>
+                <Home className="h-4 w-4 mr-2" />
+                Staff Home
+              </Button>
               <Button variant="outline" size="sm" onClick={() => navigate('/')}>
                 <Home className="h-4 w-4 mr-2" />
                 CRM
@@ -91,15 +100,17 @@ export default function AdminDashboard() {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6 max-w-4xl">
+          <TabsList className={`grid w-full max-w-4xl ${canManageUsers ? 'grid-cols-6' : 'grid-cols-5'}`}>
             <TabsTrigger value="profile" className="flex items-center gap-2">
               <User className="h-4 w-4" />
               Profile
             </TabsTrigger>
-            <TabsTrigger value="users" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              Users
-            </TabsTrigger>
+            {canManageUsers && (
+              <TabsTrigger value="users" className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                Users
+              </TabsTrigger>
+            )}
             <TabsTrigger value="analytics" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
               Analytics
@@ -145,7 +156,7 @@ export default function AdminDashboard() {
                   <div>
                     <p className="text-sm text-muted-foreground">Role</p>
                     <Badge variant={isOwner ? 'default' : 'secondary'}>
-                      {profile.role?.charAt(0).toUpperCase()}{profile.role?.slice(1)}
+                      {roleName}
                     </Badge>
                   </div>
                 </div>
@@ -156,9 +167,11 @@ export default function AdminDashboard() {
             <PasswordChangeCard />
           </TabsContent>
 
-          <TabsContent value="users">
-            <UserManagementSection isOwner={isOwner} currentUserId={user.id} />
-          </TabsContent>
+          {canManageUsers && (
+            <TabsContent value="users">
+              <UserManagementSection isOwner={isOwner} currentUserId={user.id} />
+            </TabsContent>
+          )}
 
           <TabsContent value="analytics">
             <CRMUsageAnalytics />
