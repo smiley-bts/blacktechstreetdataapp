@@ -30,7 +30,7 @@ export default function Auth() {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [capsLockOn, setCapsLockOn] = useState(false);
-  const { signIn, user, loading, session } = useAuth();
+  const { signIn, user, loading, session, profile, isStaff } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   
@@ -38,10 +38,15 @@ export default function Auth() {
   const isResetMode = mode === 'reset' && session;
 
   useEffect(() => {
-    if (!loading && user && !isResetMode) {
-      navigate('/admin-dashboard');
+    if (!loading && user && profile && !isResetMode) {
+      // Redirect staff to staff home, admins/owners to admin dashboard
+      if (isStaff) {
+        navigate('/staff');
+      } else {
+        navigate('/admin-dashboard');
+      }
     }
-  }, [user, loading, navigate, isResetMode]);
+  }, [user, loading, navigate, isResetMode, profile, isStaff]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,10 +115,10 @@ export default function Auth() {
           />
           <CardTitle className="flex items-center justify-center gap-2 text-2xl">
             <Lock className="h-5 w-5" />
-            Admin Login
+            Team Login
           </CardTitle>
           <CardDescription>
-            Sign in to access the admin dashboard
+            Sign in to access the BTS platform
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -170,7 +175,7 @@ export default function Auth() {
               </div>
               {capsLockOn && (
                 <p className="text-xs text-amber-500 flex items-center gap-1 mt-1">
-                  <span className="font-medium">⚠ Caps Lock is on</span>
+                  <span className="font-medium">Caps Lock is on</span>
                 </p>
               )}
             </div>
